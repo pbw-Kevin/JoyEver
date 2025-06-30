@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { isLoggedInStat, navOpened, msgcnt } from '../assets/main.ts';
+import { msgcnt } from '../assets/main.ts';
+import { navOpened } from '../assets/navDrawer.ts';
+import { isLoggedInStat } from '../assets/account.ts';
 
 var WikiCollActive = ref(false)
 </script>

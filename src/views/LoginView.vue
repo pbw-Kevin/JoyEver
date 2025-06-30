@@ -1,19 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
-import { login } from '../assets/main.ts'
+import { ref } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
+import { login } from '../assets/account.ts';
+import { sendNoti } from '../assets/notifications.ts';
 
-var name = ref("")
-var pass = ref("")
+var router = useRouter();
+
+var name = ref("");
+var pass = ref("");
 
 var info = ref({
   a: 1
-})
+});
 
 function loginAccount(){
   login(name.value,pass.value).then(
     (ret) => {
-      info.value = ret;
+      if(!ret.code){
+        sendNoti("登录成功！");
+        router.push({ name: 'Home' });
+      }
+      else{
+        info.value = ret;
+      }
     }
   )
 }

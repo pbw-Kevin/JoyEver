@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { isLoggedInStat, logoutSnackbar } from '../assets/main.ts';
-
-logoutSnackbar()
+import { isLoggedInStat, logoutSnackbar, getUser } from '../assets/account.ts';
 </script>
 
 <template>
@@ -17,5 +15,6 @@ logoutSnackbar()
         （推荐，登录后可以查看过往对局，启用聊天功能）
       </li>
     </ul>
+    <span>{{ getUser() }}</span>
   </div>
 </template>

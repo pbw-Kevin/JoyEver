@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isLoggedIn } from '../assets/main.ts';
+import { isLoggedIn } from '../assets/account.ts';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

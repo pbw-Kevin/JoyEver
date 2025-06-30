@@ -6,7 +6,6 @@ import NavigationDrawer from './components/NavigationDrawer.vue'
 import 'mdui/mdui.css'
 import 'mdui'
 import { setColorScheme } from 'mdui/functions/setColorScheme.js';
-import { isLoggedInStat, navOpened } from './assets/main.ts';
 
 setColorScheme('#ff0000')
 </script>

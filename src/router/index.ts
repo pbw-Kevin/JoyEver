@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { navOpened } from '../assets/main.ts'
-import { ref } from 'vue'
+import { navOpened } from '../assets/navDrawer.ts'
+import { dispNoti } from '../assets/notifications.ts'
 import { breakpoint } from 'mdui'
 
 const router = createRouter({
@@ -133,6 +133,7 @@ router.beforeEach((to, from, next) => {
   document.title = to.meta.title
   navOpened.value = breakpoint().up('md')
   next()
+  dispNoti()
 })
 
 export default router

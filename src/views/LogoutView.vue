@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { logout, logoutSnackbar } from '../assets/main.ts';
+import { logout } from '../assets/account.ts';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
