@@ -3,17 +3,22 @@ import { ref } from 'vue'
 import { RouterView } from 'vue-router'
 import TopAppBar from './components/TopAppBar.vue'
 import NavigationDrawer from './components/NavigationDrawer.vue'
+import BackgroundImage from './components/BackgroundImage.vue'
+import BottomAppBar from './components/BottomAppBar.vue'
 import 'mdui/mdui.css'
 import 'mdui'
-import { setColorScheme } from 'mdui/functions/setColorScheme.js';
+import { useAppearance, getAppearance } from './assets/appearance.ts';
 
-setColorScheme('#ff0000')
+useAppearance()
+var appearanceSettings = getAppearance()
 </script>
 
 <template>
+  <BackgroundImage v-if="appearanceSettings.backgroundImage" />
   <TopAppBar />
   <NavigationDrawer />
   <RouterView />
+  <BottomAppBar />
 </template>
 
 <style>

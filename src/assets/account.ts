@@ -2,8 +2,6 @@ import { ref } from 'vue'
 import { sendNoti } from './notifications.ts'
 import { User } from './main.ts'
 
-User.loginAnonymously();
-
 export function getUser(){
   return User.current();
 }
@@ -25,7 +23,6 @@ export function isEmail(s: string){
 export async function login(name: string, pass: string):Promise<Object>{
   let ret = { code: -1, message: "" };
   if(isEmail(name)){
-    console.log("Email");
     await User.loginWithEmail(name, pass).then(
       (user) => {
         ret.code = 0;
@@ -38,7 +35,6 @@ export async function login(name: string, pass: string):Promise<Object>{
     );
   }
   else{
-    console.log("Username");
     await User.logIn(name, pass).then(
       (user) => {
         ret.code = 0;
@@ -55,8 +51,11 @@ export async function login(name: string, pass: string):Promise<Object>{
 }
 
 export async function logout() {
+  if(!isLoggedIn())return;
   await User.logOut();
   User.loginAnonymously();
   updateLoggedInStat();
   sendNoti("登出成功！");
 }
+
+if(!isLoggedIn())User.loginAnonymously();

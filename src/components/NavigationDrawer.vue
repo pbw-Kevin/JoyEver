@@ -4,12 +4,14 @@ import { RouterLink } from 'vue-router'
 import { msgcnt } from '../assets/main.ts';
 import { navOpened } from '../assets/navDrawer.ts';
 import { isLoggedInStat } from '../assets/account.ts';
+import { getAppearance } from '../assets/appearance.ts';
 
+var appearanceSettings = getAppearance();
 var WikiCollActive = ref(false)
 </script>
 
 <template>
-  <mdui-navigation-drawer :open="navOpened" close-on-overlay-click>
+  <mdui-navigation-drawer :open="navOpened" close-on-overlay-click :class="{withBgImg: appearanceSettings.backgroundImage}">
     <mdui-list class="nav-drawer-list">
       <mdui-list-subheader>菜单</mdui-list-subheader>
       <RouterLink to="/">
@@ -56,3 +58,24 @@ var WikiCollActive = ref(false)
     </mdui-list>
   </mdui-navigation-drawer>
 </template>
+
+<style scoped>
+mdui-list.nav-drawer-list {
+  margin: 0px 12px 0px 12px;
+}
+
+mdui-navigation-drawer {
+  box-shadow: var(--mdui-elevation-level3);
+}
+
+@media (min-width: 840px){
+  mdui-navigation-drawer.withBgImg {
+    opacity: 0.7;
+    transition: 0.5s;
+  }
+
+  mdui-navigation-drawer.withBgImg:hover {
+    opacity: 1;
+  }
+}
+</style>

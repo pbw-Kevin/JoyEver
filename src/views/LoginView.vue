@@ -39,6 +39,40 @@ function loginAccount(){
       <mdui-button type="submit">登录</mdui-button>
     </form>
     <div>还没有账号？<RouterLink to="/register">注册</RouterLink></div>
+    <div>忘记密码？<RouterLink to="/resetpassword">重置密码</RouterLink></div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
+    <div>1</div>
     <div>{{ info }} {{ name }} {{ pass }}</div>
   </div>
 </template>

@@ -28,15 +28,3 @@ mdui-badge.message-count {
   position: absolute;
   margin-right: 100px;
 }
-
-mdui-top-app-bar {
-  position: fixed;
-}
-
-mdui-navigation-drawer {
-  box-shadow: var(--mdui-elevation-level3);
-}
-
-mdui-list.nav-drawer-list {
-  margin: 0px 12px 0px 12px;
-}

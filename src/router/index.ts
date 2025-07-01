@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { navOpened } from '../assets/navDrawer.ts'
 import { dispNoti } from '../assets/notifications.ts'
+import { updateLoggedInStat } from '../assets/account.ts'
 import { breakpoint } from 'mdui'
 
 const router = createRouter({
@@ -71,6 +72,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/wiki/test',
+      name: 'Test',
+      component: () => import('../views/TestView.vue'),
+      meta: {
+        title: '在线试验 - 永乐大典',
+      },
+    },
+    {
       path: '/myaccount',
       name: 'MyAccount',
       component: () => import('../views/MyAccountView.vue'),
@@ -130,8 +139,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title
+  document.title = to.meta.title as string
   navOpened.value = breakpoint().up('md')
+  updateLoggedInStat()
   next()
   dispNoti()
 })
