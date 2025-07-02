@@ -5,6 +5,7 @@ import { msgcnt } from '../assets/main.ts';
 import { navOpened } from '../assets/navDrawer.ts';
 import { isLoggedInStat } from '../assets/account.ts';
 import { getAppearance } from '../assets/appearance.ts';
+import MessageCount from './MessageCount.vue';
 
 var appearanceSettings = getAppearance();
 var room = ref("1234")
@@ -17,7 +18,7 @@ var room = ref("1234")
       <RouterLink to="/" class="title">永乐大典</RouterLink>
       <RouterLink to="/message" class="title" v-if="msgcnt > 0">
         <span class="small-title">消息</span>
-        <mdui-badge class="message-count">{{ msgcnt }}</mdui-badge>
+        <MessageCount :msgcnt />
       </RouterLink>
       <RouterLink :to="'/room/' + room" class="title small-title" v-if="room === '1234'">房间：{{ room }}</RouterLink>
     </mdui-top-app-bar-title>
@@ -49,6 +50,18 @@ var room = ref("1234")
 </template>
 
 <style scoped>
+.title {
+  color: rgb(var(--mdui-color-on-surface));
+  font-size: var(--mdui-typescale-title-large-size);
+  height: var(--mdui-typescale-title-large-size);
+  margin: 0px 16px 0px 8px;
+}
+
+.small-title {
+  font-size: 84%;
+  height: 84%;
+}
+
 mdui-top-app-bar.withBgImg {
   opacity: 0.7;
   transition: 0.5s;

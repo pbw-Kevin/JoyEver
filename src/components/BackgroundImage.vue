@@ -5,9 +5,9 @@ var appearanceSettings = getAppearance()
 </script>
 
 <template>
-  <div class="bg-img" :style="{'background-image': `url(${appearanceSettings.backgroundImage})`,'opacity':appearanceSettings.backgroundImageOpacity}">
-    
-  </div>
+  <div class="bg-img" v-if="appearanceSettings.backgroundImage" :style="{
+    'background-image': `url(${appearanceSettings.backgroundImage})`,
+    'opacity':appearanceSettings.backgroundImageOpacity}" />
 </template>
 
 <style scoped>

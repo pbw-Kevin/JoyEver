@@ -11,20 +11,3 @@ a {
   margin-left: 12px;
   line-height: 160%;
 }
-
-.title {
-  color: rgb(var(--mdui-color-on-surface));
-  font-size: var(--mdui-typescale-title-large-size);
-  height: var(--mdui-typescale-title-large-size);
-  margin: 0px 16px 0px 8px;
-}
-
-.small-title {
-  font-size: 84%;
-  height: 84%;
-}
-
-mdui-badge.message-count {
-  position: absolute;
-  margin-right: 100px;
-}

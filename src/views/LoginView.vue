@@ -10,7 +10,8 @@ var name = ref("");
 var pass = ref("");
 
 var info = ref({
-  a: 1
+  code: 0,
+  message: ""
 });
 
 function loginAccount(){
@@ -40,39 +41,6 @@ function loginAccount(){
     </form>
     <div>还没有账号？<RouterLink to="/register">注册</RouterLink></div>
     <div>忘记密码？<RouterLink to="/resetpassword">重置密码</RouterLink></div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>1</div>
-    <div>{{ info }} {{ name }} {{ pass }}</div>
+    <!-- <div>{{ info }} {{ name }} {{ pass }}</div> -->
   </div>
 </template>

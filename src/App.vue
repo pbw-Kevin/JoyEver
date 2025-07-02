@@ -14,7 +14,7 @@ var appearanceSettings = getAppearance()
 </script>
 
 <template>
-  <BackgroundImage v-if="appearanceSettings.backgroundImage" />
+  <BackgroundImage />
   <TopAppBar />
   <NavigationDrawer />
   <RouterView />

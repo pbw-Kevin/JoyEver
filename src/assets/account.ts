@@ -20,7 +20,7 @@ export function isEmail(s: string){
   return /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(s);
 }
 
-export async function login(name: string, pass: string):Promise<Object>{
+export async function login(name: string, pass: string){
   let ret = { code: -1, message: "" };
   if(isEmail(name)){
     await User.loginWithEmail(name, pass).then(

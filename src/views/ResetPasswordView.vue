@@ -3,6 +3,6 @@
 
 <template>
   <div class="content">
-    <h1>密码重置</h1>
+    <h1>重置密码</h1>
   </div>
 </template>
