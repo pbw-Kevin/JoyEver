@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { msgcnt } from '../assets/main.ts';
-import { navOpened } from '../assets/navDrawer.ts';
-import { isLoggedInStat } from '../assets/account.ts';
-import { getAppearance } from '../assets/appearance.ts';
-import MessageCount from './MessageCount.vue';
+import { msgcnt } from '../assets/message.ts'
+import { navOpened } from '../assets/navDrawer.ts'
+import { isLoggedInStat } from '../assets/account.ts'
+import { getAppearance } from '../assets/appearance.ts'
+import MessageCount from './MessageCount.vue'
 
-var appearanceSettings = getAppearance();
-var room = ref("1234")
+var appearanceSettings = getAppearance()
+var room = ref('1234')
 </script>
 
 <template>
-  <mdui-top-app-bar scroll-behavior="elevate" :class="{withBgImg: appearanceSettings.backgroundImage}">
+  <mdui-top-app-bar
+    scroll-behavior="elevate"
+    :class="{ withBgImg: appearanceSettings.backgroundImage }"
+  >
     <mdui-button-icon icon="menu" @click="navOpened = !navOpened"></mdui-button-icon>
     <mdui-top-app-bar-title>
       <RouterLink to="/" class="title">永乐大典</RouterLink>
@@ -20,7 +23,9 @@ var room = ref("1234")
         <span class="small-title">消息</span>
         <MessageCount :msgcnt />
       </RouterLink>
-      <RouterLink :to="'/room/' + room" class="title small-title" v-if="room === '1234'">房间：{{ room }}</RouterLink>
+      <RouterLink :to="'/room/' + room" class="title small-title" v-if="room === '1234'"
+        >房间：{{ room }}</RouterLink
+      >
     </mdui-top-app-bar-title>
     <div v-if="isLoggedInStat">
       <RouterLink to="/myaccount">

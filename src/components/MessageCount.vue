@@ -5,7 +5,9 @@ const prop = defineProps<{
 </script>
 
 <template>
-  <mdui-badge class="message-count" v-if="prop.msgcnt && prop.msgcnt > 0">{{ prop.msgcnt }}</mdui-badge>
+  <mdui-badge class="message-count" v-if="prop.msgcnt && prop.msgcnt > 0">{{
+    prop.msgcnt
+  }}</mdui-badge>
 </template>
 
 <style scoped>

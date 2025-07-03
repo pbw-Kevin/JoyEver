@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { getAppearance } from '../assets/appearance.ts';
+import { getAppearance } from '../assets/appearance.ts'
 
-var appearanceSettings = getAppearance();
+var appearanceSettings = getAppearance()
 </script>
 
 <template>
-  <mdui-bottom-app-bar :class="{withBgImg: appearanceSettings.backgroundImage}">
+  <mdui-bottom-app-bar :class="{ withBgImg: appearanceSettings.backgroundImage }">
     Online JoyEver &copy; 2025 JoyEver Dev Team<br />
     GitHub Repository
   </mdui-bottom-app-bar>

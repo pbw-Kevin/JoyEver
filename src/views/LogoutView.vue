@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { logout } from '../assets/account.ts';
-import { useRouter } from 'vue-router';
+import { logout } from '../assets/account.ts'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
-logout();
+logout()
 
-router.push({ name: 'Home' });
+router.push({ name: 'Home' })
 </script>
 
 <template>

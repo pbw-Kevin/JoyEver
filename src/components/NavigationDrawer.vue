@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { msgcnt } from '../assets/main.ts';
-import { navOpened, UpdateNavOpened } from '../assets/navDrawer.ts';
-import { isLoggedInStat } from '../assets/account.ts';
-import { getAppearance } from '../assets/appearance.ts';
-import MessageCount from './MessageCount.vue';
+import { msgcnt } from '../assets/message.ts'
+import { navOpened, UpdateNavOpened } from '../assets/navDrawer.ts'
+import { isLoggedInStat } from '../assets/account.ts'
+import { getAppearance } from '../assets/appearance.ts'
+import MessageCount from './MessageCount.vue'
 
-var appearanceSettings = getAppearance();
+var appearanceSettings = getAppearance()
 var WikiCollActive = ref(false)
 </script>
 
 <template>
-  <mdui-navigation-drawer :open="navOpened" close-on-overlay-click :class="{withBgImg: appearanceSettings.backgroundImage}">
+  <mdui-navigation-drawer
+    :open="navOpened"
+    close-on-overlay-click
+    :class="{ withBgImg: appearanceSettings.backgroundImage }"
+  >
     <mdui-list class="nav-drawer-list">
       <mdui-list-subheader>菜单</mdui-list-subheader>
       <RouterLink to="/" @click="UpdateNavOpened()">
@@ -28,8 +32,18 @@ var WikiCollActive = ref(false)
         </mdui-list-item>
       </RouterLink>
       <mdui-collapse>
-        <mdui-collapse-item :active="WikiCollActive" @open="WikiCollActive = true" @close="WikiCollActive = false">
-          <mdui-list-item slot="header" icon="library_books" :end-icon="'keyboard_arrow_' + ( WikiCollActive ? 'up' : 'down' )" rounded>大典</mdui-list-item>
+        <mdui-collapse-item
+          :active="WikiCollActive"
+          @open="WikiCollActive = true"
+          @close="WikiCollActive = false"
+        >
+          <mdui-list-item
+            slot="header"
+            icon="library_books"
+            :end-icon="'keyboard_arrow_' + (WikiCollActive ? 'up' : 'down')"
+            rounded
+            >大典</mdui-list-item
+          >
           <div style="margin-left: 2.5rem">
             <RouterLink to="/wiki/online" @click="UpdateNavOpened()">
               <mdui-list-item rounded>在线大典</mdui-list-item>
@@ -69,7 +83,7 @@ mdui-navigation-drawer {
   box-shadow: var(--mdui-elevation-level3);
 }
 
-@media (min-width: 840px){
+@media (min-width: 840px) {
   mdui-navigation-drawer.withBgImg {
     opacity: 0.7;
     transition: 0.5s;

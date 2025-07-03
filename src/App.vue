@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { RouterView } from 'vue-router'
 import TopAppBar from './components/TopAppBar.vue'
 import NavigationDrawer from './components/NavigationDrawer.vue'
@@ -7,7 +6,7 @@ import BackgroundImage from './components/BackgroundImage.vue'
 import BottomAppBar from './components/BottomAppBar.vue'
 import 'mdui/mdui.css'
 import 'mdui'
-import { useAppearance, getAppearance } from './assets/appearance.ts';
+import { useAppearance, getAppearance } from './assets/appearance.ts'
 
 useAppearance()
 var appearanceSettings = getAppearance()

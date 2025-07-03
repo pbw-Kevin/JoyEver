@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import UserCard from '../components/UserCard.vue'
+import { chatContainerHeight } from '../assets/height.ts'
 </script>
 
 <template>
   <div class="content">
     <h1>站内消息</h1>
-    <div class="chat-container">
+    <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
       <div class="chat-list">
         <mdui-list>
           <UserCard nickname="公告" isAnnouncement />
@@ -21,11 +22,9 @@ import UserCard from '../components/UserCard.vue'
 }
 
 .chat-container {
-  height: calc(100vh - 240px);
   background-color: rgba(255, 255, 255, 0.7);
 }
 
-.chat-list {
-  
-}
+/* .chat-list {
+} */
 </style>

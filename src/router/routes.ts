@@ -143,14 +143,14 @@ var routes = [
       title: '重置密码 - 永乐大典',
     },
   },
-    // {
-    //   path: '/',
-    //   name: '',
-    //   component: () => import('../views/View.vue'),
-    //   meta: {
-    //     title: '',
-    //   },
-    // },
-];
+  // {
+  //   path: '/',
+  //   name: '',
+  //   component: () => import('../views/View.vue'),
+  //   meta: {
+  //     title: '',
+  //   },
+  // },
+]
 
-export default routes;
+export default routes

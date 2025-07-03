@@ -17,10 +17,15 @@ const props = defineProps<{
 </script>
 
 <template>
-  <mdui-list-item alignment="center" :disabled="props.disabled" :active="props.active" @click="router.push(props.isAnnouncement?'announcement':`message/${props.username}`)">
+  <mdui-list-item
+    alignment="center"
+    :disabled="props.disabled"
+    :active="props.active"
+    @click="router.push(props.isAnnouncement ? 'announcement' : `message/${props.username}`)"
+  >
     {{ props.nickname }}
     <mdui-icon slot="icon" name="announcement" v-if="props.isAnnouncement"></mdui-icon>
-    <UserAvatar slot="icon" :url="props.avatarURL" v-else/>
+    <UserAvatar slot="icon" :url="props.avatarURL" v-else />
     <span slot="description" v-if="props.infoText">{{ props.infoText }}</span>
   </mdui-list-item>
 </template>

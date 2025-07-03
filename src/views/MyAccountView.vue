@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { isLoggedIn } from '../assets/account.ts';
-import { sendNoti } from '../assets/notifications.ts';
+import { isLoggedIn } from '../assets/account.ts'
+import { sendNoti } from '../assets/notifications.ts'
 import { useRouter } from 'vue-router'
-import UserAvatar from '../components/UserAvatar.vue';
-import UserTag from '../components/UserTag.vue';
+import UserAvatar from '../components/UserAvatar.vue'
+import UserTag from '../components/UserTag.vue'
 
 const router = useRouter()
 
-if(!isLoggedIn()){
-  sendNoti("请先登录！");
-  router.push({ name: 'Login' });
+if (!isLoggedIn()) {
+  sendNoti('请先登录！')
+  router.push({ name: 'Login' })
 }
 </script>
 
@@ -25,11 +25,9 @@ if(!isLoggedIn()){
           <UserTag tag="管理员" color="purple" />
           <UserTag tag="超级管理员" color="green" />
           <UserTag tag="站长" color="aqua" />
-          <UserTag tag="已封禁" color="brown" />
-        </span><br />
-        <span class="user-head-username">
-          123
-        </span>
+          <UserTag tag="已封禁" color="brown" /> </span
+        ><br />
+        <span class="user-head-username"> 123 </span>
       </div>
     </div>
   </div>
@@ -62,6 +60,6 @@ if(!isLoggedIn()){
 }
 
 .user-head-username::before {
-  content: "@"
+  content: '@';
 }
 </style>

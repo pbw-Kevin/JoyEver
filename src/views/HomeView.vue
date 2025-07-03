@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isLoggedInStat, getUser } from '../assets/account.ts';
+import { isLoggedInStat, getUser } from '../assets/account.ts'
 </script>
 
 <template>
