@@ -25,8 +25,8 @@ if (!isLoggedIn()) {
           <UserTag tag="管理员" color="purple" />
           <UserTag tag="超级管理员" color="green" />
           <UserTag tag="站长" color="aqua" />
-          <UserTag tag="已封禁" color="brown" /> </span
-        ><br />
+          <UserTag tag="已封禁" color="brown" />
+        </span><br />
         <span class="user-head-username"> 123 </span>
       </div>
     </div>

@@ -6,8 +6,10 @@ var appearanceSettings = getAppearance()
 
 <template>
   <mdui-bottom-app-bar :class="{ withBgImg: appearanceSettings.backgroundImage }">
-    Online JoyEver &copy; 2025 JoyEver Dev Team<br />
-    GitHub Repository
+    <p>
+      Online JoyEver &copy; 2025 JoyEver Dev Team<br />
+      <a href="https://github.com/pbw-Kevin/JoyEver" target="_blank">GitHub Repository</a>
+    </p>
   </mdui-bottom-app-bar>
 </template>
 

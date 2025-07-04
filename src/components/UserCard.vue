@@ -24,6 +24,7 @@ const props = defineProps<{
     @click="router.push(props.isAnnouncement ? 'announcement' : `message/${props.username}`)"
   >
     {{ props.nickname }}
+    <slot></slot>
     <mdui-icon slot="icon" name="announcement" v-if="props.isAnnouncement"></mdui-icon>
     <UserAvatar slot="icon" :url="props.avatarURL" v-else />
     <span slot="description" v-if="props.infoText">{{ props.infoText }}</span>

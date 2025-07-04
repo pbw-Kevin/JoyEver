@@ -9,7 +9,6 @@ import 'mdui'
 import { useAppearance, getAppearance } from './assets/appearance.ts'
 
 useAppearance()
-var appearanceSettings = getAppearance()
 </script>
 
 <template>
