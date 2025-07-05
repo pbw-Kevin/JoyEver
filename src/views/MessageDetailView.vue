@@ -26,6 +26,15 @@ import { isDesktop } from '../assets/appearance.ts'
         </div>
       </div>
       <div class="chat-box">
+        <mdui-top-app-bar scroll-target=".chat-box">
+          <RouterLink to="/message">
+            <mdui-button-icon icon="arrow_back" />
+          </RouterLink>
+          <mdui-top-app-bar-title>
+            聊天：{{ $route.params.id }}
+          </mdui-top-app-bar-title>
+          <mdui-button-icon icon="more_vert"></mdui-button-icon>
+        </mdui-top-app-bar>
       </div>
     </div>
   </div>
