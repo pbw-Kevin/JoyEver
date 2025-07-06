@@ -9,7 +9,7 @@
       Based on <a href="https://vuejs.org" target="_blank">Vue3</a> framework<br />
       Using <a href="https://mdui.org" target="_blank">MDUI Web Component Library</a><br />
       Using <a href="https://leancloud.app" target="_blank">LeanCloud</a> as back-end system<br />
-      Thanks for all those guys supporting me before and after coding!
+      Thanks for all those guys' supporting before and after coding!
     </p>
     <h2>Team</h2>
     <p>@AIR-Kevin Core member</p>

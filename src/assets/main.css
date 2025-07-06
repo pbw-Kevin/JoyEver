@@ -1,9 +1,10 @@
 a {
   text-decoration: none;
-  color: rgb(177, 141, 222);
+  color: rgb(var(--mdui-color-primary));
 }
 
-.content a:hover {
+.content a:hover,
+mdui-bottom-app-bar a:hover {
   text-decoration: underline;
 }
 

@@ -2,20 +2,20 @@
 import UserCard from '../components/UserCard.vue'
 import MessageCount from '../components/MessageCount.vue'
 import { chatContainerHeight } from '../assets/height.ts'
-import { isDesktop } from '../assets/appearance.ts' 
+import { isDesktop } from '../assets/appearance.ts'
 </script>
 
 <template>
   <div class="content">
     <h1>站内消息</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
-      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%'}">
+      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%' }">
         <mdui-text-field label="搜索" disabled>
           <mdui-button-icon slot="end-icon" icon="search"></mdui-button-icon>
         </mdui-text-field>
         <mdui-list>
-          <UserCard nickname="公告" isAnnouncement >
-            <MessageCount :msgcnt=1 />
+          <UserCard nickname="公告" isAnnouncement>
+            <MessageCount :msgcnt="1" />
           </UserCard>
         </mdui-list>
         <div class="chat-disabled">

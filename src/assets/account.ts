@@ -57,4 +57,4 @@ export async function logout() {
   sendNoti('登出成功！')
 }
 
-if (!isLoggedIn()) User.loginAnonymously()
+if (!getUser()) User.loginAnonymously()

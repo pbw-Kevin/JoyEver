@@ -2,6 +2,6 @@
 
 <template>
   <div class="content">
-    <h1>公开的房间列表</h1>
+    <h1>房间列表</h1>
   </div>
 </template>

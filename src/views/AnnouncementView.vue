@@ -2,20 +2,20 @@
 import UserCard from '../components/UserCard.vue'
 import MessageCount from '../components/MessageCount.vue'
 import { chatContainerHeight } from '../assets/height.ts'
-import { isDesktop } from '../assets/appearance.ts' 
+import { isDesktop } from '../assets/appearance.ts'
 </script>
 
 <template>
   <div class="content">
     <h1>站内消息</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
-      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%'}" v-if="isDesktop">
+      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%' }" v-if="isDesktop">
         <mdui-text-field label="搜索" disabled>
           <mdui-button-icon slot="end-icon" icon="search"></mdui-button-icon>
         </mdui-text-field>
         <mdui-list>
-          <UserCard nickname="公告" isAnnouncement >
-            <MessageCount :msgcnt=1 />
+          <UserCard nickname="公告" isAnnouncement>
+            <MessageCount :msgcnt="1" />
           </UserCard>
         </mdui-list>
         <div class="chat-disabled">
@@ -30,9 +30,7 @@ import { isDesktop } from '../assets/appearance.ts'
           <RouterLink to="/message">
             <mdui-button-icon icon="arrow_back" />
           </RouterLink>
-          <mdui-top-app-bar-title>
-            公告
-          </mdui-top-app-bar-title>
+          <mdui-top-app-bar-title> 公告 </mdui-top-app-bar-title>
         </mdui-top-app-bar>
       </div>
     </div>
