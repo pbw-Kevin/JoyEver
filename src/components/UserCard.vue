@@ -21,7 +21,7 @@ const props = defineProps<{
     alignment="center"
     :disabled="props.disabled"
     :active="props.active"
-    @click="router.push(props.isAnnouncement ? 'announcement' : `message/${props.username}`)"
+    @click="router.push(props.isAnnouncement ? '/announcement' : `/message/${props.username}`)"
   >
     {{ props.nickname }}
     <slot></slot>

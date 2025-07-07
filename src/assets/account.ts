@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { sendNoti } from './notifications.ts'
 import { User } from './main.ts'
 
@@ -55,6 +56,14 @@ export async function logout() {
   User.loginAnonymously()
   updateLoggedInStat()
   sendNoti('登出成功！')
+}
+
+export var requireLogin = () => {
+  var router = useRouter()
+  if (!isLoggedIn()) {
+    sendNoti('请先登录！')
+    router.push({ name: 'Login' })
+  }
 }
 
 if (!getUser()) User.loginAnonymously()

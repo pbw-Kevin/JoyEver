@@ -1,0 +1,76 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import UserAvatar from './UserAvatar.vue'
+type messageAlignment = 'left' | 'right'
+
+const props = defineProps<{
+  avatarURL?: string
+  nickname?: string
+  alignment: messageAlignment
+  backgroundColor?: string
+  href?: string
+  routePath?: string
+}>()
+var router = useRouter()
+
+var isRight = computed(() => {
+  return props.alignment == 'right'
+})
+</script>
+
+<template>
+  <div
+    class="message-piece"
+    :style="{
+      flexDirection: isRight ? 'row-reverse' : 'row',
+      paddingLeft: isRight ? '30%' : '10px',
+      paddingRight: isRight ? '10px' : '30%',
+    }"
+  >
+    <UserAvatar class="avatar" :url="props.avatarURL"></UserAvatar>
+    <div class="message-box" :style="{ textAlign: props.alignment }">
+      <div class="message-nickname" v-if="props.nickname">{{ props.nickname }}</div>
+      <div class="message-card">
+        <mdui-card
+          @click="props.routePath ? router.push(props.routePath) : void 0"
+          :style="{
+            backgroundColor: props.backgroundColor,
+            cursor: props.routePath ? 'pointer' : '',
+          }"
+          :href="props.href"
+        >
+          <slot></slot>
+        </mdui-card>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.avatar {
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+}
+
+.message-piece {
+  display: flex;
+  width: calc(70% - 10px);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.message-box {
+  max-width: 100%;
+}
+
+mdui-card {
+  padding: 10px;
+  text-align: left;
+  min-height: 40px;
+  min-width: 30px;
+  max-width: 100%;
+  word-break: break-all;
+}
+</style>

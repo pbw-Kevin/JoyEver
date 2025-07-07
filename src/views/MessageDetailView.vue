@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import UserCard from '../components/UserCard.vue'
-import MessageCount from '../components/MessageCount.vue'
+import MessageChatList from '../components/MessageChatList.vue'
+import MessagePiece from '../components/MessagePiece.vue'
+import { requireLogin } from '../assets/account.ts'
 import { chatContainerHeight } from '../assets/height.ts'
 import { isDesktop } from '../assets/appearance.ts'
+
+requireLogin()
 </script>
 
 <template>
@@ -10,20 +14,7 @@ import { isDesktop } from '../assets/appearance.ts'
     <h1>站内消息</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
       <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%' }" v-if="isDesktop">
-        <mdui-text-field label="搜索" disabled>
-          <mdui-button-icon slot="end-icon" icon="search"></mdui-button-icon>
-        </mdui-text-field>
-        <mdui-list>
-          <UserCard nickname="公告" isAnnouncement>
-            <MessageCount :msgcnt="1" />
-          </UserCard>
-        </mdui-list>
-        <div class="chat-disabled">
-          <div class="chat-disabled-info">
-            <mdui-icon name="warning" class="chat-disabled-icon"></mdui-icon>
-            <p>登录后方可与好友聊天！</p>
-          </div>
-        </div>
+        <MessageChatList></MessageChatList>
       </div>
       <div class="chat-box">
         <mdui-top-app-bar scroll-target=".chat-box">
@@ -33,6 +24,11 @@ import { isDesktop } from '../assets/appearance.ts'
           <mdui-top-app-bar-title> 聊天：{{ $route.params.id }} </mdui-top-app-bar-title>
           <mdui-button-icon icon="more_vert"></mdui-button-icon>
         </mdui-top-app-bar>
+        <MessagePiece
+          alignment="right"
+          nickname="123"
+          backgroundColor="rgb(var(--mdui-color-secondary-container))"
+        ></MessagePiece>
       </div>
     </div>
   </div>
@@ -46,13 +42,16 @@ import { isDesktop } from '../assets/appearance.ts'
 .chat-list {
   display: flex;
   flex-direction: column;
-  overflow: overlay;
+  overflow-x: hidden;
+  overflow-y: overlay;
   background-color: rgba(var(--mdui-color-background), 0.7);
 }
 
 .chat-box {
   position: relative;
   flex-grow: 1;
+  overflow-x: hidden;
+  overflow-y: overlay;
   background-color: rgba(var(--mdui-color-surface-dim), 0.7);
 }
 

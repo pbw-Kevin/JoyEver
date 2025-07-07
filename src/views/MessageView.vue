@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import UserCard from '../components/UserCard.vue'
-import MessageCount from '../components/MessageCount.vue'
+import MessageChatList from '../components/MessageChatList.vue'
 import { chatContainerHeight } from '../assets/height.ts'
 import { isDesktop } from '../assets/appearance.ts'
 </script>
@@ -10,20 +10,7 @@ import { isDesktop } from '../assets/appearance.ts'
     <h1>站内消息</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
       <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%' }">
-        <mdui-text-field label="搜索" disabled>
-          <mdui-button-icon slot="end-icon" icon="search"></mdui-button-icon>
-        </mdui-text-field>
-        <mdui-list>
-          <UserCard nickname="公告" isAnnouncement>
-            <MessageCount :msgcnt="1" />
-          </UserCard>
-        </mdui-list>
-        <div class="chat-disabled">
-          <div class="chat-disabled-info">
-            <mdui-icon name="warning" class="chat-disabled-icon"></mdui-icon>
-            <p>登录后方可与好友聊天！</p>
-          </div>
-        </div>
+        <MessageChatList></MessageChatList>
       </div>
       <div class="chat-box" v-if="isDesktop">
         <mdui-icon name="chat" class="chat-box-placeholder"></mdui-icon>

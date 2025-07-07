@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { isLoggedIn } from '../assets/account.ts'
-import { sendNoti } from '../assets/notifications.ts'
-import { useRouter } from 'vue-router'
+import { requireLogin } from '../assets/account.ts'
 import UserAvatar from '../components/UserAvatar.vue'
 import UserTag from '../components/UserTag.vue'
 
-const router = useRouter()
-
-if (!isLoggedIn()) {
-  sendNoti('请先登录！')
-  router.push({ name: 'Login' })
-}
+requireLogin()
 </script>
 
 <template>
