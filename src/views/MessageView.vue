@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import UserCard from '../components/UserCard.vue'
 import MessageChatList from '../components/MessageChatList.vue'
 import { chatContainerHeight } from '../assets/height.ts'
 import { isDesktop } from '../assets/appearance.ts'

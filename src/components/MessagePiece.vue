@@ -71,6 +71,6 @@ mdui-card {
   min-height: 40px;
   min-width: 30px;
   max-width: 100%;
-  word-break: break-all;
+  word-break: break-word;
 }
 </style>

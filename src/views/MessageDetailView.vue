@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import UserCard from '../components/UserCard.vue'
 import MessageChatList from '../components/MessageChatList.vue'
 import MessagePiece from '../components/MessagePiece.vue'
 import { requireLogin } from '../assets/account.ts'
 import { chatContainerHeight } from '../assets/height.ts'
 import { isDesktop } from '../assets/appearance.ts'
+import { messageList } from '../assets/message.ts'
 
 requireLogin()
 </script>
@@ -13,7 +13,7 @@ requireLogin()
   <div class="content">
     <h1>站内消息</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
-      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%' }" v-if="isDesktop">
+      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%', minWidth: isDesktop ? '250px' : '100%' }" v-if="isDesktop">
         <MessageChatList></MessageChatList>
       </div>
       <div class="chat-box">
@@ -24,11 +24,17 @@ requireLogin()
           <mdui-top-app-bar-title> 聊天：{{ $route.params.id }} </mdui-top-app-bar-title>
           <mdui-button-icon icon="more_vert"></mdui-button-icon>
         </mdui-top-app-bar>
-        <MessagePiece
-          alignment="right"
-          nickname="123"
-          backgroundColor="rgb(var(--mdui-color-secondary-container))"
-        ></MessagePiece>
+        <div class="chat-message-container">
+          <MessagePiece
+            v-for="message in messageList"
+            :alignment="message.me? 'right' : 'left'"
+            :nickname="message.nickname"
+            :backgroundColor="message.me ? 'rgb(var(--mdui-color-secondary-container))' : 'rgb(var(--mdui-color-surface-container-low)'"
+          >{{ message.messageType == 'text' ? message.text : '' }}</MessagePiece>
+        </div>
+        <mdui-text-field placeholder="发送消息" autosize max-rows="3">
+          <mdui-button-icon slot="end-icon" icon="send"></mdui-button-icon>
+        </mdui-text-field>
       </div>
     </div>
   </div>
@@ -42,30 +48,22 @@ requireLogin()
 .chat-list {
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: overlay;
+  overflow: overlay;
   background-color: rgba(var(--mdui-color-background), 0.7);
 }
 
 .chat-box {
   position: relative;
   flex-grow: 1;
-  overflow-x: hidden;
-  overflow-y: overlay;
+  overflow: hidden;
   background-color: rgba(var(--mdui-color-surface-dim), 0.7);
 }
 
-.chat-box-placeholder {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  margin: auto;
-  color: rgb(var(--mdui-color-outline));
-  width: 100px;
-  height: 100px;
-  font-size: 100px;
+.chat-message-container {
+  height: calc(100% - 64px);
+  max-width: 100%;
+  overflow: overlay;
+  margin-bottom: 64px;
 }
 
 .chat-disabled {
@@ -91,5 +89,10 @@ requireLogin()
   width: 100px;
   height: 100px;
   font-size: 100px;
+}
+
+mdui-text-field {
+  position: absolute;
+  bottom: 0;
 }
 </style>

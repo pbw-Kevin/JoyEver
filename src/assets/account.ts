@@ -8,7 +8,7 @@ export function getUser() {
 }
 
 export function isLoggedIn(): boolean {
-  return !(!Boolean(getUser()) || getUser().isAnonymous())
+  return Boolean(getUser()) && !getUser().isAnonymous()
 }
 
 export var isLoggedInStat = ref(isLoggedIn())

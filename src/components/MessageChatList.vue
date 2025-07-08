@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import { defineProps } from 'vue';
 import UserCard from '../components/UserCard.vue'
 import MessageCount from '../components/MessageCount.vue'
+import { announcementMsgcnt, chatList, MessageChatListType } from '../assets/message.ts';
 import { isLoggedInStat } from '../assets/account.ts'
+
+const prop = defineProps<{
+  list?: MessageChatListType
+}>()
 </script>
 
 <template>
@@ -10,15 +16,12 @@ import { isLoggedInStat } from '../assets/account.ts'
   </mdui-text-field>
   <mdui-list>
     <UserCard nickname="公告" isAnnouncement>
-      <MessageCount :msgcnt="1" />
+      <MessageCount :msgcnt="announcementMsgcnt" />
     </UserCard>
     <div class="friend-list" v-if="isLoggedInStat">
-      <UserCard nickname="123123" username="123123">
-        <MessageCount :msgcnt="1" />
+      <UserCard v-for="item in prop.list || chatList" :username="item.username" :nickname="item.nickname || item.username">
+        <MessageCount :msgcnt="item.msgcnt" />
       </UserCard>
-      <UserCard nickname="456456" username="456456"> </UserCard>
-      <UserCard nickname="789789" username="789789"> </UserCard>
-      <UserCard nickname="lmx" username="lmx"> </UserCard>
     </div>
   </mdui-list>
   <div class="chat-disabled" v-if="!isLoggedInStat">
