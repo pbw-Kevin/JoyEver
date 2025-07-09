@@ -6,7 +6,7 @@ import BackgroundImage from './components/BackgroundImage.vue'
 import BottomAppBar from './components/BottomAppBar.vue'
 import 'mdui/mdui.css'
 import 'mdui'
-import { useAppearance, getAppearance } from './assets/appearance.ts'
+import { useAppearance } from './assets/appearance.ts'
 
 useAppearance()
 </script>
@@ -18,7 +18,3 @@ useAppearance()
   <RouterView />
   <BottomAppBar />
 </template>
-
-<style>
-@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
-</style>

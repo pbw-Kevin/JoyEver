@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import '@mdui/icons/announcement.js'
 import UserAvatar from './UserAvatar.vue'
 
 const router = useRouter()
@@ -25,7 +26,7 @@ const props = defineProps<{
   >
     {{ props.nickname }}
     <slot></slot>
-    <mdui-icon slot="icon" name="announcement" v-if="props.isAnnouncement"></mdui-icon>
+    <mdui-icon-announcement slot="icon" v-if="props.isAnnouncement"></mdui-icon-announcement>
     <UserAvatar slot="icon" :url="props.avatarURL" v-else />
     <span slot="description" v-if="props.infoText">{{ props.infoText }}</span>
   </mdui-list-item>

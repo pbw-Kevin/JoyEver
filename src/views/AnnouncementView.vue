@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import '@mdui/icons/arrow-back.js'
 import MessageChatList from '../components/MessageChatList.vue'
 import { chatContainerHeight } from '../assets/height.ts'
 import { isDesktop } from '../assets/appearance.ts'
@@ -8,13 +9,16 @@ import { isDesktop } from '../assets/appearance.ts'
   <div class="content">
     <h1>站内消息</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
-      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%' }" v-if="isDesktop">
-        <MessageChatList></MessageChatList>
-      </div>
+      <MessageChatList
+        :style="{ width: isDesktop ? '250px' : '100%', minWidth: isDesktop ? '250px' : '100%' }"
+        v-if="isDesktop"
+      ></MessageChatList>
       <div class="chat-box">
         <mdui-top-app-bar scroll-target=".chat-box">
           <RouterLink to="/message">
-            <mdui-button-icon icon="arrow_back" />
+            <mdui-button-icon>
+              <mdui-icon-arrow-back></mdui-icon-arrow-back>
+            </mdui-button-icon>
           </RouterLink>
           <mdui-top-app-bar-title> 公告 </mdui-top-app-bar-title>
         </mdui-top-app-bar>
@@ -28,42 +32,10 @@ import { isDesktop } from '../assets/appearance.ts'
   display: flex;
 }
 
-.chat-list {
-  display: flex;
-  flex-direction: column;
-  overflow: overlay;
-  background-color: rgba(var(--mdui-color-background), 0.7);
-}
-
 .chat-box {
   position: relative;
   flex-grow: 1;
   overflow: overlay;
   background-color: rgba(var(--mdui-color-surface-dim), 0.7);
-}
-
-.chat-disabled {
-  min-height: 150px;
-  flex-grow: 1;
-  position: relative;
-  color: rgb(var(--mdui-color-outline));
-  background-color: rgba(var(--mdui-color-surface-dim), 0.7);
-  text-align: center;
-}
-
-.chat-disabled-info {
-  height: 150px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  margin: auto;
-}
-
-.chat-disabled-icon {
-  width: 100px;
-  height: 100px;
-  font-size: 100px;
 }
 </style>

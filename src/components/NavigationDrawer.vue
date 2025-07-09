@@ -1,5 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
+import '@mdui/icons/home.js'
+import '@mdui/icons/videogame-asset.js'
+import '@mdui/icons/message.js'
+import '@mdui/icons/library-books.js'
+import '@mdui/icons/keyboard-arrow-up.js'
+import '@mdui/icons/keyboard-arrow-down.js'
+import '@mdui/icons/person.js'
+import '@mdui/icons/assignment.js'
+import '@mdui/icons/info.js'
+
 import { msgcnt } from '../assets/message.ts'
 import { navOpened, UpdateNavOpened } from '../assets/navDrawer.ts'
 import { isLoggedInStat } from '../assets/account.ts'
@@ -21,21 +32,19 @@ UpdateNavOpened()
   >
     <mdui-list class="nav-drawer-list" :style="{ 'margin-bottom': isDesktop ? '80px' : '' }">
       <mdui-list-subheader>{{ isDesktop ? '' : '菜单' }}</mdui-list-subheader>
-      <NavigationDrawerItem to="/" :belonged-routes="['Home']" icon="home">
+      <NavigationDrawerItem to="/" :belonged-routes="['Home']">
+        <mdui-icon-home slot="icon"></mdui-icon-home>
         首页
       </NavigationDrawerItem>
-      <NavigationDrawerItem
-        to="/game"
-        :belonged-routes="['GameHome', 'RoomList', 'Room']"
-        icon="videogame_asset"
-      >
+      <NavigationDrawerItem to="/game" :belonged-routes="['GameHome', 'RoomList', 'Room']">
+        <mdui-icon-videogame-asset slot="icon"></mdui-icon-videogame-asset>
         游戏
       </NavigationDrawerItem>
       <NavigationDrawerItem
         to="/message"
         :belonged-routes="['Message', 'MessageDetail', 'Announcement']"
-        icon="message"
       >
+        <mdui-icon-message slot="icon"></mdui-icon-message>
         消息
         <MessageCount :msgcnt />
       </NavigationDrawerItem>
@@ -45,13 +54,15 @@ UpdateNavOpened()
           @open="WikiCollActive = true"
           @close="WikiCollActive = false"
         >
-          <mdui-list-item
-            slot="header"
-            icon="library_books"
-            :end-icon="'keyboard_arrow_' + (WikiCollActive ? 'up' : 'down')"
-            rounded
-            >大典</mdui-list-item
-          >
+          <mdui-list-item slot="header" rounded>
+            <mdui-icon-library-books slot="icon"></mdui-icon-library-books>
+            大典
+            <mdui-icon-keyboard-arrow-up
+              slot="end-icon"
+              v-if="WikiCollActive"
+            ></mdui-icon-keyboard-arrow-up>
+            <mdui-icon-keyboard-arrow-down slot="end-icon" v-else></mdui-icon-keyboard-arrow-down>
+          </mdui-list-item>
           <div style="margin-left: 2.5rem">
             <NavigationDrawerItem to="/wiki/online" :belonged-routes="['OnlineWiki']">
               在线大典
@@ -69,18 +80,16 @@ UpdateNavOpened()
           </div>
         </mdui-collapse-item>
       </mdui-collapse>
-      <NavigationDrawerItem
-        to="/myaccount"
-        :belonged-routes="['MyAccount']"
-        icon="person"
-        v-if="isLoggedInStat"
-      >
+      <NavigationDrawerItem to="/myaccount" :belonged-routes="['MyAccount']" v-if="isLoggedInStat">
+        <mdui-icon-person slot="icon"></mdui-icon-person>
         账号
       </NavigationDrawerItem>
-      <NavigationDrawerItem to="/changelog" :belonged-routes="['Changelog']" icon="assignment">
+      <NavigationDrawerItem to="/changelog" :belonged-routes="['Changelog']">
+        <mdui-icon-assignment slot="icon"></mdui-icon-assignment>
         更新日志
       </NavigationDrawerItem>
-      <NavigationDrawerItem to="/about" :belonged-routes="['About']" icon="info">
+      <NavigationDrawerItem to="/about" :belonged-routes="['About']">
+        <mdui-icon-info slot="icon"></mdui-icon-info>
         关于
       </NavigationDrawerItem>
     </mdui-list>

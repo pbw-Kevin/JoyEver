@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isLoggedInStat, getUser } from '../assets/account.ts'
+import { isLoggedInStat } from '../assets/account.ts'
 </script>
 
 <template>
@@ -15,6 +15,5 @@ import { isLoggedInStat, getUser } from '../assets/account.ts'
         （推荐，登录后可以查看过往对局，启用聊天功能）
       </li>
     </ul>
-    <!-- <span>{{ getUser() }}</span> -->
   </div>
 </template>

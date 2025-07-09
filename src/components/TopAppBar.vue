@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+
+import '@mdui/icons/menu.js'
+import '@mdui/icons/person.js'
+import '@mdui/icons/logout.js'
+import '@mdui/icons/login.js'
+import '@mdui/icons/person-add.js'
+
 import { msgcnt } from '../assets/message.ts'
 import { navOpened } from '../assets/navDrawer.ts'
 import { isLoggedInStat } from '../assets/account.ts'
@@ -16,7 +23,9 @@ var room = ref('1234')
     scroll-behavior="elevate"
     :class="{ withBgImg: appearanceSettings.backgroundImage }"
   >
-    <mdui-button-icon icon="menu" @click="navOpened = !navOpened"></mdui-button-icon>
+    <mdui-button-icon @click="navOpened = !navOpened">
+      <mdui-icon-menu></mdui-icon-menu>
+    </mdui-button-icon>
     <mdui-top-app-bar-title>
       <RouterLink to="/" class="title">永乐大典</RouterLink>
       <RouterLink to="/message" class="title" v-if="msgcnt > 0">
@@ -30,24 +39,32 @@ var room = ref('1234')
     <div v-if="isLoggedInStat">
       <RouterLink to="/myaccount">
         <mdui-tooltip content="账号">
-          <mdui-button-icon icon="person"></mdui-button-icon>
+          <mdui-button-icon>
+            <mdui-icon-person></mdui-icon-person>
+          </mdui-button-icon>
         </mdui-tooltip>
       </RouterLink>
       <RouterLink to="/logout">
         <mdui-tooltip content="登出">
-          <mdui-button-icon icon="logout"></mdui-button-icon>
+          <mdui-button-icon>
+            <mdui-icon-logout></mdui-icon-logout>
+          </mdui-button-icon>
         </mdui-tooltip>
       </RouterLink>
     </div>
     <div v-else>
       <RouterLink to="/login">
         <mdui-tooltip content="登录">
-          <mdui-button-icon icon="login"></mdui-button-icon>
+          <mdui-button-icon>
+            <mdui-icon-login></mdui-icon-login>
+          </mdui-button-icon>
         </mdui-tooltip>
       </RouterLink>
       <RouterLink to="/register">
         <mdui-tooltip content="注册">
-          <mdui-button-icon icon="person_add"></mdui-button-icon>
+          <mdui-button-icon>
+            <mdui-icon-person-add></mdui-icon-person-add>
+          </mdui-button-icon>
         </mdui-tooltip>
       </RouterLink>
     </div>

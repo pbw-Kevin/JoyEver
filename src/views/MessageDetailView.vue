@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import '@mdui/icons/arrow-back.js'
+import '@mdui/icons/more-vert.js'
+import '@mdui/icons/send.js'
+
 import MessageChatList from '../components/MessageChatList.vue'
 import MessagePiece from '../components/MessagePiece.vue'
 import { requireLogin } from '../assets/account.ts'
@@ -13,27 +17,43 @@ requireLogin()
   <div class="content">
     <h1>站内消息</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
-      <div class="chat-list" :style="{ width: isDesktop ? '250px' : '100%', minWidth: isDesktop ? '250px' : '100%' }" v-if="isDesktop">
-        <MessageChatList></MessageChatList>
-      </div>
+      <MessageChatList
+        :style="{ width: isDesktop ? '250px' : '100%', minWidth: isDesktop ? '250px' : '100%' }"
+        v-if="isDesktop"
+      ></MessageChatList>
       <div class="chat-box">
         <mdui-top-app-bar scroll-target=".chat-box">
           <RouterLink to="/message">
-            <mdui-button-icon icon="arrow_back" />
+            <mdui-button-icon>
+              <mdui-icon-arrow-back></mdui-icon-arrow-back>
+            </mdui-button-icon>
           </RouterLink>
           <mdui-top-app-bar-title> 聊天：{{ $route.params.id }} </mdui-top-app-bar-title>
-          <mdui-button-icon icon="more_vert"></mdui-button-icon>
+          <mdui-button-icon>
+            <mdui-icon-more-vert></mdui-icon-more-vert>
+          </mdui-button-icon>
         </mdui-top-app-bar>
         <div class="chat-message-container">
           <MessagePiece
             v-for="message in messageList"
-            :alignment="message.me? 'right' : 'left'"
+            :alignment="message.me ? 'right' : 'left'"
             :nickname="message.nickname"
-            :backgroundColor="message.me ? 'rgb(var(--mdui-color-secondary-container))' : 'rgb(var(--mdui-color-surface-container-low)'"
-          >{{ message.messageType == 'text' ? message.text : '' }}</MessagePiece>
+            :time="message.time"
+            :backgroundColor="
+              message.me
+                ? 'rgb(var(--mdui-color-secondary-container))'
+                : 'rgb(var(--mdui-color-surface-container-low)'
+            "
+          >
+            <p v-for="para in message.text.split('\n')" v-if="message.messageType == 'text'">
+              {{ para }}
+            </p>
+          </MessagePiece>
         </div>
         <mdui-text-field placeholder="发送消息" autosize max-rows="3">
-          <mdui-button-icon slot="end-icon" icon="send"></mdui-button-icon>
+          <mdui-button-icon slot="end-icon">
+            <mdui-icon-send></mdui-icon-send>
+          </mdui-button-icon>
         </mdui-text-field>
       </div>
     </div>
@@ -45,25 +65,19 @@ requireLogin()
   display: flex;
 }
 
-.chat-list {
-  display: flex;
-  flex-direction: column;
-  overflow: overlay;
-  background-color: rgba(var(--mdui-color-background), 0.7);
-}
-
 .chat-box {
   position: relative;
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
   background-color: rgba(var(--mdui-color-surface-dim), 0.7);
 }
 
 .chat-message-container {
-  height: calc(100% - 64px);
-  max-width: 100%;
+  flex-grow: 1;
+  width: 100%;
   overflow: overlay;
-  margin-bottom: 64px;
 }
 
 .chat-disabled {
@@ -91,8 +105,7 @@ requireLogin()
   font-size: 100px;
 }
 
-mdui-text-field {
-  position: absolute;
-  bottom: 0;
+p {
+  margin: 0;
 }
 </style>

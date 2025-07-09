@@ -7,6 +7,7 @@ type messageAlignment = 'left' | 'right'
 const props = defineProps<{
   avatarURL?: string
   nickname?: string
+  time?: string
   alignment: messageAlignment
   backgroundColor?: string
   href?: string
@@ -24,13 +25,16 @@ var isRight = computed(() => {
     class="message-piece"
     :style="{
       flexDirection: isRight ? 'row-reverse' : 'row',
-      paddingLeft: isRight ? '30%' : '10px',
-      paddingRight: isRight ? '10px' : '30%',
+      paddingLeft: isRight ? '0' : '10px',
+      paddingRight: isRight ? '10px' : '0',
     }"
   >
     <UserAvatar class="avatar" :url="props.avatarURL"></UserAvatar>
     <div class="message-box" :style="{ textAlign: props.alignment }">
-      <div class="message-nickname" v-if="props.nickname">{{ props.nickname }}</div>
+      <div class="message-head" :style="{ flexDirection: isRight ? 'row-reverse' : 'row' }">
+        <div class="message-nickname" v-if="props.nickname">{{ props.nickname }}</div>
+        <div class="message-time" v-if="props.time">{{ props.time }}</div>
+      </div>
       <div class="message-card">
         <mdui-card
           @click="props.routePath ? router.push(props.routePath) : void 0"
@@ -50,13 +54,15 @@ var isRight = computed(() => {
 <style scoped>
 .avatar {
   width: 30px;
+  min-width: 30px;
   height: 30px;
   font-size: 30px;
 }
 
 .message-piece {
   display: flex;
-  width: calc(70% - 10px);
+  flex-grow: 1;
+  width: calc(100% - 10px);
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -65,12 +71,24 @@ var isRight = computed(() => {
   max-width: 100%;
 }
 
+.message-head {
+  display: flex;
+  width: 100%;
+  padding-left: -40%;
+}
+
+.message-time {
+  margin: 0 5px 0 5px;
+  font-size: 80%;
+  color: rgb(var(--mdui-color-on-surface-variant));
+}
+
 mdui-card {
   padding: 10px;
   text-align: left;
   min-height: 40px;
   min-width: 30px;
-  max-width: 100%;
+  max-width: 80%;
   word-break: break-word;
 }
 </style>
