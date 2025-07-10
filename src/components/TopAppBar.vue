@@ -11,18 +11,14 @@ import '@mdui/icons/person-add.js'
 import { msgcnt } from '../assets/message.ts'
 import { navOpened } from '../assets/navDrawer.ts'
 import { isLoggedInStat } from '../assets/account.ts'
-import { getAppearance } from '../assets/appearance.ts'
+import { backgroundImageLoaded } from '../assets/appearance.ts'
 import MessageCount from './MessageCount.vue'
 
-var appearanceSettings = getAppearance()
 var room = ref('1234')
 </script>
 
 <template>
-  <mdui-top-app-bar
-    scroll-behavior="elevate"
-    :class="{ withBgImg: appearanceSettings.backgroundImage }"
-  >
+  <mdui-top-app-bar scroll-behavior="elevate" :class="{ withBgImg: backgroundImageLoaded }">
     <mdui-button-icon @click="navOpened = !navOpened">
       <mdui-icon-menu></mdui-icon-menu>
     </mdui-button-icon>

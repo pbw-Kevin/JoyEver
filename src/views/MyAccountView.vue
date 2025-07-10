@@ -51,6 +51,7 @@ requireLogin()
 
 .user-head-username {
   font-size: 20px;
+  color: rgb(var(--mdui-color-on-surface-variant));
 }
 
 .user-head-username::before {
