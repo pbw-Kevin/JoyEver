@@ -14,11 +14,10 @@ import '@mdui/icons/info.js'
 import { msgcnt } from '../assets/message.ts'
 import { navOpened, UpdateNavOpened } from '../assets/navDrawer.ts'
 import { isLoggedInStat } from '../assets/account.ts'
-import { getAppearance, isDesktop } from '../assets/appearance.ts'
+import { backgroundImageLoaded, isDesktop } from '../assets/appearance.ts'
 import NavigationDrawerItem from './NavigationDrawerItem.vue'
 import MessageCount from './MessageCount.vue'
 
-var appearanceSettings = getAppearance()
 var WikiCollActive = ref(false)
 
 UpdateNavOpened()
@@ -28,7 +27,7 @@ UpdateNavOpened()
   <mdui-navigation-drawer
     :open="navOpened"
     close-on-overlay-click
-    :class="{ withBgImg: appearanceSettings.backgroundImage }"
+    :class="{ withBgImg: backgroundImageLoaded }"
   >
     <mdui-list class="nav-drawer-list" :style="{ 'margin-bottom': isDesktop ? '80px' : '' }">
       <mdui-list-subheader>{{ isDesktop ? '' : '菜单' }}</mdui-list-subheader>
