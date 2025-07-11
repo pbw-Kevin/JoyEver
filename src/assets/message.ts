@@ -1,4 +1,3 @@
-import { messageType } from 'leancloud-realtime'
 import { ref } from 'vue'
 
 export type MessageChatListItemType = {

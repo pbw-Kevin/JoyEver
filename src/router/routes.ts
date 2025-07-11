@@ -96,6 +96,22 @@ var routes = [
     },
   },
   {
+    path: '/history',
+    name: 'History',
+    component: () => import('../views/HistoryView.vue'),
+    meta: {
+      title: '历史对局 - 永乐大典',
+    },
+  },
+  {
+    path: '/setting',
+    name: 'Setting',
+    component: () => import('../views/SettingView.vue'),
+    meta: {
+      title: '设置 - 永乐大典',
+    },
+  },
+  {
     path: '/changelog',
     name: 'Changelog',
     component: () => import('../views/ChangelogView.vue'),
