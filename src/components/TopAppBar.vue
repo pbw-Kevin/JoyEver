@@ -81,7 +81,7 @@ var room = ref('1234')
 }
 
 mdui-top-app-bar.withBgImg {
-  opacity: 0.7;
+  opacity: var(--sidebar-opacity, 0.7);
   transition: 0.5s;
 }
 

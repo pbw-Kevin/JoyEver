@@ -13,7 +13,7 @@ import { backgroundImageLoaded } from '../assets/appearance.ts'
 
 <style scoped>
 mdui-bottom-app-bar.withBgImg {
-  opacity: 0.7;
+  opacity: var(--sidebar-opacity, 0.7);
   transition: 0.5s;
 }
 

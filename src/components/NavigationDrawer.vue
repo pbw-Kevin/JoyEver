@@ -106,7 +106,7 @@ mdui-navigation-drawer {
 
 @media (min-width: 840px) {
   mdui-navigation-drawer.withBgImg {
-    opacity: 0.7;
+    opacity: var(--sidebar-opacity, 0.7);
     transition: 0.5s;
   }
 

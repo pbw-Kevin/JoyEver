@@ -25,20 +25,15 @@ requireLogin()
       </div>
     </div>
     <div class="user-info">
-      <div class="user-email-container">
-        <mdui-text-field
-          class="user-email"
-          variant="outlined"
-          readonly
-          label="邮箱"
-          value="kevin20110612@126.com"
-        ></mdui-text-field>
-        <mdui-checkbox class="user-email-public">公开邮箱</mdui-checkbox>
-      </div>
+      <mdui-text-field
+        class="user-email"
+        variant="outlined"
+        readonly
+        label="邮箱"
+        value="kevin20110612@126.com"
+      ></mdui-text-field>
       <br />
-      <RouterLink to="/setting">
-        <mdui-button>账号设置</mdui-button>
-      </RouterLink><br />
+      <RouterLink to="/setting"> <mdui-button>账号设置</mdui-button> </RouterLink><br />
       <RouterLink to="/history">
         <mdui-button>历史对局</mdui-button>
       </RouterLink>
@@ -78,11 +73,6 @@ requireLogin()
 }
 
 .user-email {
-  width: auto;
-  margin-bottom: 10px;
-}
-
-.user-email-public {
-  vertical-align: middle;
+  margin-bottom: 6px;
 }
 </style>

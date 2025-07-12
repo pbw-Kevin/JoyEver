@@ -15,8 +15,6 @@ if (!isLoggedIn()) {
   <div class="content">
     <h1>设置</h1>
     <h2>全局设置</h2>
-    <p>
-      
-    </p>
+    <p></p>
   </div>
 </template>

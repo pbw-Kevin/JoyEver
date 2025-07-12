@@ -32,5 +32,9 @@ var appearanceSettings = getAppearance()
   width: 100%;
   height: 100%;
   object-fit: cover;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 </style>
