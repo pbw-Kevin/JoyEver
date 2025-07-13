@@ -21,7 +21,7 @@ requireLogin()
           <UserTag tag="已封禁" color="brown" />
         </span>
         <br />
-        <span class="user-head-username"> 123 </span>
+        <span class="user-head-username">123</span>
       </div>
     </div>
     <div class="user-info">
@@ -33,9 +33,16 @@ requireLogin()
         value="kevin20110612@126.com"
       ></mdui-text-field>
       <br />
-      <RouterLink to="/setting"> <mdui-button>账号设置</mdui-button> </RouterLink><br />
+      <RouterLink to="/setting">
+        <mdui-button>账号设置</mdui-button>
+      </RouterLink>
+      <br />
       <RouterLink to="/history">
         <mdui-button>历史对局</mdui-button>
+      </RouterLink>
+      <br />
+      <RouterLink to="/logout">
+        <mdui-button>登出账号</mdui-button>
       </RouterLink>
     </div>
   </div>
@@ -73,6 +80,6 @@ requireLogin()
 }
 
 .user-email {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 </style>

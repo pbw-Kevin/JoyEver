@@ -159,6 +159,14 @@ var routes = [
       title: '重置密码 - 永乐大典',
     },
   },
+  {
+    path: '/emailverify',
+    name: 'EmailVerify',
+    component: () => import('../views/EmailVerifyView.vue'),
+    meta: {
+      title: '邮箱验证 - 永乐大典',
+    },
+  },
   // {
   //   path: '/',
   //   name: '',
