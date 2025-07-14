@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendNoti } from './notifications.ts'
-import { User } from './main.ts'
+import { Query, User } from './main.ts'
 import { getError } from './error.ts'
 
 export function getUser() {
@@ -19,15 +19,15 @@ export function updateLoggedInStat() {
 }
 
 export function isEmail(s: string) {
-  return /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(s)
+  return /^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$/.test(s)
 }
 
 export function isFormattedUsername(name: string) {
-  return /[A-Za-z][\w]{4,15}/.test(name)
+  return /^[A-Za-z][\w]{4,15}$/.test(name)
 }
 
 export function isFormattedPassword(pass: string) {
-  return /[\S]{8,}/.test(pass)
+  return /^[\S]{8,}$/.test(pass)
 }
 
 export async function login(name: string, pass: string) {

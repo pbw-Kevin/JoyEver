@@ -1,4 +1,5 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { announcementMsgcnt } from './announcement.ts'
 
 export type MessageChatListItemType = {
   username: string
@@ -15,14 +16,15 @@ export type MessageType = {
 }
 export type MessageListType = Array<MessageType>
 
-export var msgcnt = ref(2)
+export var msgcnt = computed(() => {
+  return announcementMsgcnt.value + friendMsgcnt.value
+})
 
-export var announcementMsgcnt = ref(1)
+export var friendMsgcnt = ref(1)
 
 var chatListRaw: MessageChatListType = [
   {
     username: '123123',
-    msgcnt: 1,
   },
   {
     username: '456456',
@@ -97,3 +99,8 @@ var messageListRaw: MessageListType = [
 ]
 
 export var messageList = ref(messageListRaw)
+
+export function GotoBottom(query: string = '.chat-box') {
+  var elem = document.querySelector(query)
+  if (elem) elem.scrollTop = elem.scrollHeight
+}

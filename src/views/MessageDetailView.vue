@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted, onUpdated } from 'vue'
+
 import '@mdui/icons/arrow-back.js'
 import '@mdui/icons/more-vert.js'
 import '@mdui/icons/send.js'
@@ -8,9 +10,11 @@ import MessagePiece from '../components/MessagePiece.vue'
 import { requireLogin } from '../assets/account.ts'
 import { chatContainerHeight } from '../assets/height.ts'
 import { isDesktop } from '../assets/appearance.ts'
-import { messageList } from '../assets/message.ts'
+import { messageList, GotoBottom } from '../assets/message.ts'
 
 requireLogin()
+onMounted(() => setTimeout(GotoBottom, 0, '.chat-message-container'))
+onUpdated(() => GotoBottom('.chat-message-container')) // Too brute actions
 </script>
 
 <template>
@@ -22,7 +26,7 @@ requireLogin()
         v-if="isDesktop"
       ></MessageChatList>
       <div class="chat-box">
-        <mdui-top-app-bar scroll-target=".chat-box">
+        <mdui-top-app-bar scroll-target=".chat-message-container">
           <RouterLink to="/message">
             <mdui-button-icon>
               <mdui-icon-arrow-back></mdui-icon-arrow-back>

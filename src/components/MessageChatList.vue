@@ -4,7 +4,8 @@ import '@mdui/icons/warning.js'
 
 import UserCard from '../components/UserCard.vue'
 import MessageCount from '../components/MessageCount.vue'
-import { announcementMsgcnt, chatList } from '../assets/message.ts'
+import { announcementMsgcnt } from '../assets/announcement.ts'
+import { chatList } from '../assets/message.ts'
 import type { MessageChatListType } from '../assets/message.ts'
 import { isLoggedInStat } from '../assets/account.ts'
 
