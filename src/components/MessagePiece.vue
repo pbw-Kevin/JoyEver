@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import UserAvatar from './UserAvatar.vue'
+import UserTag from './UserTag.vue'
 type messageAlignment = 'left' | 'right'
 
 const props = defineProps<{
@@ -9,7 +10,7 @@ const props = defineProps<{
   nickname?: string
   userTag?: {
     tag: string
-    name: string
+    color: string
   }[]
   time?: string
   alignment: messageAlignment
@@ -37,6 +38,7 @@ var isRight = computed(() => {
     <div class="message-box" :style="{ textAlign: props.alignment }">
       <div class="message-head" :style="{ flexDirection: isRight ? 'row-reverse' : 'row' }">
         <div class="message-nickname" v-if="props.nickname">{{ props.nickname }}</div>
+        <UserTag v-for="tag in props.userTag" :tag="tag.tag" :color="tag.color"></UserTag>
         <div class="message-time" v-if="props.time">{{ props.time }}</div>
       </div>
       <div class="message-card">

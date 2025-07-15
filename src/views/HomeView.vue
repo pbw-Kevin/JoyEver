@@ -12,7 +12,7 @@ import { isLoggedInStat } from '../assets/account.ts'
       <li>在线查看<RouterLink to="/wiki/online">永乐大典（Wiki）</RouterLink></li>
       <li v-if="!isLoggedInStat">
         <RouterLink to="/login">登录账号</RouterLink><br />
-        （推荐，登录后可以查看过往对局，启用聊天功能）
+        （推荐，登录后可以查看历史对局，启用聊天功能）
       </li>
     </ul>
   </div>

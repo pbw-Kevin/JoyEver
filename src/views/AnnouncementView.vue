@@ -1,25 +1,23 @@
 <script setup lang="ts">
-import { onMounted, onUpdated } from 'vue'
+import { ref, onMounted, onUpdated } from 'vue'
 
 import '@mdui/icons/arrow-back.js'
 import '@mdui/icons/keyboard-arrow-down.js'
 
 import MessageChatList from '../components/MessageChatList.vue'
 import AnnouncementPiece from '../components/AnnouncementPiece.vue'
-import { AnnouncementList, updateAnnouncement } from '../assets/announcement.ts'
+import { localInfo, AnnouncementList, updateAnnouncement } from '../assets/announcement.ts'
 import { GotoBottom } from '../assets/message.ts'
 import { chatContainerHeight } from '../assets/height.ts'
 import { isDesktop } from '../assets/appearance.ts'
-import { getLocalInfo } from '../assets/localInfo.ts'
 
-var lastTime = getLocalInfo().value.lastReadAnnouncement
+var lastTime = ref(localInfo.value)
 
-AnnouncementList.value.forEach((announcement) => {
-  console.log(announcement.time, lastTime)
+onMounted(() => {
+  lastTime.value = localInfo.value
+  setTimeout(GotoBottom, 0, '.chat-announcement-container')
+  updateAnnouncement(true)
 })
-
-updateAnnouncement(true)
-onMounted(() => setTimeout(GotoBottom, 0, '.chat-announcement-container'))
 onUpdated(() => GotoBottom('.chat-announcement-container')) // Too brute actions
 </script>
 

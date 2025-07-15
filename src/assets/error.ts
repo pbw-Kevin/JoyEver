@@ -25,6 +25,10 @@ var errors = [
     code: 13,
     message: 'Not a valid email.',
   },
+  {
+    code: 15,
+    message: 'Registered successfully, but error occured while creating account-related objects.',
+  },
 ]
 
 export function getError(code: number) {

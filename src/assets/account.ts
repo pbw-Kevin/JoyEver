@@ -1,12 +1,21 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendNoti } from './notifications.ts'
-import { Query, User } from './main.ts'
+import { Query, Object, User } from './main.ts'
 import { getError } from './error.ts'
 
 export function getUser() {
   return User.current()
 }
+
+export var emailObject = new Object('Email')
+export var emailQuery = new Query('Email')
+
+export var userInfoObject = new Object('UserInfo')
+export var userInfoQuery = new Query('UserInfo')
+
+export var privateUserInfoObject = new Object('PrivateUserInfo')
+export var privateUserInfoQuery = new Query('PrivateUserInfo')
 
 export function isLoggedIn(): boolean {
   return Boolean(getUser()) && !getUser().isAnonymous()
@@ -104,6 +113,15 @@ export async function register(name: string, pass: string, passAgain: string, em
   await user.signUp().then(
     (user) => {
       ret = getError(0)
+      if (email) {
+        emailObject.set('userId', getUser().get('objectId'))
+        emailObject.save().then(
+          (emailObject) => {},
+          (error) => {
+            ret = getError(15)
+          },
+        )
+      }
     },
     (error) => {
       ret.code = error.code

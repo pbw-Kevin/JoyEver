@@ -96,7 +96,23 @@ var routes = [
     },
   },
   {
+    path: '/account/:id',
+    name: 'Account',
+    component: () => import('../views/AccountView.vue'),
+    meta: {
+      title: '账号 - 永乐大典',
+    },
+  },
+  {
     path: '/history',
+    name: 'MyHistory',
+    component: () => import('../views/MyHistoryView.vue'),
+    meta: {
+      title: '历史对局 - 永乐大典',
+    },
+  },
+  {
+    path: '/history/:id',
     name: 'History',
     component: () => import('../views/HistoryView.vue'),
     meta: {

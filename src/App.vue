@@ -6,9 +6,9 @@ import BackgroundImage from './components/BackgroundImage.vue'
 import BottomAppBar from './components/BottomAppBar.vue'
 import 'mdui/mdui.css'
 import 'mdui'
-import { useAppearance } from './assets/appearance.ts'
+import { fetchAppearance } from './assets/appearance.ts'
 
-useAppearance()
+fetchAppearance()
 </script>
 
 <template>

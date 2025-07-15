@@ -20,7 +20,7 @@ export var msgcnt = computed(() => {
   return announcementMsgcnt.value + friendMsgcnt.value
 })
 
-export var friendMsgcnt = ref(1)
+export var friendMsgcnt = ref(0)
 
 var chatListRaw: MessageChatListType = [
   {
@@ -100,7 +100,7 @@ var messageListRaw: MessageListType = [
 
 export var messageList = ref(messageListRaw)
 
-export function GotoBottom(query: string = '.chat-box') {
+export function GotoBottom(query: string) {
   var elem = document.querySelector(query)
   if (elem) elem.scrollTop = elem.scrollHeight
 }

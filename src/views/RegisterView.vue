@@ -24,7 +24,7 @@ function registerAccount() {
         if (email) router.push({ name: 'EmailVerify' })
         else router.push({ name: 'Home' })
       } else {
-        console.log(ret)
+        console.log(ret) // Need better solution
       }
     }
   })

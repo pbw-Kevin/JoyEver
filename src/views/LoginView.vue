@@ -16,7 +16,7 @@ function loginAccount() {
         sendNoti('登录成功！')
         router.push({ name: 'Home' })
       } else {
-        console.log(ret)
+        console.log(ret) // Need better solution
       }
     }
   })

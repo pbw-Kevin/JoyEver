@@ -13,7 +13,7 @@ requireLogin()
       <UserAvatar class="user-avatar" url="" />
       <div class="user-head-info">
         <span class="user-head-nickname">
-          123
+          AIR-Kevin
           <UserTag tag="用户" />
           <UserTag tag="管理员" color="purple" />
           <UserTag tag="超级管理员" color="green" />
@@ -21,7 +21,7 @@ requireLogin()
           <UserTag tag="已封禁" color="brown" />
         </span>
         <br />
-        <span class="user-head-username">123</span>
+        <span class="user-head-username">Kevin_pbw</span>
       </div>
     </div>
     <div class="user-info">
@@ -33,14 +33,16 @@ requireLogin()
         value="kevin20110612@126.com"
       ></mdui-text-field>
       <br />
-      <RouterLink to="/setting">
-        <mdui-button>账号设置</mdui-button>
+      <RouterLink :to="`/account/Kevin_pbw`">
+        <mdui-button>访客视角</mdui-button>
       </RouterLink>
-      <br />
       <RouterLink to="/history">
         <mdui-button>历史对局</mdui-button>
       </RouterLink>
       <br />
+      <RouterLink to="/setting">
+        <mdui-button>账号设置</mdui-button>
+      </RouterLink>
       <RouterLink to="/logout">
         <mdui-button>登出账号</mdui-button>
       </RouterLink>
@@ -81,5 +83,9 @@ requireLogin()
 
 .user-email {
   margin-bottom: 8px;
+}
+
+mdui-button {
+  margin: 4px;
 }
 </style>

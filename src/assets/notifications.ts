@@ -8,10 +8,6 @@ type notis = Array<noti>
 
 let notiList: notis = []
 
-export function sendNoti(msg: string) {
-  notiList.push({ message: msg })
-}
-
 export function dispNoti() {
   let curNotiList = notiList
   notiList = []
@@ -22,4 +18,9 @@ export function dispNoti() {
       placement: 'bottom-start',
     })
   })
+}
+
+export function sendNoti(msg: string, displayImmediately: boolean = false) {
+  notiList.push({ message: msg })
+  if (displayImmediately) dispNoti()
 }

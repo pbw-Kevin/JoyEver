@@ -1,9 +1,10 @@
 import { Query } from './main.ts'
-import { getLocalInfo, saveLocalInfo } from './localInfo.ts'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 
-var localInfo = getLocalInfo()
+export var localInfo = ref(
+  new Date(localStorage.getItem('last-read-announcement') || '2000/01/01 00:00:00'),
+)
 
 var AnnouncementsQuery = new Query('Announcement')
 
@@ -18,12 +19,15 @@ export var AnnouncementList: Ref<
 
 export var announcementMsgcnt = computed(() => {
   return AnnouncementList.value.filter((announcement) => {
-    return announcement.time > localInfo.value.lastReadAnnouncement
+    return announcement.time > localInfo.value
   }).length
 })
 
 export function updateAnnouncement(visit: boolean = false) {
-  if (visit) localInfo.value.lastReadAnnouncement = new Date()
+  if (visit) {
+    localInfo.value = new Date()
+    localStorage.setItem('last-read-announcement', localInfo.value.toLocaleString('zh-CN'))
+  }
   AnnouncementsQuery.find().then((announcements) => {
     AnnouncementList.value = []
     announcements.forEach((announcement) => {
@@ -33,5 +37,4 @@ export function updateAnnouncement(visit: boolean = false) {
       AnnouncementList.value.push(tmpAnnouncement)
     })
   })
-  saveLocalInfo()
 }

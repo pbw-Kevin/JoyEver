@@ -15,6 +15,12 @@ if (!isLoggedIn()) {
   <div class="content">
     <h1>设置</h1>
     <h2>全局设置</h2>
+    <p>
+      <mdui-checkbox>公开邮箱</mdui-checkbox>
+    </p>
+    <h2>游戏设置</h2>
+    <p></p>
+    <h2>外观</h2>
     <p></p>
   </div>
 </template>
