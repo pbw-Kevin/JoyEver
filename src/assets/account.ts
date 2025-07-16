@@ -14,6 +14,9 @@ export var emailQuery = new Query('Email')
 export var userInfoObject = new Object('UserInfo')
 export var userInfoQuery = new Query('UserInfo')
 
+export var userRolesObject = new Object('UserRoles')
+export var userRolesQuery = new Query('UserRoles')
+
 export var privateUserInfoObject = new Object('PrivateUserInfo')
 export var privateUserInfoQuery = new Query('PrivateUserInfo')
 
@@ -22,6 +25,8 @@ export function isLoggedIn(): boolean {
 }
 
 export var isLoggedInStat = ref(isLoggedIn())
+
+export var curRole = ref([] as string[])
 
 export function updateLoggedInStat() {
   isLoggedInStat.value = isLoggedIn()

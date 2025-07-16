@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { requireLogin } from '../assets/account.ts'
+import { ref } from 'vue'
+import { requireLogin, getUser, userRolesQuery } from '../assets/account.ts'
 import UserAvatar from '../components/UserAvatar.vue'
-import UserTag from '../components/UserTag.vue'
+import UserTagPack from '../components/UserTagPack.vue'
 
 requireLogin()
+
+var roles = ref([] as string[])
+
+userRolesQuery.equalTo('username', getUser().get('username'))
+userRolesQuery.find().then((roleses) => {
+  if (roleses.length == 1) {
+    roles.value = roleses[0].get('roles')
+  }
+})
 </script>
 
 <template>
@@ -14,11 +24,7 @@ requireLogin()
       <div class="user-head-info">
         <span class="user-head-nickname">
           AIR-Kevin
-          <UserTag tag="用户" />
-          <UserTag tag="管理员" color="purple" />
-          <UserTag tag="超级管理员" color="green" />
-          <UserTag tag="站长" color="aqua" />
-          <UserTag tag="已封禁" color="brown" />
+          <UserTagPack :roles></UserTagPack>
         </span>
         <br />
         <span class="user-head-username">Kevin_pbw</span>

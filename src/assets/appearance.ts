@@ -23,16 +23,13 @@ var localGeneralAppearance = {
 
 var appearanceSetting = ref(localGeneralAppearance)
 
-var appearanceSettingList: {
-  name: string
-  theme: Theme
-  colorScheme: string
-  backgroundImage: string
-  backgroundImageOpacity: number
-  sidebarOpacity: number
-}[] = [localGeneralAppearance]
+var appearanceSettingList = [localGeneralAppearance]
 
 export function fetchAppearance() {
+  var rawLocalAppearance = sessionStorage.getItem('appearance')
+  if (rawLocalAppearance) {
+    appearanceSetting.value = JSON.parse(rawLocalAppearance)
+  }
   generalAppearanceQuery.find().then(
     (list) => {
       appearanceSettingList = []
@@ -45,8 +42,9 @@ export function fetchAppearance() {
           backgroundImageOpacity: item.get('backgroundImageOpacity') || 0,
           sidebarOpacity: item.get('sidebarOpacity') || 1,
         }
-        if (item.get('isDefault')) {
+        if (item.get('isDefault') && !rawLocalAppearance) {
           appearanceSetting.value = itemJSON
+          sessionStorage.setItem('appearance', JSON.stringify(itemJSON))
         }
         appearanceSettingList.push(itemJSON)
       })
@@ -59,6 +57,11 @@ export function fetchAppearance() {
 
 export function getAppearance() {
   return appearanceSetting
+}
+
+export function setAppearance(appe: typeof localGeneralAppearance) {
+  sessionStorage.setItem('appearance', JSON.stringify(appe))
+  appearanceSetting.value = appe
 }
 
 export var isDesktop = ref(breakpoint().up('md'))

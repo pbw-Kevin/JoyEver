@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { isLoggedIn, getUser, userInfoQuery, emailQuery } from '../assets/account.ts'
+import {
+  isLoggedIn,
+  getUser,
+  userInfoQuery,
+  emailQuery,
+  userRolesQuery,
+} from '../assets/account.ts'
 import { sendNoti } from '@/assets/notifications.ts'
 import UserAvatar from '../components/UserAvatar.vue'
-import UserTag from '../components/UserTag.vue'
+import UserTagPack from '../components/UserTagPack.vue'
 import { ref, type Ref } from 'vue'
 
 var route = useRoute()
@@ -20,29 +26,34 @@ var userInfo: Ref<{
   belongsTo?: string
   nickname: string
   ownedAccunts?: string[]
-  userId: string
   username: string
   createdAt: string
   updatedAt: string
 }> = ref({
   objectId: '',
   nickname: '',
-  userId: '',
   username: '',
   createdAt: '',
   updatedAt: '',
 })
 var email = ref('')
+var roles = ref([] as string[])
 userInfoQuery.find().then(
   (users) => {
     if (users.length > 1) sendNoti('该用户异常', true)
     else if (users.length == 0) sendNoti('该用户不存在', true)
     else {
       userInfo.value = users[0].toJSON()
-      emailQuery.equalTo('userId', userInfo.value.userId)
+      emailQuery.equalTo('username', username)
       emailQuery.find().then((emails) => {
         if (emails.length == 1) {
           email.value = emails[0].get('email')
+        }
+      })
+      userRolesQuery.equalTo('username', username)
+      userRolesQuery.find().then((roleses) => {
+        if (roleses.length == 1) {
+          roles.value = roleses[0].get('roles')
         }
       })
     }
@@ -61,11 +72,7 @@ userInfoQuery.find().then(
       <div class="user-head-info">
         <span class="user-head-nickname">
           {{ userInfo.nickname }}
-          <UserTag tag="用户" />
-          <UserTag tag="管理员" color="purple" />
-          <UserTag tag="超级管理员" color="green" />
-          <UserTag tag="站长" color="aqua" />
-          <UserTag tag="已封禁" color="brown" />
+          <UserTagPack :roles></UserTagPack>
         </span>
         <br />
         <span class="user-head-username">{{ username }}</span>
