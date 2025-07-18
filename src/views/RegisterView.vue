@@ -21,8 +21,7 @@ function registerAccount() {
     if (ret) {
       if (ret.code == 0) {
         sendNoti('注册成功！')
-        if (email) router.push({ name: 'EmailVerify' })
-        else router.push({ name: 'Home' })
+        router.push({ name: 'Home' })
       } else {
         console.log(ret) // Need better solution
       }
