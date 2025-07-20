@@ -8,6 +8,7 @@ import '@mdui/icons/library-books.js'
 import '@mdui/icons/keyboard-arrow-up.js'
 import '@mdui/icons/keyboard-arrow-down.js'
 import '@mdui/icons/person.js'
+import '@mdui/icons/contact-support.js'
 import '@mdui/icons/assignment.js'
 import '@mdui/icons/info.js'
 
@@ -82,6 +83,10 @@ UpdateNavOpened()
       <NavigationDrawerItem to="/myaccount" :belonged-routes="['MyAccount']" v-if="isLoggedInStat">
         <mdui-icon-person slot="icon"></mdui-icon-person>
         账号
+      </NavigationDrawerItem>
+      <NavigationDrawerItem to="/ticket" :belonged-routes="['Ticket']">
+        <mdui-icon-contact-support slot="icon"></mdui-icon-contact-support>
+        工单
       </NavigationDrawerItem>
       <NavigationDrawerItem to="/changelog" :belonged-routes="['Changelog']">
         <mdui-icon-assignment slot="icon"></mdui-icon-assignment>

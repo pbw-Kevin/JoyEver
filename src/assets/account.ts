@@ -119,6 +119,7 @@ export async function register(name: string, pass: string, passAgain: string, em
     (user) => {
       ret = getError(0)
       if (email) {
+        emailObject = new Object('Email')
         emailObject.set('userId', getUser().get('objectId'))
         emailObject.save().then(
           (emailObject) => {},
@@ -127,6 +128,15 @@ export async function register(name: string, pass: string, passAgain: string, em
           },
         )
       }
+      userInfoObject = new Object('UserInfo')
+      userInfoObject.set('nickname', name)
+      userInfoObject.set('username', name)
+      userInfoObject.save().then(
+        (userInfoObject) => {},
+        (error) => {
+          ret = getError(15)
+        },
+      )
     },
     (error) => {
       ret.code = error.code

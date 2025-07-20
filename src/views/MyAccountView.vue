@@ -1,14 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { requireLogin, getUser, userRolesQuery } from '../assets/account.ts'
+import { ref, type Ref } from 'vue'
+import { requireLogin, getUser, userRolesQuery, userInfoQuery } from '../assets/account.ts'
 import UserAvatar from '../components/UserAvatar.vue'
 import UserTagPack from '../components/UserTagPack.vue'
 
 requireLogin()
 
 var roles = ref([] as string[])
+var email = ref(getUser().get('email') || '')
+var userInfo: Ref<{
+  objectId: string
+  avatarURL?: string
+  belongsTo?: string
+  nickname: string
+  ownedAccunts?: string[]
+  username: string
+  createdAt: string
+  updatedAt: string
+}> = ref({
+  objectId: '',
+  nickname: '',
+  username: '',
+  createdAt: '',
+  updatedAt: '',
+})
 
+userInfoQuery.equalTo('username', getUser().get('username'))
 userRolesQuery.equalTo('username', getUser().get('username'))
+userInfoQuery.find().then(
+  (users) => {
+    if (users.length == 1) {
+      userInfo.value = users[0].toJSON()
+    }
+  },
+  (error) => {},
+)
 userRolesQuery.find().then((roleses) => {
   if (roleses.length == 1) {
     roles.value = roleses[0].get('roles')
@@ -20,7 +46,7 @@ userRolesQuery.find().then((roleses) => {
   <div class="content">
     <h1>我的账号</h1>
     <div class="user-head">
-      <UserAvatar class="user-avatar" url="" />
+      <UserAvatar class="user-avatar" :url="userInfo.avatarURL" />
       <div class="user-head-info">
         <span class="user-head-nickname">
           AIR-Kevin

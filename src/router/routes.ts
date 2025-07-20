@@ -128,6 +128,14 @@ var routes = [
     },
   },
   {
+    path: '/ticket',
+    name: 'Ticket',
+    component: () => import('../views/TicketView.vue'),
+    meta: {
+      title: '工单 - 永乐大典',
+    },
+  },
+  {
     path: '/changelog',
     name: 'Changelog',
     component: () => import('../views/ChangelogView.vue'),

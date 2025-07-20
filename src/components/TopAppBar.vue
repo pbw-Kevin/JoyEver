@@ -14,7 +14,7 @@ import { isLoggedInStat } from '../assets/account.ts'
 import { backgroundImageLoaded } from '../assets/appearance.ts'
 import MessageCount from './MessageCount.vue'
 
-var room = ref('1234')
+var room = ref('')
 </script>
 
 <template>
@@ -28,9 +28,9 @@ var room = ref('1234')
         <span class="small-title">消息</span>
         <MessageCount :msgcnt />
       </RouterLink>
-      <RouterLink :to="'/room/' + room" class="title small-title" v-if="room === '1234'"
-        >房间：{{ room }}</RouterLink
-      >
+      <RouterLink :to="'/room/' + room" class="title" v-if="room">
+        <span class="small-title">房间：{{ room }}</span>
+      </RouterLink>
     </mdui-top-app-bar-title>
     <div v-if="isLoggedInStat">
       <RouterLink to="/myaccount">
