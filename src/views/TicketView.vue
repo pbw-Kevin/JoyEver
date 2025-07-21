@@ -6,6 +6,7 @@ import '@mdui/icons/keyboard-arrow-down.js'
   <div class="content">
     <h1>工单</h1>
     <mdui-button>我的工单</mdui-button>
+    <h2>新工单</h2>
     <form>
       <mdui-text-field label="工单主题"></mdui-text-field>
       <mdui-select label="工单类型">

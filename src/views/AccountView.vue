@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import {
-  isLoggedIn,
-  getUser,
-  userInfoQuery,
-  emailQuery,
-  userRolesQuery,
-} from '../assets/account.ts'
+import { isLoggedIn, getUser, userRolesQuery, getUserInfo, getEmail } from '../assets/account.ts'
 import { sendNoti } from '@/assets/notifications.ts'
 import UserAvatar from '../components/UserAvatar.vue'
 import UserTagPack from '../components/UserTagPack.vue'
@@ -19,7 +13,6 @@ var username = route.params.id
 var isMe = isLoggedIn() && getUser().get('username') == username
 var isNotMe = isLoggedIn() && getUser().get('username') != username
 
-userInfoQuery.equalTo('username', username)
 var userInfo: Ref<{
   objectId: string
   avatarURL?: string
@@ -38,30 +31,18 @@ var userInfo: Ref<{
 })
 var email = ref('')
 var roles = ref([] as string[])
-userInfoQuery.find().then(
-  (users) => {
-    if (users.length > 1) sendNoti('该用户异常', true)
-    else if (users.length == 0) sendNoti('该用户不存在', true)
-    else {
-      userInfo.value = users[0].toJSON()
-      emailQuery.equalTo('username', username)
-      emailQuery.find().then((emails) => {
-        if (emails.length == 1) {
-          email.value = emails[0].get('email')
-        }
-      })
-      userRolesQuery.equalTo('username', username)
-      userRolesQuery.find().then((roleses) => {
-        if (roleses.length == 1) {
-          roles.value = roleses[0].get('roles')
-        }
-      })
+getUserInfo(true, username as string).then((tmpUserInfo) => {
+  userInfo.value = tmpUserInfo.toJSON()
+  getEmail(true, username as string).then((tmpEmailInfo) => {
+    email.value = tmpEmailInfo.get('email')
+  })
+  userRolesQuery.equalTo('username', username)
+  userRolesQuery.find().then((roleses) => {
+    if (roleses.length == 1) {
+      roles.value = roleses[0].get('roles')
     }
-  },
-  (error) => {
-    sendNoti('获取用户失败', true)
-  },
-)
+  })
+})
 </script>
 
 <template>

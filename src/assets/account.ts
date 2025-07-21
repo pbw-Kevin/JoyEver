@@ -4,7 +4,8 @@ import { sendNoti } from './notifications.ts'
 import { Query, Object, User } from './main.ts'
 import { getError } from './error.ts'
 
-export function getUser() {
+export function getUser(fetch = true) {
+  if (User.current()) User.current().fetch()
   return User.current()
 }
 
@@ -42,6 +43,62 @@ export function isFormattedUsername(name: string) {
 
 export function isFormattedPassword(pass: string) {
   return /^[\S]{8,}$/.test(pass)
+}
+
+export async function getUserInfo(noti = true, name = '') {
+  if (!name) requireLogin()
+  userInfoQuery.equalTo('username', name || getUser().get('username'))
+  var ret = new Object('UserInfo')
+  await userInfoQuery.find().then((users) => {
+    if (users.length > 1) {
+      if (noti) sendNoti('该用户异常', true)
+    } else if (users.length == 0) {
+      if (name) {
+        if (noti) sendNoti('该用户不存在', true)
+      } else {
+        userInfoObject = new Object('UserInfo')
+        userInfoObject.set('nickname', getUser().get('username'))
+        userInfoObject.set('username', getUser().get('username'))
+        userInfoObject.save().then((userInfoObject) => {
+          ret = userInfoObject
+        })
+      }
+    } else {
+      ret = users[0] as typeof ret
+    }
+  })
+  return ret
+}
+
+export async function getEmail(noti = true, name = '') {
+  if (!name) requireLogin()
+  emailQuery.equalTo('username', name || getUser().get('username'))
+  emailQuery.includeACL(true)
+  var ret = new Object('Email')
+  await emailQuery.find().then((emails) => {
+    if (emails.length > 1) {
+      if (noti) sendNoti('该用户异常', true)
+    } else if (emails.length == 0) {
+      if (name) {
+        ret = new Object('email')
+      } else {
+        emailObject = new Object('email')
+        emailObject.set('email', getUser().get('email'))
+        emailObject.set('username', getUser().get('username'))
+        var created = false
+        emailObject.save().then(
+          (emailObject) => {
+            ret = emailObject
+          },
+          (error) => {},
+        )
+      }
+    } else {
+      if (emails[0].getACL().getPublicReadAccess()) ret = emails[0] as typeof ret
+      else ret = new Object('email')
+    }
+  })
+  return ret
 }
 
 export async function login(name: string, pass: string) {

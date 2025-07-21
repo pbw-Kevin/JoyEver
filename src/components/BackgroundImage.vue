@@ -6,10 +6,9 @@ var appearanceSettings = getAppearance()
 </script>
 
 <template>
-  <div class="bg-img-container">
+  <div class="bg-img-container" v-if="appearanceSettings.backgroundImage">
     <img
       class="bg-img"
-      v-if="appearanceSettings.backgroundImage"
       draggable="false"
       :src="appearanceSettings.backgroundImage"
       :style="{ opacity: backgroundImageLoaded ? appearanceSettings.backgroundImageOpacity : 0 }"
