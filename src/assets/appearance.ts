@@ -1,10 +1,14 @@
+/*
+  Asset for appearance service of JoyEver
+*/
+
 import { ref, watch } from 'vue'
 import { setColorScheme, setTheme, breakpoint, observeResize } from 'mdui'
 import type { Theme } from 'mdui/internal/theme'
-import { Query } from './main.ts'
+import { AV } from './main.ts'
 import { sendNoti } from './notifications.ts'
 
-var generalAppearanceQuery = new Query('GeneralAppearance')
+var generalAppearanceQuery = new AV.Query('GeneralAppearance')
 
 var theme: Theme = 'auto'
 var colorScheme = '#63ebb5'

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { requireLogin, getUser, getUserInfo, getEmail } from '../assets/account.ts'
-import { Object as AVObject } from '../assets/main.ts'
+import { AV } from '../assets/main.ts'
 
 requireLogin()
 
 var user = getUser()
 var username = user.get('username')
-var userInfo = new AVObject('UserInfo')
+var userInfo = new AV.Object('UserInfo')
 var nickname = ref('')
 var email = ref(user.get('email'))
-var emailInfo = new AVObject('Email')
+var emailInfo = new AV.Object('Email')
 var isPublicEmail = ref(false)
 var isVerifiedEmail = ref(user.get('emailVerified'))
 getUserInfo().then((tmpUserInfo) => {

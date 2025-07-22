@@ -1,21 +1,32 @@
-import { Query } from './main.ts'
+/*
+  Asset for announcement service of JoyEver
+*/
+
+import { AV } from './main.ts'
 import { ref, computed } from 'vue'
-import type { Ref } from 'vue'
+import { getPrivateUserInfo, isLoggedIn } from './account.ts'
 
 export var localInfo = ref(
   new Date(localStorage.getItem('last-read-announcement') || '2000/01/01 00:00:00'),
 )
 
-var AnnouncementsQuery = new Query('Announcement')
+if (isLoggedIn()) {
+  getPrivateUserInfo().then((privateUserInfo) => {
+    localInfo.value = privateUserInfo.get('lastReadAnnouncement') || localInfo.value
+    localStorage.setItem('last-read-announcement', localInfo.value.toLocaleString('zh-CN'))
+  })
+}
+
+var AnnouncementsQuery = new AV.Query('Announcement')
 
 AnnouncementsQuery.ascending('updatedAt')
 
-export var AnnouncementList: Ref<
-  {
+export var AnnouncementList = ref(
+  [] as {
     text: string
     time: Date
-  }[]
-> = ref([])
+  }[],
+)
 
 export var announcementMsgcnt = computed(() => {
   return AnnouncementList.value.filter((announcement) => {
@@ -27,6 +38,12 @@ export function updateAnnouncement(visit: boolean = false) {
   if (visit) {
     localInfo.value = new Date()
     localStorage.setItem('last-read-announcement', localInfo.value.toLocaleString('zh-CN'))
+    if (isLoggedIn()) {
+      getPrivateUserInfo().then((privateUserInfo) => {
+        privateUserInfo.set('lastReadAnnouncement', localInfo.value)
+        privateUserInfo.save()
+      })
+    }
   }
   AnnouncementsQuery.find().then((announcements) => {
     AnnouncementList.value = []

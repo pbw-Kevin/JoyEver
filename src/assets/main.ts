@@ -4,7 +4,7 @@
 
 // Basic Vars
 import * as AV from 'leancloud-storage'
-export const { Query, Object, User, Friendship, ACL, Role } = AV
+export { AV }
 import { Realtime, TextMessage } from 'leancloud-realtime'
 
 // Basic Consts

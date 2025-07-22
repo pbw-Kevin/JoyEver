@@ -34,7 +34,7 @@ var roles = ref([] as string[])
 getUserInfo(true, username as string).then((tmpUserInfo) => {
   userInfo.value = tmpUserInfo.toJSON()
   getEmail(true, username as string).then((tmpEmailInfo) => {
-    email.value = tmpEmailInfo.get('email')
+    if (tmpEmailInfo.getACL().getPublicReadAccess()) email.value = tmpEmailInfo.get('email')
   })
   userRolesQuery.equalTo('username', username)
   userRolesQuery.find().then((roleses) => {

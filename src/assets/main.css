@@ -1,3 +1,7 @@
+/*
+  Main CSS asset of JoyEver
+*/
+
 a {
   text-decoration: none;
   color: rgb(var(--mdui-color-primary));

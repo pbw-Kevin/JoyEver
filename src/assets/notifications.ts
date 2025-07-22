@@ -1,3 +1,7 @@
+/*
+  Asset for side notification service of JoyEver
+*/
+
 import { snackbar } from 'mdui'
 
 type noti = {

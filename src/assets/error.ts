@@ -1,3 +1,7 @@
+/*
+  Asset for providing unified error message of JoyEver
+*/
+
 var errors = [
   {
     code: 0,

@@ -1,3 +1,7 @@
+/*
+  Asset for navigation drawer component of JoyEver
+*/
+
 import { ref } from 'vue'
 import { breakpoint } from 'mdui'
 import { useRoute } from 'vue-router'

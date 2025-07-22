@@ -1,25 +1,29 @@
+/*
+  Asset for account service of JoyEver
+*/
+
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendNoti } from './notifications.ts'
-import { Query, Object, User } from './main.ts'
+import { AV } from './main.ts'
 import { getError } from './error.ts'
 
 export function getUser(fetch = true) {
-  if (User.current()) User.current().fetch()
-  return User.current()
+  if (AV.User.current() && fetch) AV.User.current().fetch()
+  return AV.User.current()
 }
 
-export var emailObject = new Object('Email')
-export var emailQuery = new Query('Email')
+export var emailObject = new AV.Object('Email')
+export var emailQuery = new AV.Query('Email')
 
-export var userInfoObject = new Object('UserInfo')
-export var userInfoQuery = new Query('UserInfo')
+export var userInfoObject = new AV.Object('UserInfo')
+export var userInfoQuery = new AV.Query('UserInfo')
 
-export var userRolesObject = new Object('UserRoles')
-export var userRolesQuery = new Query('UserRoles')
+export var userRolesObject = new AV.Object('UserRoles')
+export var userRolesQuery = new AV.Query('UserRoles')
 
-export var privateUserInfoObject = new Object('PrivateUserInfo')
-export var privateUserInfoQuery = new Query('PrivateUserInfo')
+export var privateUserInfoObject = new AV.Object('PrivateUserInfo')
+export var privateUserInfoQuery = new AV.Query('PrivateUserInfo')
 
 export function isLoggedIn(): boolean {
   return Boolean(getUser()) && !getUser().isAnonymous()
@@ -48,7 +52,7 @@ export function isFormattedPassword(pass: string) {
 export async function getUserInfo(noti = true, name = '') {
   if (!name) requireLogin()
   userInfoQuery.equalTo('username', name || getUser().get('username'))
-  var ret = new Object('UserInfo')
+  var ret = new AV.Object('UserInfo')
   await userInfoQuery.find().then((users) => {
     if (users.length > 1) {
       if (noti) sendNoti('该用户异常', true)
@@ -56,7 +60,7 @@ export async function getUserInfo(noti = true, name = '') {
       if (name) {
         if (noti) sendNoti('该用户不存在', true)
       } else {
-        userInfoObject = new Object('UserInfo')
+        userInfoObject = new AV.Object('UserInfo')
         userInfoObject.set('nickname', getUser().get('username'))
         userInfoObject.set('username', getUser().get('username'))
         userInfoObject.save().then((userInfoObject) => {
@@ -74,15 +78,15 @@ export async function getEmail(noti = true, name = '') {
   if (!name) requireLogin()
   emailQuery.equalTo('username', name || getUser().get('username'))
   emailQuery.includeACL(true)
-  var ret = new Object('Email')
+  var ret = new AV.Object('Email')
   await emailQuery.find().then((emails) => {
     if (emails.length > 1) {
       if (noti) sendNoti('该用户异常', true)
     } else if (emails.length == 0) {
       if (name) {
-        ret = new Object('email')
+        ret = new AV.Object('email')
       } else {
-        emailObject = new Object('email')
+        emailObject = new AV.Object('email')
         emailObject.set('email', getUser().get('email'))
         emailObject.set('username', getUser().get('username'))
         var created = false
@@ -94,8 +98,31 @@ export async function getEmail(noti = true, name = '') {
         )
       }
     } else {
-      if (emails[0].getACL().getPublicReadAccess()) ret = emails[0] as typeof ret
-      else ret = new Object('email')
+      ret = emails[0] as typeof ret
+    }
+  })
+  return ret
+}
+
+export async function getPrivateUserInfo(noti = false, name = '') {
+  if (name) requireLogin()
+  privateUserInfoQuery.equalTo('username', name || getUser().get('username'))
+  var ret = new AV.Object('PrivateUserInfo')
+  await privateUserInfoQuery.find().then((users) => {
+    if (users.length > 1) {
+      if (noti) sendNoti('该用户异常', true)
+    } else if (users.length == 0) {
+      if (name) {
+        if (noti) sendNoti('该用户不存在', true)
+      } else {
+        privateUserInfoObject = new AV.Object('PrivateUserInfo')
+        privateUserInfoObject.set('username', getUser().get('username'))
+        privateUserInfoObject.save().then((privateUserInfoObject) => {
+          ret = privateUserInfoObject
+        })
+      }
+    } else {
+      ret = users[0] as typeof ret
     }
   })
   return ret
@@ -105,7 +132,7 @@ export async function login(name: string, pass: string) {
   let ret = { code: -1, message: 'Logging in' }
   if (!isFormattedPassword(pass)) return getError(3)
   if (isEmail(name)) {
-    await User.loginWithEmail(name, pass).then(
+    await AV.User.loginWithEmail(name, pass).then(
       (user) => {
         ret = getError(0)
       },
@@ -118,7 +145,7 @@ export async function login(name: string, pass: string) {
     if (!isFormattedUsername(name)) {
       return getError(2)
     }
-    await User.logIn(name, pass).then(
+    await AV.User.logIn(name, pass).then(
       (user) => {
         ret = getError(0)
       },
@@ -134,7 +161,7 @@ export async function login(name: string, pass: string) {
 
 export async function logout() {
   if (!isLoggedIn()) return
-  await User.logOut()
+  await AV.User.logOut()
   updateLoggedInStat()
   sendNoti('登出成功！')
 }
@@ -148,7 +175,7 @@ export var requireLogin = () => {
 }
 
 export function requireUser() {
-  if (!Boolean(getUser())) User.loginAnonymously()
+  if (!Boolean(getUser())) AV.User.loginAnonymously()
 }
 
 export async function register(name: string, pass: string, passAgain: string, email: string) {
@@ -168,7 +195,7 @@ export async function register(name: string, pass: string, passAgain: string, em
   if (email && !isEmail(email)) {
     return getError(13)
   }
-  var user = new User()
+  var user = new AV.User()
   user.setUsername(name)
   user.setPassword(pass)
   if (email) user.setEmail(email)
@@ -176,7 +203,7 @@ export async function register(name: string, pass: string, passAgain: string, em
     (user) => {
       ret = getError(0)
       if (email) {
-        emailObject = new Object('Email')
+        emailObject = new AV.Object('Email')
         emailObject.set('userId', getUser().get('objectId'))
         emailObject.save().then(
           (emailObject) => {},
@@ -185,7 +212,7 @@ export async function register(name: string, pass: string, passAgain: string, em
           },
         )
       }
-      userInfoObject = new Object('UserInfo')
+      userInfoObject = new AV.Object('UserInfo')
       userInfoObject.set('nickname', name)
       userInfoObject.set('username', name)
       userInfoObject.save().then(

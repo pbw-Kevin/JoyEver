@@ -1,3 +1,7 @@
+/*
+  Asset for message service of JoyEver
+*/
+
 import { computed, ref } from 'vue'
 import { announcementMsgcnt } from './announcement.ts'
 
