@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { isLoggedIn, getUser, userRolesQuery, getUserInfo, getEmail } from '../assets/account.ts'
-import { sendNoti } from '@/assets/notifications.ts'
 import UserAvatar from '../components/UserAvatar.vue'
 import UserTagPack from '../components/UserTagPack.vue'
 import { ref, type Ref } from 'vue'

@@ -128,6 +128,32 @@ export async function getPrivateUserInfo(noti = false, name = '') {
   return ret
 }
 
+export async function getUserRoles(noti = false, name = '') {
+  if (name) requireLogin()
+  userRolesQuery.equalTo('username', name || getUser().get('username'))
+  userRolesQuery.includeACL(true)
+  var ret = new AV.Object('UserRoles')
+  await userRolesQuery.find().then((users) => {
+    if (users.length > 1) {
+      if (noti) sendNoti('该用户异常', true)
+    } else if (users.length == 0) {
+      if (name) {
+        if (noti) sendNoti('该用户不存在', true)
+      } else {
+        userRolesObject = new AV.Object('UserRoles')
+        userRolesObject.set('username', getUser().get('username'))
+        userRolesObject.set('roles', [])
+        userRolesObject.save().then((userRolesObject) => {
+          ret = userRolesObject
+        })
+      }
+    } else {
+      ret = users[0] as typeof ret
+    }
+  })
+  return ret
+}
+
 export async function login(name: string, pass: string) {
   let ret = { code: -1, message: 'Logging in' }
   if (!isFormattedPassword(pass)) return getError(3)

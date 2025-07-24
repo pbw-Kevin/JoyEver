@@ -1,5 +1,8 @@
 import './assets/main.css'
 
+import 'mdui'
+import 'mdui/mdui.css'
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'

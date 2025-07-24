@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUpdated } from 'vue'
-
 import '@mdui/icons/arrow-back.js'
 import '@mdui/icons/more-vert.js'
 import '@mdui/icons/send.js'
 
+import { onMounted, onUpdated } from 'vue'
 import MessageChatList from '../components/MessageChatList.vue'
 import MessagePiece from '../components/MessagePiece.vue'
 import { requireLogin } from '../assets/account.ts'
