@@ -4,15 +4,14 @@ import TopAppBar from './components/TopAppBar.vue'
 import NavigationDrawer from './components/NavigationDrawer.vue'
 import BackgroundImage from './components/BackgroundImage.vue'
 import BottomAppBar from './components/BottomAppBar.vue'
-import { fetchAppearance } from './assets/appearance.ts'
-
-fetchAppearance()
+import TopNotification from './components/TopNotification.vue'
 </script>
 
 <template>
   <BackgroundImage />
   <TopAppBar />
   <NavigationDrawer />
+  <TopNotification />
   <RouterView />
   <BottomAppBar />
 </template>

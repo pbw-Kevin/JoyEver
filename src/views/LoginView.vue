@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { isEmail, isFormattedPassword, isFormattedUsername, login } from '../assets/account.ts'
+import { getUser, isEmail, isFormattedPassword, isFormattedUsername, login } from '../assets/account.ts'
 import { sendNoti } from '../assets/notifications.ts'
+import { setTopNotification } from '../assets/topNotification.ts'
 
 var router = useRouter()
 
@@ -34,6 +35,9 @@ function loginAccount() {
     if (ret) {
       if (!ret.code) {
         sendNoti('登录成功！')
+        if(getUser().get('email') && !getUser().get('emailVerified')){
+          setTopNotification('尚未验证邮箱。验证邮箱以获得更安全的账号体验。转到“账号设置”以验证。')
+        }
         router.push({ name: 'Home' })
       } else if (ret.code == 205) {
         errorInfo.value.username = '找不到邮箱对应的用户。'

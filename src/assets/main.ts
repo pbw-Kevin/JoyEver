@@ -10,7 +10,7 @@ import { Realtime, TextMessage } from 'leancloud-realtime'
 // Basic Consts
 const AppID = 'g5i93a9rDSYWpoNcokyG1X8W-MdYXbMMI'
 const AppKey = 'kgE7V5kyD3MH9JhrKJACAvWQ'
-const serverURL = 'https://joyever.air-kevin-leancloud.rf.gd'
+export const serverURL = 'https://joyever.air-kevin-leancloud.rf.gd'
 
 // Initialization
 AV.init({
