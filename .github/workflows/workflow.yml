@@ -13,14 +13,13 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '22'
-    - name: Create IS_GH_PAGES environment variable
-      run: |
-        touch .env
-        echo IS_GH_PAGES=true >> .env
     - name: Install dependencies
       run: npm install
     - name: Build
-      run: npm run build
+      run: |
+        npm run build
+        touch .env
+        echo IS_GH_PAGES=true >> .env
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
