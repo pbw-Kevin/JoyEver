@@ -1,0 +1,1 @@
+import{_ as s,c as n,o as a,a as o,t as r}from"./index-CZ8X6Rkp.js";const c={},l={class:"content"};function i(t,e){return a(),n("div",l,[o("h1",null,"房间："+r(t.$route.params.id),1),e[0]||(e[0]=o("p",null," 开发中。 ",-1))])}const d=s(c,[["render",i]]);export{d as default};
