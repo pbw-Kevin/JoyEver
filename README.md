@@ -1,33 +1,17 @@
 # JoyEver
 
-This template should help get you started developing with Vue 3 in Vite.
+The front-end of Online JoyEver.
 
-## Recommended IDE Setup
+## Websites
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Stable version: (Released during major updates)
+- Intl. site (Recommended): <https://joyever.rth2.xyz>
+- China site (Not recommended, even not stable in China!): <https://joyever.rth1.xyz>
 
-## Type Support for `.vue` Imports in TS
+Preview version: (Updated during commits)
+- <https://pbw-kevin.github.io/JoyEver/>
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Related Repositories
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
+- Game-pack: [pbw-Kevin/JoyEverGameLogic](https://github.com/pbw-Kevin/JoyEverGameLogic)
+- LeanCloud&reg; Game Engine: [pbw-Kevin/JoyEverEngine](https://github.com/pbw-Kevin/JoyEverEngine)

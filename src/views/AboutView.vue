@@ -25,7 +25,7 @@
     <p>
       App (front-end): <a href="https://github.com/pbw-Kevin/JoyEver" target="_blank">GitHub Repository</a><br />
       Game-pack (game logic): <a href="https://github.com/pbw-Kevin/JoyEverGameLogic" target="_blank">GitHub Repository</a><br />
-      Leancloud&reg; Client Engine (game engine): <a href="https://github.com/pbw-Kevin/JoyEverEngine" target="_blank">GitHub Repository</a><br />
+      LeanCloud&reg; Client Engine (game engine): <a href="https://github.com/pbw-Kevin/JoyEverEngine" target="_blank">GitHub Repository</a><br />
     </p>
   </div>
 </template>
