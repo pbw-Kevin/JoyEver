@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import '@mdui/icons/keyboard-arrow-down.js'
 
 const ticketTypes = [
@@ -14,9 +15,9 @@ const ticketTypes = [
 <template>
   <div class="content">
     <h1>工单</h1>
-    <mdui-button>我的工单</mdui-button>
+    <RouterLink to="/myticket"><mdui-button>我的工单</mdui-button></RouterLink>
     <h2>新工单</h2>
-    <form>
+    <form @submit.prevent>
       <mdui-text-field label="工单主题"></mdui-text-field>
       <mdui-select label="工单类型">
         <mdui-menu-item
@@ -27,9 +28,9 @@ const ticketTypes = [
           <mdui-icon-keyboard-arrow-down></mdui-icon-keyboard-arrow-down>
         </mdui-button-icon>
       </mdui-select>
+      <mdui-text-field rows="5" label="工单内容"></mdui-text-field>
+      <mdui-button type="submit">提交工单</mdui-button>
     </form>
-    <mdui-text-field rows="5" label="工单内容"></mdui-text-field>
-    <mdui-button>提交工单</mdui-button>
   </div>
 </template>
 
