@@ -7,7 +7,7 @@ import { fetchAppearance } from '../assets/appearance.ts'
 import { updateTopNotificationRef } from '../assets/topNotification.ts'
 
 const router = createRouter({
-  history: (import.meta.env.IS_GH_PAGES ? createWebHashHistory : createWebHistory)(import.meta.env.BASE_URL),
+  history: (import.meta.env.VITE_IS_GH_PAGES ? createWebHashHistory : createWebHistory)(import.meta.env.BASE_URL),
   routes: routes,
 })
 
