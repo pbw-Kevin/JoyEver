@@ -1,0 +1,1 @@
+import{_ as s,c as t,o,a as n}from"./index-DRZwfABo.js";const c={},r={class:"content"};function a(_,e){return o(),t("div",r,e[0]||(e[0]=[n("h1",null,"重置密码",-1)]))}const l=s(c,[["render",a]]);export{l as default};
