@@ -1,1 +1,0 @@
-import{_ as s,c as n,o,a as t}from"./index-CZ8X6Rkp.js";const c={},r={class:"content"};function a(l,e){return o(),n("div",r,e[0]||(e[0]=[t("h1",null,"在线试验",-1),t("p",null," 开发中。 ",-1)]))}const d=s(c,[["render",a]]);export{d as default};
