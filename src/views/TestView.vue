@@ -3,8 +3,6 @@
 <template>
   <div class="content">
     <h1>在线试验</h1>
-    <p>
-      开发中。
-    </p>
+    <p>开发中。</p>
   </div>
 </template>

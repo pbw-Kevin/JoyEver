@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { notiContentRef } from '../assets/topNotification';
+import { notiContentRef } from '../assets/topNotification'
 
 import '@mdui/icons/info.js'
-import '@mdui/icons/close.js';
+import '@mdui/icons/close.js'
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import '@mdui/icons/close.js';
     <mdui-card variant="outlined">
       <mdui-icon-info />
       <div class="top-notification-content">
-        {{ notiContentRef }} 
+        {{ notiContentRef }}
       </div>
       <mdui-button-icon>
         <mdui-icon-close @click="notiContentRef = ''" />

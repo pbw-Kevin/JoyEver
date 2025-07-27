@@ -17,10 +17,10 @@ var backgroundImage = ''
 var backgroundImageOpacity = 0
 var sidebarOpacity = 1
 
-var localGeneralAppearance = {
+const localGeneralAppearance = {
   name: '',
   isGeneral: true,
-  theme: theme as Theme || 'auto',
+  theme: (theme as Theme) || 'auto',
   colorScheme: colorScheme || '#ffffff',
   backgroundImage: backgroundImage || '',
   backgroundImageOpacity: backgroundImageOpacity || 0,
@@ -29,9 +29,12 @@ var localGeneralAppearance = {
 
 var appearanceSetting = ref(localGeneralAppearance)
 
-var appearanceSettingList = [localGeneralAppearance]
+export var appearanceSettingList = [localGeneralAppearance]
+
+export var fetched = ref(false)
 
 export async function fetchAppearance() {
+  fetched.value = false
   var activeAppearance = localGeneralAppearance
   var rawLocalAppearance = sessionStorage.getItem('appearance')
   if (rawLocalAppearance) {
@@ -61,28 +64,31 @@ export async function fetchAppearance() {
       sendNoti('获取默认外观列表失败', true)
     },
   )
-  if(isLoggedIn()) {
+  if (isLoggedIn()) {
     await getPrivateUserInfo().then((userInfo) => {
-      if(userInfo.get('customAppearance')) {
-        userInfo.get('customAppearance').foreach((item: {
-          name?: string;
-          theme?: Theme;
-          colorScheme?: string;
-          backgroundImage?: string;
-          backgroundImageOpacity?: number;
-          sidebarOpacity?: number;
-        }) => {
-          var itemJSON = {
-            name: item.name || '',
-            isGeneral: false,
-            theme: item.theme || 'auto',
-            colorScheme: item.colorScheme || '#ffffff',
-            backgroundImage: item.backgroundImage || '',
-            backgroundImageOpacity: item.backgroundImageOpacity || 0,
-            sidebarOpacity: item.sidebarOpacity || 1,
-          }
-          appearanceSettingList.push(itemJSON)
-        })
+      if (userInfo.get('customAppearance')) {
+        var customAppearance = userInfo.get('customAppearance')
+        customAppearance.forEach(
+          (item: {
+            name?: string
+            theme?: Theme
+            colorScheme?: string
+            backgroundImage?: string
+            backgroundImageOpacity?: number
+            sidebarOpacity?: number
+          }) => {
+            var itemJSON = {
+              name: item.name || '',
+              isGeneral: false,
+              theme: item.theme || 'auto',
+              colorScheme: item.colorScheme || '#ffffff',
+              backgroundImage: item.backgroundImage || '',
+              backgroundImageOpacity: item.backgroundImageOpacity || 0,
+              sidebarOpacity: item.sidebarOpacity || 1,
+            }
+            appearanceSettingList.push(itemJSON)
+          },
+        )
       }
       if (userInfo.get('activeAppearance')) {
         var activeAppearanceName = userInfo.get('activeAppearance')
@@ -97,6 +103,7 @@ export async function fetchAppearance() {
   }
   appearanceSetting.value = activeAppearance
   sessionStorage.setItem('appearance', JSON.stringify(activeAppearance))
+  fetched.value = true
 }
 
 export function getAppearance() {
@@ -118,12 +125,15 @@ const observer = observeResize(document.body, function (entry, observer) {
 
 watch(
   appearanceSetting,
-  (val) => {
+  (val, oldVal) => {
+    if (val.backgroundImage !== oldVal?.backgroundImage) {
+      backgroundImageLoaded.value = false
+    }
     setTheme(val.theme)
     setColorScheme(val.colorScheme)
     document
       .querySelector('body')
       ?.style.setProperty('--sidebar-opacity', val.sidebarOpacity.toString())
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 )

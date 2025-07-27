@@ -228,9 +228,11 @@ export async function register(name: string, pass: string, passAgain: string, em
   await user.signUp().then(
     (user) => {
       ret = getError(0)
+      // Should have better access control
       if (email) {
         emailObject = new AV.Object('Email')
-        emailObject.set('userId', getUser().get('objectId'))
+        emailObject.set('username', getUser().get('username'))
+        emailObject.set('email', email)
         emailObject.save().then(
           (emailObject) => {},
           (error) => {
@@ -243,6 +245,15 @@ export async function register(name: string, pass: string, passAgain: string, em
       userInfoObject.set('username', name)
       userInfoObject.save().then(
         (userInfoObject) => {},
+        (error) => {
+          ret = getError(15)
+        },
+      )
+      privateUserInfoObject = new AV.Object('PrivateUserInfo')
+      privateUserInfoObject.set('username', name)
+      privateUserInfoObject.set('customAppearance', [])
+      privateUserInfoObject.save().then(
+        (privateUserInfoObject) => {},
         (error) => {
           ret = getError(15)
         },

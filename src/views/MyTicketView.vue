@@ -9,7 +9,7 @@ const ticketTypes = [
   { value: 'help-improve', label: '改进建议' },
   { value: 'complain', label: '申诉' },
   { value: 'contact-admin', label: '联系管理' },
-  { value: 'other', label: '其他' }
+  { value: 'other', label: '其他' },
 ]
 
 requireLogin()
