@@ -53,7 +53,7 @@ getUserInfo(false).then((tmpUserInfo) => {
         value="kevin20110612@126.com"
       ></mdui-text-field>
       <br />
-      <RouterLink :to="`/account/Kevin_pbw`">
+      <RouterLink :to="`/account/${userInfo.username}`">
         <mdui-button>访客视角</mdui-button>
       </RouterLink>
       <RouterLink to="/history">
