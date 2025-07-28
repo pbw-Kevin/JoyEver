@@ -1,0 +1,1 @@
+import{_ as o,c as s,o as n,a as t}from"./index-Bnuaqtwk.js";const c={},r={class:"content"};function a(l,e){return n(),s("div",r,e[0]||(e[0]=[t("h1",null,"历史对局",-1),t("p",null,"开发中。",-1)]))}const i=o(c,[["render",a]]);export{i as default};
