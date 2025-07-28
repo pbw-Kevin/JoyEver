@@ -52,6 +52,7 @@ onUpdated(() => GotoBottom('.chat-message-container')) // Too brute actions
               {{ para }}
             </p>
           </MessagePiece>
+          <p v-if="messageList.length == 0" class="no-message">暂无消息</p>
         </div>
         <mdui-text-field placeholder="发送消息" autosize max-rows="3">
           <mdui-button-icon slot="end-icon">
@@ -110,5 +111,12 @@ onUpdated(() => GotoBottom('.chat-message-container')) // Too brute actions
 
 p {
   margin: 0;
+}
+
+.no-message {
+  margin-top: 10px;
+  font-size: 24px;
+  color: rgb(var(--mdui-color-on-surface-variant));
+  text-align: center;
 }
 </style>

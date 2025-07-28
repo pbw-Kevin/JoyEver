@@ -54,7 +54,7 @@ UpdateNavOpened()
           @open="WikiCollActive = true"
           @close="WikiCollActive = false"
         >
-          <mdui-list-item slot="header" rounded>
+          <NavigationDrawerItem slot="header" :belonged-routes="['Wiki']">
             <mdui-icon-library-books slot="icon"></mdui-icon-library-books>
             大典
             <mdui-icon-keyboard-arrow-up
@@ -62,7 +62,7 @@ UpdateNavOpened()
               v-if="WikiCollActive"
             ></mdui-icon-keyboard-arrow-up>
             <mdui-icon-keyboard-arrow-down slot="end-icon" v-else></mdui-icon-keyboard-arrow-down>
-          </mdui-list-item>
+          </NavigationDrawerItem>
           <div style="margin-left: 2.5rem">
             <NavigationDrawerItem to="/wiki/online" :belonged-routes="['OnlineWiki']">
               在线大典
@@ -80,11 +80,15 @@ UpdateNavOpened()
           </div>
         </mdui-collapse-item>
       </mdui-collapse>
-      <NavigationDrawerItem to="/myaccount" :belonged-routes="['MyAccount']" v-if="isLoggedInStat">
+      <NavigationDrawerItem
+        to="/myaccount"
+        :belonged-routes="['MyAccount', 'Setting']"
+        v-if="isLoggedInStat"
+      >
         <mdui-icon-person slot="icon"></mdui-icon-person>
         账号
       </NavigationDrawerItem>
-      <NavigationDrawerItem to="/ticket" :belonged-routes="['Ticket']">
+      <NavigationDrawerItem to="/ticket" :belonged-routes="['Ticket', 'MyTicket']">
         <mdui-icon-contact-support slot="icon"></mdui-icon-contact-support>
         工单
       </NavigationDrawerItem>

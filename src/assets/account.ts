@@ -25,6 +25,36 @@ export var userRolesQuery = new AV.Query('UserRoles')
 export var privateUserInfoObject = new AV.Object('PrivateUserInfo')
 export var privateUserInfoQuery = new AV.Query('PrivateUserInfo')
 
+export var roleObject = new AV.Object('_Role')
+export var roleQuery = new AV.Query('_Role')
+
+var adminRole = new AV.Object('_Role') as AV.Role
+var superAdminRole = new AV.Object('_Role') as AV.Role
+var siteOwnerRole = new AV.Object('_Role') as AV.Role
+
+;(function () {
+  roleQuery.equalTo('name', 'admin')
+  roleQuery.find().then((roles) => {
+    if (roles.length > 0) {
+      adminRole = roles[0] as AV.Role
+    }
+  })
+
+  roleQuery.equalTo('name', 'super_dmin')
+  roleQuery.find().then((roles) => {
+    if (roles.length > 0) {
+      superAdminRole = roles[0] as AV.Role
+    }
+  })
+
+  roleQuery.equalTo('name', 'site_owner')
+  roleQuery.find().then((roles) => {
+    if (roles.length > 0) {
+      siteOwnerRole = roles[0] as AV.Role
+    }
+  })
+})()
+
 export function isLoggedIn(): boolean {
   return Boolean(getUser()) && !getUser().isAnonymous()
 }
@@ -149,6 +179,9 @@ export async function getUserRoles(noti = false, name = '') {
       }
     } else {
       ret = users[0] as typeof ret
+      if (!name) {
+        curRole.value = ret.get('roles') || []
+      }
     }
   })
   return ret
@@ -182,6 +215,9 @@ export async function login(name: string, pass: string) {
     )
   }
   updateLoggedInStat()
+  getUserRoles().then((userRolesObject) => {
+    curRole.value = userRolesObject.get('roles') || []
+  })
   return ret
 }
 
@@ -228,11 +264,16 @@ export async function register(name: string, pass: string, passAgain: string, em
   await user.signUp().then(
     (user) => {
       ret = getError(0)
-      // Should have better access control
       if (email) {
         emailObject = new AV.Object('Email')
         emailObject.set('username', getUser().get('username'))
         emailObject.set('email', email)
+        var emailACL = new AV.ACL()
+        emailACL.setReadAccess(user, true)
+        emailACL.setWriteAccess(user, true)
+        emailACL.setRoleReadAccess(superAdminRole, true)
+        emailACL.setRoleWriteAccess(superAdminRole, true)
+        emailObject.setACL(emailACL)
         emailObject.save().then(
           (emailObject) => {},
           (error) => {
@@ -243,6 +284,11 @@ export async function register(name: string, pass: string, passAgain: string, em
       userInfoObject = new AV.Object('UserInfo')
       userInfoObject.set('nickname', name)
       userInfoObject.set('username', name)
+      var userInfoACL = new AV.ACL()
+      userInfoACL.setPublicReadAccess(true)
+      userInfoACL.setWriteAccess(user, true)
+      userInfoACL.setRoleWriteAccess(superAdminRole, true)
+      userInfoObject.setACL(userInfoACL)
       userInfoObject.save().then(
         (userInfoObject) => {},
         (error) => {
@@ -252,6 +298,12 @@ export async function register(name: string, pass: string, passAgain: string, em
       privateUserInfoObject = new AV.Object('PrivateUserInfo')
       privateUserInfoObject.set('username', name)
       privateUserInfoObject.set('customAppearance', [])
+      var privateUserInfoACL = new AV.ACL()
+      privateUserInfoACL.setReadAccess(user, true)
+      privateUserInfoACL.setWriteAccess(user, true)
+      privateUserInfoACL.setRoleReadAccess(superAdminRole, true)
+      privateUserInfoACL.setRoleWriteAccess(superAdminRole, true)
+      privateUserInfoObject.setACL(privateUserInfoACL)
       privateUserInfoObject.save().then(
         (privateUserInfoObject) => {},
         (error) => {

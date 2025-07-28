@@ -68,7 +68,7 @@ getUserInfo(true, username as string).then((tmpUserInfo) => {
         v-if="email"
       ></mdui-text-field>
       <br />
-      <mdui-button v-if="isNotMe">添加好友</mdui-button>
+      <mdui-button v-if="isNotMe" disabled>添加好友</mdui-button>
       <RouterLink to="/myaccount" v-if="isMe">
         <mdui-button>个人视角</mdui-button>
       </RouterLink>

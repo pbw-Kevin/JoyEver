@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
-import { requireLogin, getUser, userRolesQuery, getUserInfo } from '../assets/account.ts'
+import { curRole, requireLogin, getUser, getUserRoles, getUserInfo } from '../assets/account.ts'
 import UserAvatar from '../components/UserAvatar.vue'
 import UserTagPack from '../components/UserTagPack.vue'
 
 requireLogin()
 
-var roles = ref([] as string[])
 var email = ref(getUser().get('email') || '')
 var userInfo: Ref<{
   objectId: string
@@ -25,14 +24,9 @@ var userInfo: Ref<{
   updatedAt: '',
 })
 
-userRolesQuery.equalTo('username', getUser().get('username'))
+getUserRoles()
 getUserInfo(false).then((tmpUserInfo) => {
   userInfo.value = tmpUserInfo.toJSON()
-})
-userRolesQuery.find().then((roleses) => {
-  if (roleses.length == 1) {
-    roles.value = roleses[0].get('roles')
-  }
 })
 </script>
 
@@ -43,11 +37,11 @@ userRolesQuery.find().then((roleses) => {
       <UserAvatar class="user-avatar" :url="userInfo.avatarURL" />
       <div class="user-head-info">
         <span class="user-head-nickname">
-          AIR-Kevin
-          <UserTagPack :roles></UserTagPack>
+          {{ userInfo.nickname }}
+          <UserTagPack :roles="curRole"></UserTagPack>
         </span>
         <br />
-        <span class="user-head-username">Kevin_pbw</span>
+        <span class="user-head-username">{{ userInfo.username }}</span>
       </div>
     </div>
     <div class="user-info">
