@@ -37,7 +37,6 @@ const ticketTypes = [
 mdui-text-field,
 mdui-select,
 mdui-button {
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0;
 }
 </style>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import UserTag from './UserTag.vue'
 import '@mdui/icons/announcement.js'
@@ -66,7 +65,7 @@ var router = useRouter()
 }
 
 .announcement-time {
-  margin: 0 5px 0 5px;
+  margin: 0 5px;
   font-size: 80%;
   color: rgb(var(--mdui-color-on-surface-variant));
 }

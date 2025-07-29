@@ -30,7 +30,6 @@ mdui-card {
 
 .top-notification-content {
   flex: 1;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 0 10px;
 }
 </style>

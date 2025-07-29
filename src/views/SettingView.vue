@@ -8,6 +8,8 @@ import {
   getUserInfo,
   getEmail,
   getPrivateUserInfo,
+  isFormattedPassword,
+  isEmail,
 } from '../assets/account.ts'
 import {
   appearanceSettingList,
@@ -21,10 +23,11 @@ import { sendNoti } from '@/assets/notifications.ts'
 requireLogin()
 
 var user = getUser()
-var username = user.get('username')
+var username = user.getUsername()
 var userInfo = new AV.Object('UserInfo')
 var nickname = ref('')
 var email = ref(user.get('email'))
+var hasEmail = ref(!!email.value)
 var emailInfo = new AV.Object('Email')
 var isPublicEmail = ref(false)
 var isVerifiedEmail = ref(user.get('emailVerified'))
@@ -43,16 +46,41 @@ watch(nickname, (newNickname) => {
   userInfo.set('nickname', newNickname)
 })
 
-watch(email, (newEmail) => {
-  user.set('email', newEmail)
-  emailInfo.set('email', newEmail)
-  isVerifiedEmail.value = false
+var emailErrorInfo = ref('')
+
+function saveEmail() {
+  emailErrorInfo.value = ''
+  if (email.value && !isEmail(email.value)) {
+    emailErrorInfo.value = '邮箱格式不正确。'
+    return
+  }
+  user.setEmail(email.value)
+  user
+    .save()
+    .then((user) => {
+      isVerifiedEmail.value = user.get('emailVerified')
+      hasEmail.value = !!email.value
+      return emailInfo.set('email', email.value)
+    })
+    .then(() => {
+      sendNoti('邮箱已保存！', true)
+    })
+    .catch((error) => {
+      if (error.code == 203) {
+        emailErrorInfo.value = '邮箱已被使用。请尝试其他邮箱。'
+        return
+      }
+      emailErrorInfo.value = '保存邮箱时出现问题。'
+    })
   verifyEmailClicked.value = false
   verifyEmailFailed.value = false
+}
+
+watch(email, () => {
+  emailErrorInfo.value = ''
 })
 
 function updateIsPublicEmail(newValue: boolean) {
-  console.log(newValue)
   isPublicEmail.value = newValue
   emailInfo.getACL().setPublicReadAccess(newValue)
   emailInfo
@@ -75,6 +103,37 @@ function sendEmailVerification() {
     })
 }
 
+var pass = ref('')
+var passAgain = ref('')
+
+var passErrorInfo = ref({
+  password: '',
+  passwordAgain: '',
+})
+var passwordChanged = ref(false)
+
+function savePassword() {
+  passErrorInfo.value = {
+    password: '',
+    passwordAgain: '',
+  }
+  passwordChanged.value = false
+  if (!pass.value) {
+    passErrorInfo.value.password = '请填写密码。'
+    return
+  } else if (!isFormattedPassword(pass.value)) {
+    passErrorInfo.value.password = '密码格式不正确。密码的长度应至少为 8 个字符，且不为空白字符。'
+    return
+  } else if (pass.value !== passAgain.value) {
+    passErrorInfo.value.passwordAgain = '两次输入的密码不一致。'
+    return
+  } else {
+    user.setPassword(pass.value)
+    passwordChanged.value = true
+  }
+}
+
+var appearanceSetting = getAppearance()
 var appearanceList = ref(appearanceSettingList)
 var activeAppearance = ref({ ...getAppearance().value })
 var activeAppearanceName = ref(activeAppearance.value.name)
@@ -109,7 +168,7 @@ watch(activeAppearanceName, (newName) => {
 watch(
   activeAppearance,
   (newAppearance) => {
-    setAppearance(newAppearance)
+    appearanceSetting.value = { ...newAppearance }
   },
   { deep: true },
 )
@@ -167,7 +226,6 @@ function saveAppearance() {
     }
     Object.assign(existingAppearance, { ...activeAppearance.value })
   } else {
-    console.log('pushed')
     appearanceList.value.push({ ...activeAppearance.value })
   }
   if (appliedAppearanceName.value === activeAppearanceName.value) {
@@ -200,6 +258,7 @@ function saveAsNewAppearance() {
 
 function applyAppearance() {
   appliedAppearanceName.value = activeAppearanceName.value
+  setAppearance(activeAppearance.value)
 }
 
 function deleteAppearance() {
@@ -223,6 +282,9 @@ function deleteAppearance() {
 
 async function saveSetting() {
   var hasError = false
+  await user.save().catch((err) => {
+    hasError = true
+  })
   await userInfo.save().catch((err) => {
     hasError = true
   })
@@ -265,8 +327,11 @@ onUnmounted(() => {
     <h2>全局设置</h2>
     <mdui-text-field label="用户名" variant="outlined" readonly :value="username"></mdui-text-field>
     <mdui-text-field label="昵称" v-model="nickname"></mdui-text-field>
-    <mdui-text-field label="邮箱" v-model="email"></mdui-text-field>
-    <div v-if="email">
+    <mdui-text-field type="email" label="邮箱" v-model="email">
+      <span slot="helper" class="error-info">{{ emailErrorInfo }}</span>
+    </mdui-text-field>
+    <mdui-button @click="saveEmail()">保存邮箱</mdui-button>
+    <div v-if="hasEmail">
       <mdui-checkbox :checked="isPublicEmail" @input="updateIsPublicEmail(!$event.target.checked)"
         >公开邮箱</mdui-checkbox
       >
@@ -280,7 +345,18 @@ onUnmounted(() => {
       <span v-if="verifyEmailClicked">验证邮件已发送</span>
       <span v-if="verifyEmailFailed">发送验证邮件失败</span>
     </div>
+    <h3>安全</h3>
+    <mdui-text-field type="password" toggle-password label="新密码" v-model="pass">
+      <span slot="helper" class="error-info">{{ passErrorInfo.password }}</span>
+    </mdui-text-field>
+    <mdui-text-field type="password" toggle-password label="确认新密码" v-model="passAgain">
+      <span slot="helper" class="error-info">{{ passErrorInfo.passwordAgain }}</span>
+    </mdui-text-field>
+    <mdui-button @click="savePassword()">更改密码</mdui-button>
+    <span v-if="passwordChanged">密码已更改！</span>
     <h2>游戏设置</h2>
+    <mdui-checkbox>公开历史记录</mdui-checkbox>
+    <br />
     <mdui-checkbox>自动禁用不可用手势</mdui-checkbox>
     <h3>自定义手势</h3>
     <h2>外观</h2>
@@ -371,14 +447,12 @@ mdui-select,
 mdui-button,
 mdui-card,
 .color-scheme {
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0;
   vertical-align: middle;
 }
 
 mdui-button {
-  margin-left: 5px;
-  margin-right: 5px;
+  margin: 5px;
 }
 
 .appearance-card {
@@ -393,7 +467,6 @@ mdui-button {
 
 .error-info {
   color: rgb(var(--mdui-color-error));
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0;
 }
 </style>

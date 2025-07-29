@@ -34,76 +34,77 @@ export var appearanceSettingList = [localGeneralAppearance]
 export var fetched = ref(false)
 
 export async function fetchAppearance() {
-  fetched.value = false
   var activeAppearance = localGeneralAppearance
   var rawLocalAppearance = sessionStorage.getItem('appearance')
   if (rawLocalAppearance) {
     activeAppearance = JSON.parse(rawLocalAppearance)
     appearanceSetting.value = activeAppearance
   }
-  await generalAppearanceQuery.find().then(
-    (list) => {
-      appearanceSettingList = []
-      list.forEach((item) => {
-        var itemJSON = {
-          name: item.get('name') || '',
-          isGeneral: true,
-          theme: item.get('theme') || 'auto',
-          colorScheme: item.get('colorScheme') || '#ffffff',
-          backgroundImage: item.get('backgroundImage') || '',
-          backgroundImageOpacity: item.get('backgroundImageOpacity') || 0,
-          sidebarOpacity: item.get('sidebarOpacity') || 1,
+  if (!fetched.value) {
+    await generalAppearanceQuery.find().then(
+      (list) => {
+        appearanceSettingList = []
+        list.forEach((item) => {
+          var itemJSON = {
+            name: item.get('name') || '',
+            isGeneral: true,
+            theme: item.get('theme') || 'auto',
+            colorScheme: item.get('colorScheme') || '#ffffff',
+            backgroundImage: item.get('backgroundImage') || '',
+            backgroundImageOpacity: item.get('backgroundImageOpacity') || 0,
+            sidebarOpacity: item.get('sidebarOpacity') || 1,
+          }
+          if (item.get('isDefault') && !rawLocalAppearance) {
+            activeAppearance = itemJSON
+          }
+          appearanceSettingList.push(itemJSON)
+        })
+      },
+      (error) => {
+        sendNoti('获取默认外观列表失败', true)
+      },
+    )
+    if (isLoggedIn()) {
+      await getPrivateUserInfo().then((userInfo) => {
+        if (userInfo.get('customAppearance')) {
+          var customAppearance = userInfo.get('customAppearance')
+          customAppearance.forEach(
+            (item: {
+              name?: string
+              theme?: Theme
+              colorScheme?: string
+              backgroundImage?: string
+              backgroundImageOpacity?: number
+              sidebarOpacity?: number
+            }) => {
+              var itemJSON = {
+                name: item.name || '',
+                isGeneral: false,
+                theme: item.theme || 'auto',
+                colorScheme: item.colorScheme || '#ffffff',
+                backgroundImage: item.backgroundImage || '',
+                backgroundImageOpacity: item.backgroundImageOpacity || 0,
+                sidebarOpacity: item.sidebarOpacity || 1,
+              }
+              appearanceSettingList.push(itemJSON)
+            },
+          )
         }
-        if (item.get('isDefault') && !rawLocalAppearance) {
-          activeAppearance = itemJSON
+        if (userInfo.get('activeAppearance')) {
+          var activeAppearanceName = userInfo.get('activeAppearance')
+          var activeAppearanceItem = appearanceSettingList.find(
+            (item) => item.name === activeAppearanceName,
+          )
+          if (activeAppearanceItem) {
+            activeAppearance = { ...activeAppearanceItem }
+          }
         }
-        appearanceSettingList.push(itemJSON)
       })
-    },
-    (error) => {
-      sendNoti('获取默认外观列表失败', true)
-    },
-  )
-  if (isLoggedIn()) {
-    await getPrivateUserInfo().then((userInfo) => {
-      if (userInfo.get('customAppearance')) {
-        var customAppearance = userInfo.get('customAppearance')
-        customAppearance.forEach(
-          (item: {
-            name?: string
-            theme?: Theme
-            colorScheme?: string
-            backgroundImage?: string
-            backgroundImageOpacity?: number
-            sidebarOpacity?: number
-          }) => {
-            var itemJSON = {
-              name: item.name || '',
-              isGeneral: false,
-              theme: item.theme || 'auto',
-              colorScheme: item.colorScheme || '#ffffff',
-              backgroundImage: item.backgroundImage || '',
-              backgroundImageOpacity: item.backgroundImageOpacity || 0,
-              sidebarOpacity: item.sidebarOpacity || 1,
-            }
-            appearanceSettingList.push(itemJSON)
-          },
-        )
-      }
-      if (userInfo.get('activeAppearance')) {
-        var activeAppearanceName = userInfo.get('activeAppearance')
-        var activeAppearanceItem = appearanceSettingList.find(
-          (item) => item.name === activeAppearanceName,
-        )
-        if (activeAppearanceItem) {
-          activeAppearance = activeAppearanceItem
-        }
-      }
-    })
+    }
+    appearanceSetting.value = activeAppearance
+    sessionStorage.setItem('appearance', JSON.stringify(activeAppearance))
+    fetched.value = true
   }
-  appearanceSetting.value = activeAppearance
-  sessionStorage.setItem('appearance', JSON.stringify(activeAppearance))
-  fetched.value = true
 }
 
 export function getAppearance() {

@@ -105,8 +105,7 @@ p {
 }
 
 .new-announcement {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 0;
   color: rgb(var(--mdui-color-on-surface-variant));
   line-height: 30px;
   text-align: center;

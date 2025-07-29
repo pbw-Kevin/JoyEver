@@ -50,7 +50,8 @@ getUserInfo(false).then((tmpUserInfo) => {
         variant="outlined"
         readonly
         label="邮箱"
-        value="kevin20110612@126.com"
+        :value="email"
+        v-if="email"
       ></mdui-text-field>
       <br />
       <RouterLink :to="`/account/${userInfo.username}`">
@@ -107,5 +108,9 @@ getUserInfo(false).then((tmpUserInfo) => {
 
 mdui-button {
   margin: 4px;
+}
+
+mdui-text-field {
+  margin: 10px 0;
 }
 </style>

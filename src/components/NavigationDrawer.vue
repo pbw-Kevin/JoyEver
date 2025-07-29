@@ -106,7 +106,7 @@ UpdateNavOpened()
 
 <style scoped>
 mdui-list.nav-drawer-list {
-  margin: 0px 12px 0px 12px;
+  margin: 0px 12px;
 }
 
 mdui-navigation-drawer {

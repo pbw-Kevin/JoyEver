@@ -72,7 +72,7 @@ getUserInfo(true, username as string).then((tmpUserInfo) => {
       <RouterLink to="/myaccount" v-if="isMe">
         <mdui-button>个人视角</mdui-button>
       </RouterLink>
-      <RouterLink :to="`/history/${username}`">
+      <RouterLink :to="`/history/${username}`" v-if="false">
         <mdui-button>历史对局</mdui-button>
       </RouterLink>
     </div>
@@ -116,5 +116,9 @@ getUserInfo(true, username as string).then((tmpUserInfo) => {
 
 mdui-button {
   margin: 4px;
+}
+
+mdui-text-field {
+  margin: 10px 0;
 }
 </style>

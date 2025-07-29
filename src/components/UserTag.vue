@@ -15,8 +15,8 @@ const props = defineProps<{
 .user-tag {
   display: inline;
   white-space: nowrap;
-  padding: 0 4px 0 4px;
-  margin: 0 3px 0 3px;
+  padding: 0 4px;
+  margin: 0 3px;
   font-size: 60%;
   color: white;
   border-radius: var(--mdui-shape-corner-small);

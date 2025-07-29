@@ -37,7 +37,7 @@ if (route.query.token) {
 <template>
   <div class="content">
     <h1>邮箱验证</h1>
-    <p id="verify-error" v-if="errorInfo">
+    <p class="error-info" v-if="errorInfo">
       验证失败。<br />
       错误：{{ errorInfo }}
     </p>
@@ -45,7 +45,7 @@ if (route.query.token) {
 </template>
 
 <style scoped>
-#verify-error {
+.error-info {
   color: rgb(var(--mdui-color-error));
 }
 </style>

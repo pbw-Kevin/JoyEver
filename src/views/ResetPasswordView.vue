@@ -58,8 +58,18 @@ function submitForm() {
     <h1>重置密码</h1>
     <p class="error-info" v-if="errorInfo">{{ errorInfo }}</p>
     <form @submit.prevent="submitForm()">
-      <mdui-text-field type="password" label="密码" v-model="pass"></mdui-text-field>
-      <mdui-text-field type="password" label="确认密码" v-model="passAgain"></mdui-text-field>
+      <mdui-text-field
+        type="password"
+        toggle-password
+        label="密码"
+        v-model="pass"
+      ></mdui-text-field>
+      <mdui-text-field
+        type="password"
+        toggle-password
+        label="确认密码"
+        v-model="passAgain"
+      ></mdui-text-field>
       <mdui-button type="submit">重置密码</mdui-button>
     </form>
   </div>
@@ -68,8 +78,7 @@ function submitForm() {
 <style scoped>
 mdui-button,
 mdui-text-field {
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0;
 }
 
 .error-info {

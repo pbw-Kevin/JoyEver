@@ -84,7 +84,7 @@ var isRight = computed(() => {
 }
 
 .message-time {
-  margin: 0 5px 0 5px;
+  margin: 0 5px;
   font-size: 80%;
   color: rgb(var(--mdui-color-on-surface-variant));
 }

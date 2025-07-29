@@ -8,7 +8,7 @@ import { sendNoti } from './notifications.ts'
 import { AV } from './main.ts'
 import { getError } from './error.ts'
 
-export function getUser(fetch = true) {
+export function getUser(fetch = false) {
   if (AV.User.current() && fetch) AV.User.current().fetch()
   return AV.User.current()
 }
@@ -28,27 +28,36 @@ export var privateUserInfoQuery = new AV.Query('PrivateUserInfo')
 export var roleObject = new AV.Object('_Role')
 export var roleQuery = new AV.Query('_Role')
 
+export var myEmailObject = new AV.Object('Email')
+export var myUserInfoObject = new AV.Object('UserInfo')
+export var myPrivateUserInfoObject = new AV.Object('PrivateUserInfo')
+export var myUserRolesObject = new AV.Object('UserRoles')
+export var myEmailObjectFetched = false
+export var myUserInfoObjectFetched = false
+export var myPrivateUserInfoObjectFetched = false
+export var myUserRolesObjectFetched = false
+
 var adminRole = new AV.Object('_Role') as AV.Role
 var superAdminRole = new AV.Object('_Role') as AV.Role
 var siteOwnerRole = new AV.Object('_Role') as AV.Role
 
-;(function () {
+;(async function () {
   roleQuery.equalTo('name', 'admin')
-  roleQuery.find().then((roles) => {
+  await roleQuery.find().then((roles) => {
     if (roles.length > 0) {
       adminRole = roles[0] as AV.Role
     }
   })
 
-  roleQuery.equalTo('name', 'super_dmin')
-  roleQuery.find().then((roles) => {
+  roleQuery.equalTo('name', 'super_admin')
+  await roleQuery.find().then((roles) => {
     if (roles.length > 0) {
       superAdminRole = roles[0] as AV.Role
     }
   })
 
   roleQuery.equalTo('name', 'site_owner')
-  roleQuery.find().then((roles) => {
+  await roleQuery.find().then((roles) => {
     if (roles.length > 0) {
       siteOwnerRole = roles[0] as AV.Role
     }
@@ -80,7 +89,10 @@ export function isFormattedPassword(pass: string) {
 }
 
 export async function getUserInfo(noti = true, name = '') {
-  if (!name) requireLogin()
+  if (!name) {
+    requireLogin()
+    if (myUserInfoObjectFetched) return myUserInfoObject
+  }
   userInfoQuery.equalTo('username', name || getUser().get('username'))
   var ret = new AV.Object('UserInfo')
   await userInfoQuery.find().then((users) => {
@@ -101,11 +113,18 @@ export async function getUserInfo(noti = true, name = '') {
       ret = users[0] as typeof ret
     }
   })
+  if (!name) {
+    myUserInfoObject = ret
+    myUserInfoObjectFetched = true
+  }
   return ret
 }
 
 export async function getEmail(noti = true, name = '') {
-  if (!name) requireLogin()
+  if (!name) {
+    requireLogin()
+    if (myEmailObjectFetched) return myEmailObject
+  }
   emailQuery.equalTo('username', name || getUser().get('username'))
   emailQuery.includeACL(true)
   var ret = new AV.Object('Email')
@@ -114,9 +133,9 @@ export async function getEmail(noti = true, name = '') {
       if (noti) sendNoti('该用户异常', true)
     } else if (emails.length == 0) {
       if (name) {
-        ret = new AV.Object('email')
+        ret = new AV.Object('Email')
       } else {
-        emailObject = new AV.Object('email')
+        emailObject = new AV.Object('Email')
         emailObject.set('email', getUser().get('email'))
         emailObject.set('username', getUser().get('username'))
         var created = false
@@ -131,11 +150,18 @@ export async function getEmail(noti = true, name = '') {
       ret = emails[0] as typeof ret
     }
   })
+  if (!name) {
+    myEmailObject = ret
+    myEmailObjectFetched = true
+  }
   return ret
 }
 
 export async function getPrivateUserInfo(noti = false, name = '') {
-  if (name) requireLogin()
+  if (!name) {
+    requireLogin()
+    if (myPrivateUserInfoObjectFetched) return myPrivateUserInfoObject
+  }
   privateUserInfoQuery.equalTo('username', name || getUser().get('username'))
   var ret = new AV.Object('PrivateUserInfo')
   await privateUserInfoQuery.find().then((users) => {
@@ -155,11 +181,18 @@ export async function getPrivateUserInfo(noti = false, name = '') {
       ret = users[0] as typeof ret
     }
   })
+  if (!name) {
+    myPrivateUserInfoObject = ret
+    myPrivateUserInfoObjectFetched = true
+  }
   return ret
 }
 
 export async function getUserRoles(noti = false, name = '') {
-  if (name) requireLogin()
+  if (name) {
+    requireLogin()
+    if (myUserRolesObjectFetched) return myUserRolesObject
+  }
   userRolesQuery.equalTo('username', name || getUser().get('username'))
   userRolesQuery.includeACL(true)
   var ret = new AV.Object('UserRoles')
@@ -184,6 +217,10 @@ export async function getUserRoles(noti = false, name = '') {
       }
     }
   })
+  if (!name) {
+    myUserRolesObject = ret
+    myUserRolesObjectFetched = true
+  }
   return ret
 }
 
