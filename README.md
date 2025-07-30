@@ -8,7 +8,7 @@ Stable version: (Released during major updates)
 - Intl. site (Recommended): <https://joyever.rth2.xyz>
 - China site (Not recommended, even not stable in China!): <https://joyever.rth1.xyz>
 
-Preview version: (Updated during commits)
+Preview version: (Updated during pushes on the main branch)
 - <https://pbw-kevin.github.io/JoyEver/>
 
 ## Related Repositories
