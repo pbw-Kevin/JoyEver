@@ -33,14 +33,14 @@ export var appearanceSettingList = [localGeneralAppearance]
 
 export var fetched = ref(false)
 
-export async function fetchAppearance() {
+export async function fetchAppearance(force = false) {
   var activeAppearance = localGeneralAppearance
   var rawLocalAppearance = sessionStorage.getItem('appearance')
   if (rawLocalAppearance) {
     activeAppearance = JSON.parse(rawLocalAppearance)
     appearanceSetting.value = activeAppearance
   }
-  if (!fetched.value) {
+  if (!fetched.value || force) {
     await generalAppearanceQuery.find().then(
       (list) => {
         appearanceSettingList = []

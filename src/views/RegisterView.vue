@@ -34,6 +34,8 @@ function registerAccount() {
   } else if (!isFormattedUsername(name.value)) {
     errorInfo.value.username =
       '用户名格式不正确。用户名的长度应在 5 到 16 个字符之间，且只能包含字母、数字和下划线，其中第一个字符必须是字母。'
+  } else if (isEmail(name.value)) {
+    errorInfo.value.username = '用户名格式不正确。用户名不应具有邮箱的格式。'
   }
   if (!pass.value) {
     errorInfo.value.password = '密码不能为空。'

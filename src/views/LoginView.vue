@@ -10,6 +10,7 @@ import {
 } from '../assets/account.ts'
 import { sendNoti } from '../assets/notifications.ts'
 import { setTopNotification } from '../assets/topNotification.ts'
+import { fetchAppearance } from '@/assets/appearance.ts'
 
 var router = useRouter()
 
@@ -46,6 +47,7 @@ function loginAccount() {
         if (getUser().get('email') && !getUser().get('emailVerified')) {
           setTopNotification('尚未验证邮箱。验证邮箱以获得更安全的账号体验。转到“账号设置”以验证。')
         }
+        fetchAppearance(true)
         router.push({ name: 'Home' })
       } else if (ret.code == 205) {
         errorInfo.value.username = '找不到邮箱对应的用户。'
