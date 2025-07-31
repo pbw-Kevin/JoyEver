@@ -1,0 +1,1 @@
+import{_ as t,c as s,o as n,a as o}from"./index-D2whVdz8.js";const c={},r={class:"content"};function a(l,e){return n(),s("div",r,e[0]||(e[0]=[o("h1",null,"房间列表",-1),o("p",null,"开发中。",-1)]))}const i=t(c,[["render",a]]);export{i as default};

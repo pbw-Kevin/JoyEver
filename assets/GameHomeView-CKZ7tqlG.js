@@ -1,0 +1,1 @@
+import{_ as t,c as n,o as s,a as o}from"./index-D2whVdz8.js";const c={},a={class:"content"};function r(l,e){return s(),n("div",a,e[0]||(e[0]=[o("h1",null,"游戏",-1),o("p",null,"开发中。敬请期待。",-1)]))}const d=t(c,[["render",r]]);export{d as default};
