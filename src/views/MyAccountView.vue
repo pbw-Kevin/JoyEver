@@ -6,7 +6,8 @@ import UserTagPack from '../components/UserTagPack.vue'
 
 requireLogin()
 
-var email = ref(getUser().get('email') || '')
+var user = getUser()
+var email = ref(user.get('email') || '')
 var userInfo: Ref<{
   objectId: string
   avatarURL?: string
@@ -41,7 +42,7 @@ getUserInfo(false).then((tmpUserInfo) => {
           <UserTagPack :roles="curRole"></UserTagPack>
         </span>
         <br />
-        <span class="user-head-username">{{ userInfo.username }}</span>
+        <span class="user-head-username">{{ user.get('username') }}</span>
       </div>
     </div>
     <div class="user-info">
@@ -54,7 +55,7 @@ getUserInfo(false).then((tmpUserInfo) => {
         v-if="email"
       ></mdui-text-field>
       <br />
-      <RouterLink :to="`/account/${userInfo.username}`">
+      <RouterLink :to="`/account/${user.get('username')}`">
         <mdui-button>访客视角</mdui-button>
       </RouterLink>
       <RouterLink to="/history">

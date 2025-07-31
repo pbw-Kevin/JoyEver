@@ -86,7 +86,7 @@ watch(
       <mdui-button type="submit">登录</mdui-button>
     </form>
     <div>还没有账号？<RouterLink to="/register">注册</RouterLink></div>
-    <div>忘记密码？<RouterLink to="/resetpassword">重置密码</RouterLink></div>
+    <div>忘记密码？<RouterLink to="/preresetpassword">重置密码</RouterLink></div>
   </div>
 </template>
 

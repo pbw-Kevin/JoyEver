@@ -184,6 +184,14 @@ var routes = [
     },
   },
   {
+    path: '/preresetpassword',
+    name: 'PreResetPassword',
+    component: () => import('../views/PreResetPasswordView.vue'),
+    meta: {
+      title: '重置密码 - 永乐大典',
+    },
+  },
+  {
     path: '/resetpassword',
     name: 'ResetPassword',
     component: () => import('../views/ResetPasswordView.vue'),
