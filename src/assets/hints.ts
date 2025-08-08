@@ -1,6 +1,8 @@
 /*
-  Asset for hint-component of JoyEver
+  Asset for hint component of JoyEver
 */
+
+import { AV } from './main.ts'
 
 var hints = [
   '登录账号后可以在“我的账号” > “设置” > “外观”中更改自己喜欢的主题样式！',
@@ -16,6 +18,22 @@ var hints = [
   '点击“你知道吗”卡片的任意位置可以刷新里面的内容！',
 ]
 
+var fetched = false
+
+export function fetchHints(force = false) {
+  if (fetched && !force) return
+  fetched = true
+  var hintQuery = new AV.Query('Hint')
+  hintQuery.find().then((tmpHints) => {
+    hints = tmpHints.map((tmpHint) => {
+      return tmpHint.get('hint')
+    })
+  }, (error) => {
+    fetched = false
+  })
+}
+
 export function getHint(): string {
+  fetchHints()
   return hints[Math.floor(Math.random() * hints.length)]
 }

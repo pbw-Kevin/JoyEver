@@ -13,19 +13,10 @@ export function getUser(fetch = false) {
   return AV.User.current()
 }
 
-export var emailObject = new AV.Object('Email')
 export var emailQuery = new AV.Query('Email')
-
-export var userInfoObject = new AV.Object('UserInfo')
 export var userInfoQuery = new AV.Query('UserInfo')
-
-export var userRolesObject = new AV.Object('UserRoles')
 export var userRolesQuery = new AV.Query('UserRoles')
-
-export var privateUserInfoObject = new AV.Object('PrivateUserInfo')
 export var privateUserInfoQuery = new AV.Query('PrivateUserInfo')
-
-export var roleObject = new AV.Object('_Role')
 export var roleQuery = new AV.Query('_Role')
 
 export var myEmailObject = new AV.Object('Email')
@@ -102,7 +93,7 @@ export async function getUserInfo(noti = true, name = '') {
       if (name) {
         if (noti) sendNoti('该用户不存在', true)
       } else {
-        userInfoObject = new AV.Object('UserInfo')
+        var userInfoObject = new AV.Object('UserInfo')
         userInfoObject.set('nickname', getUser().get('username'))
         userInfoObject.set('username', getUser().get('username'))
         userInfoObject.save().then((userInfoObject) => {
@@ -135,7 +126,7 @@ export async function getEmail(noti = true, name = '') {
       if (name) {
         ret = new AV.Object('Email')
       } else {
-        emailObject = new AV.Object('Email')
+        var emailObject = new AV.Object('Email')
         emailObject.set('email', getUser().get('email'))
         emailObject.set('username', getUser().get('username'))
         var created = false
@@ -171,7 +162,7 @@ export async function getPrivateUserInfo(noti = false, name = '') {
       if (name) {
         if (noti) sendNoti('该用户不存在', true)
       } else {
-        privateUserInfoObject = new AV.Object('PrivateUserInfo')
+        var privateUserInfoObject = new AV.Object('PrivateUserInfo')
         privateUserInfoObject.set('username', getUser().get('username'))
         privateUserInfoObject.save().then((privateUserInfoObject) => {
           ret = privateUserInfoObject
@@ -203,7 +194,7 @@ export async function getUserRoles(noti = false, name = '') {
       if (name) {
         if (noti) sendNoti('该用户不存在', true)
       } else {
-        userRolesObject = new AV.Object('UserRoles')
+        var userRolesObject = new AV.Object('UserRoles')
         userRolesObject.set('username', getUser().get('username'))
         userRolesObject.set('roles', [])
         userRolesObject.save().then((userRolesObject) => {
@@ -302,7 +293,7 @@ export async function register(name: string, pass: string, passAgain: string, em
     (user) => {
       ret = getError(0)
       if (email) {
-        emailObject = new AV.Object('Email')
+        var emailObject = new AV.Object('Email')
         emailObject.set('username', getUser().get('username'))
         emailObject.set('email', email)
         var emailACL = new AV.ACL()
@@ -318,7 +309,7 @@ export async function register(name: string, pass: string, passAgain: string, em
           },
         )
       }
-      userInfoObject = new AV.Object('UserInfo')
+      var userInfoObject = new AV.Object('UserInfo')
       userInfoObject.set('nickname', name)
       userInfoObject.set('username', name)
       var userInfoACL = new AV.ACL()
@@ -332,7 +323,7 @@ export async function register(name: string, pass: string, passAgain: string, em
           ret = getError(15)
         },
       )
-      privateUserInfoObject = new AV.Object('PrivateUserInfo')
+      var privateUserInfoObject = new AV.Object('PrivateUserInfo')
       privateUserInfoObject.set('username', name)
       privateUserInfoObject.set('customAppearance', [])
       var privateUserInfoACL = new AV.ACL()
