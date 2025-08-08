@@ -1,1 +1,0 @@
-import{d as r,c as t,n as a,t as s,o as c}from"./index-BD5_7tqr.js";const g=r({__name:"UserTag",props:{tag:{},color:{}},setup(e){const o=e;return(n,l)=>(c(),t("div",{class:"user-tag",style:a({"background-color":o.color||"grey"})},s(o.tag),5))}});export{g as _};
