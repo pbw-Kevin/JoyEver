@@ -15,7 +15,7 @@ const props = defineProps<{
 .user-tag {
   display: inline;
   white-space: nowrap;
-  padding: 0 4px;
+  padding: 2px 4px;
   margin: 0 3px;
   font-size: 60%;
   color: white;

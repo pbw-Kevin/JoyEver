@@ -10,6 +10,10 @@ const ticketTypes = [
   { value: 'contact-admin', label: '联系管理' },
   { value: 'other', label: '其他' },
 ]
+
+function submitTicket() {
+  // console.log('submitted')
+}
 </script>
 
 <template>
@@ -17,9 +21,9 @@ const ticketTypes = [
     <h1>工单</h1>
     <RouterLink to="/myticket"><mdui-button>我的工单</mdui-button></RouterLink>
     <h2>新工单</h2>
-    <form @submit.prevent>
-      <mdui-text-field label="工单主题"></mdui-text-field>
-      <mdui-select label="工单类型">
+    <form @submit.prevent="submitTicket()">
+      <mdui-text-field required label="工单主题"></mdui-text-field>
+      <mdui-select required label="工单类型">
         <mdui-menu-item v-for="type in ticketTypes" :value="type.value">{{
           type.label
         }}</mdui-menu-item>
@@ -27,7 +31,14 @@ const ticketTypes = [
           <mdui-icon-keyboard-arrow-down></mdui-icon-keyboard-arrow-down>
         </mdui-button-icon>
       </mdui-select>
-      <mdui-text-field rows="5" label="工单内容"></mdui-text-field>
+      <mdui-text-field
+        required
+        autosize
+        min-rows="5"
+        max-rows="10"
+        label="工单内容"
+        placeholder="如果没有登录账号，请在此留下你的联系方式，以便我们联系到你"
+      ></mdui-text-field>
       <mdui-button type="submit">提交工单</mdui-button>
     </form>
   </div>

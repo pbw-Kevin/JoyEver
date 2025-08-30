@@ -22,15 +22,18 @@ var fetched = false
 
 export function fetchHints(force = false) {
   if (fetched && !force) return
-  fetched = true
   var hintQuery = new AV.Query('Hint')
-  hintQuery.find().then((tmpHints) => {
-    hints = tmpHints.map((tmpHint) => {
-      return tmpHint.get('hint')
-    })
-  }, (error) => {
-    fetched = false
-  })
+  hintQuery.find().then(
+    (tmpHints) => {
+      hints = tmpHints.map((tmpHint) => {
+        return tmpHint.get('hint')
+      })
+      fetched = true
+    },
+    (error) => {
+      fetched = false
+    },
+  )
 }
 
 export function getHint(): string {

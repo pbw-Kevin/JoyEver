@@ -63,17 +63,17 @@ UpdateNavOpened()
             ></mdui-icon-keyboard-arrow-up>
             <mdui-icon-keyboard-arrow-down slot="end-icon" v-else></mdui-icon-keyboard-arrow-down>
           </NavigationDrawerItem>
-          <div style="margin-left: 2.5rem">
+          <div class="nav-drawer-subitem">
             <NavigationDrawerItem to="/wiki/online" :belonged-routes="['OnlineWiki']">
               在线大典
             </NavigationDrawerItem>
           </div>
-          <div style="margin-left: 2.5rem">
+          <div class="nav-drawer-subitem">
             <NavigationDrawerItem to="/wiki/docx" :belonged-routes="['DocxWiki']">
               大典Docx
             </NavigationDrawerItem>
           </div>
-          <div style="margin-left: 2.5rem">
+          <div class="nav-drawer-subitem">
             <NavigationDrawerItem to="/wiki/test" :belonged-routes="['Test']">
               试验
             </NavigationDrawerItem>
@@ -122,5 +122,9 @@ mdui-navigation-drawer {
   mdui-navigation-drawer.withBgImg:hover {
     opacity: 1;
   }
+}
+
+.nav-drawer-subitem {
+  margin-left: 2.5rem;
 }
 </style>

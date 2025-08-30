@@ -218,30 +218,18 @@ export async function getUserRoles(noti = false, name = '') {
 export async function login(name: string, pass: string) {
   let ret = { code: -1, message: 'Logging in' }
   if (!isFormattedPassword(pass)) return getError(3)
-  if (isEmail(name)) {
-    await AV.User.loginWithEmail(name, pass).then(
-      (user) => {
-        ret = getError(0)
-      },
-      (error) => {
-        ret.code = error.code
-        ret.message = error.rawMessage
-      },
-    )
-  } else {
-    if (!isFormattedUsername(name)) {
-      return getError(2)
-    }
-    await AV.User.logIn(name, pass).then(
-      (user) => {
-        ret = getError(0)
-      },
-      (error) => {
-        ret.code = error.code
-        ret.message = error.rawMessage
-      },
-    )
+  if (!isEmail(name) && !isFormattedUsername(name)) {
+    return getError(2)
   }
+  await (isEmail(name) ? AV.User.loginWithEmail : AV.User.logIn)(name, pass).then(
+    (user) => {
+      ret = getError(0)
+    },
+    (error) => {
+      ret.code = error.code
+      ret.message = error.rawMessage
+    },
+  )
   updateLoggedInStat()
   getUserRoles().then((userRolesObject) => {
     curRole.value = userRolesObject.get('roles') || []
@@ -285,7 +273,7 @@ export async function register(name: string, pass: string, passAgain: string, em
   if (email && !isEmail(email)) {
     return getError(13)
   }
-  var user = new AV.User()
+  var user = Boolean(getUser()) && getUser().isAnonymous() ? getUser() : new AV.User()
   user.setUsername(name)
   user.setPassword(pass)
   if (email) user.setEmail(email)

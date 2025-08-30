@@ -56,7 +56,7 @@ onUpdated(() => GotoBottom('.chat-announcement-container')) // Too brute actions
             class="new-announcement"
           >
             新公告
-            <mdui-icon-keyboard-arrow-down style="font-size: 20px"></mdui-icon-keyboard-arrow-down>
+            <mdui-icon-keyboard-arrow-down></mdui-icon-keyboard-arrow-down>
           </div>
           <AnnouncementPiece
             v-for="announcement in AnnouncementList.filter((announcement) => {
@@ -105,9 +105,11 @@ p {
 }
 
 .new-announcement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 10px 0;
   color: rgb(var(--mdui-color-on-surface-variant));
   line-height: 30px;
-  text-align: center;
 }
 </style>
