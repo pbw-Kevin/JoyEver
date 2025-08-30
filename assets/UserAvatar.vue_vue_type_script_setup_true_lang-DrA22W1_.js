@@ -1,0 +1,1 @@
+import{d as t,c as o,o as r}from"./index-DrOyULMF.js";const n=["src"],c={key:1},u=t({__name:"UserAvatar",props:{url:{}},setup(s){const e=s;return(a,_)=>e.url?(r(),o("mdui-avatar",{key:0,src:e.url},null,8,n)):(r(),o("mdui-icon-person",c))}});export{u as _};
