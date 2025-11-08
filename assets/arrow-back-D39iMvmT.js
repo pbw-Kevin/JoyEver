@@ -1,1 +1,0 @@
-import{s as r,g as s,h as e,j as o,k as t}from"./index-DrOyULMF.js";let a=class extends o{render(){return t('<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>')}};a.styles=r;a=s([e("mdui-icon-arrow-back")],a);

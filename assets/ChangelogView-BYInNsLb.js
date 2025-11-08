@@ -1,0 +1,1 @@
+import{_ as o,c as s,o as c,a as e,b as n}from"./index-BiTin0vQ.js";const r={},a={class:"content"};function l(_,t){return c(),s("div",a,t[0]||(t[0]=[e("h1",null,"更新日志",-1),e("h2",null,"v1.0-rc1 -- W.I.P.",-1),e("p",null,[n(" 发布于：未发布"),e("br"),n(" 初步完成基础功能。 ")],-1)]))}const f=o(r,[["render",l]]);export{f as default};
