@@ -1,11 +1,11 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes.ts'
-import { dispNoti } from '../assets/notifications.ts'
-import { updateLoggedInStat } from '../assets/account.ts'
-import { updateAnnouncement } from '../assets/announcement.ts'
-import { fetchAppearance } from '../assets/appearance.ts'
-import { updateTopNotificationRef } from '../assets/topNotification.ts'
-import { fetchHints } from '../assets/hints.ts'
+import { dispNoti } from '@/assets/notifications.ts'
+import { getUserRoles, isLoggedIn, updateLoggedInStat } from '@/assets/account.ts'
+import { updateAnnouncement } from '@/assets/announcement.ts'
+import { fetchAppearance } from '@/assets/appearance.ts'
+import { updateTopNotificationRef } from '@/assets/topNotification.ts'
+import { fetchHints } from '@/assets/hints.ts'
 
 const router = createRouter({
   history: (import.meta.env.VITE_IS_GH_PAGES ? createWebHashHistory : createWebHistory)(
@@ -21,6 +21,7 @@ router.beforeEach((to, from, next) => {
   updateTopNotificationRef()
   fetchAppearance()
   fetchHints()
+  if (isLoggedIn()) getUserRoles()
   next()
   dispNoti()
 })

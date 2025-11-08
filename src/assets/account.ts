@@ -2,7 +2,7 @@
   Asset for account service of JoyEver
 */
 
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendNoti } from './notifications.ts'
 import { AV } from './main.ts'
@@ -27,6 +27,9 @@ export var myEmailObjectFetched = false
 export var myUserInfoObjectFetched = false
 export var myPrivateUserInfoObjectFetched = false
 export var myUserRolesObjectFetched = false
+
+export type RoleName = 'admin' | 'super_admin' | 'site_owner' | 'banned'
+export type RoleNames = RoleName[]
 
 var adminRole = new AV.Object('_Role') as AV.Role
 var superAdminRole = new AV.Object('_Role') as AV.Role
@@ -61,10 +64,21 @@ export function isLoggedIn(): boolean {
 
 export var isLoggedInStat = ref(isLoggedIn())
 
-export var curRole = ref([] as string[])
+export var curRole = ref([] as RoleNames)
+export var curIsAdmin = ref(false)
+
+watch(
+  () => curRole.value,
+  (newRole) => {
+    curIsAdmin.value = isAdmin(newRole)
+  },
+  { immediate: true },
+)
 
 export function updateLoggedInStat() {
   isLoggedInStat.value = isLoggedIn()
+  if (!isLoggedIn()) curRole.value = []
+  else getUserRoles()
 }
 
 export function isEmail(s: string) {
@@ -180,9 +194,12 @@ export async function getPrivateUserInfo(noti = false, name = '') {
 }
 
 export async function getUserRoles(noti = false, name = '') {
-  if (name) {
+  if (!name) {
     requireLogin()
-    if (myUserRolesObjectFetched) return myUserRolesObject
+    if (myUserRolesObjectFetched) {
+      curRole.value = myUserRolesObject.get('roles') || []
+      return myUserRolesObject
+    }
   }
   userRolesQuery.equalTo('username', name || getUser().get('username'))
   userRolesQuery.includeACL(true)
@@ -215,6 +232,12 @@ export async function getUserRoles(noti = false, name = '') {
   return ret
 }
 
+export function isAdmin(tmpRole: RoleNames = curRole.value): boolean {
+  return (
+    tmpRole.includes('admin') || tmpRole.includes('super_admin') || tmpRole.includes('site_owner')
+  )
+}
+
 export async function login(name: string, pass: string) {
   let ret = { code: -1, message: 'Logging in' }
   if (!isFormattedPassword(pass)) return getError(3)
@@ -231,9 +254,7 @@ export async function login(name: string, pass: string) {
     },
   )
   updateLoggedInStat()
-  getUserRoles().then((userRolesObject) => {
-    curRole.value = userRolesObject.get('roles') || []
-  })
+  getUserRoles()
   return ret
 }
 
@@ -244,7 +265,7 @@ export async function logout() {
   sendNoti('登出成功！')
 }
 
-export var requireLogin = () => {
+export const requireLogin = () => {
   var router = useRouter()
   if (!isLoggedIn()) {
     sendNoti('请先登录！')
