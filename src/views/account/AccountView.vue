@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import {
-  isLoggedIn,
-  getUser,
-  userRolesQuery,
-  getUserInfo,
-  getEmail,
-  type RoleNames,
-} from '@/assets/account.ts'
+import { isLoggedIn, getUser, type RoleNames, infoObjectQuery } from '@/assets/account.ts'
 import UserAvatar from '@/components/account/UserAvatar.vue'
 import UserTagPack from '@/components/account/UserTagPack.vue'
 import { ref, type Ref } from 'vue'
+import { sendNoti } from '@/assets/notifications'
 
 var route = useRoute()
 
@@ -37,15 +31,23 @@ var userInfo: Ref<{
 })
 var email = ref('')
 var roles = ref([] as RoleNames)
-getUserInfo(true, username as string).then((tmpUserInfo) => {
+infoObjectQuery.get('userInfo').then
+infoObjectQuery.get('userInfo').then((tmpUserInfo) => {
+  if (!tmpUserInfo) {
+    sendNoti('该用户不存在或出现异常', true)
+    return
+  }
   userInfo.value = tmpUserInfo.toJSON()
-  getEmail(true, username as string).then((tmpEmailInfo) => {
+  infoObjectQuery.get('email').then((tmpEmailInfo) => {
+    if (!tmpEmailInfo) {
+      sendNoti('该用户不存在或出现异常', true)
+      return
+    }
     if (tmpEmailInfo.getACL()?.getPublicReadAccess()) email.value = tmpEmailInfo.get('email')
   })
-  userRolesQuery.equalTo('username', username)
-  userRolesQuery.find().then((roleses) => {
-    if (roleses.length == 1) {
-      roles.value = roleses[0].get('roles')
+  infoObjectQuery.get('userRoles').then((tmpRoles) => {
+    if (tmpRoles) {
+      roles.value = tmpRoles.get('roles')
     }
   })
 })

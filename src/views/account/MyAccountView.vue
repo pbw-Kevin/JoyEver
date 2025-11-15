@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
-import { curRole, requireLogin, getUser, getUserRoles, getUserInfo } from '@/assets/account.ts'
+import { curRole, requireLogin, getUser, myInfoObject } from '@/assets/account.ts'
 import UserAvatar from '@/components/account/UserAvatar.vue'
 import UserTagPack from '@/components/account/UserTagPack.vue'
 
@@ -25,9 +25,10 @@ var userInfo: Ref<{
   updatedAt: '',
 })
 
-getUserRoles()
-getUserInfo(false).then((tmpUserInfo) => {
-  userInfo.value = tmpUserInfo.toJSON()
+myInfoObject.get('userRoles')
+myInfoObject.get('userInfo').then((tmpUserInfo) => {
+  console.log(tmpUserInfo)
+  if (tmpUserInfo) userInfo.value = tmpUserInfo.toJSON()
 })
 </script>
 

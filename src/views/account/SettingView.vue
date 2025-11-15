@@ -10,9 +10,7 @@ import { confirm, prompt, getColorFromImage, throttle } from 'mdui'
 import {
   requireLogin,
   getUser,
-  getUserInfo,
-  getEmail,
-  getPrivateUserInfo,
+  myInfoObject,
   isFormattedPassword,
   isEmail,
 } from '@/assets/account.ts'
@@ -38,13 +36,15 @@ var isPublicEmail = ref(false)
 var isVerifiedEmail = ref(user.get('emailVerified'))
 var verifyEmailClicked = ref(false)
 var verifyEmailFailed = ref(false)
-getUserInfo().then((tmpUserInfo) => {
+myInfoObject.get('userInfo').then((tmpUserInfo) => {
+  if (!tmpUserInfo) return
   userInfo = tmpUserInfo
   nickname.value = userInfo.get('nickname')
 })
-getEmail().then((tmpEmailInfo) => {
+myInfoObject.get('email').then((tmpEmailInfo) => {
+  if (!tmpEmailInfo) return
   emailInfo = tmpEmailInfo
-  isPublicEmail.value = emailInfo.getACL().getPublicReadAccess()
+  isPublicEmail.value = tmpEmailInfo.getACL().getPublicReadAccess()
 })
 
 watch(nickname, (newNickname) => {
@@ -296,7 +296,11 @@ async function saveSetting() {
   await emailInfo.save().catch((err) => {
     hasError = true
   })
-  await getPrivateUserInfo().then(async (tmpUserInfo) => {
+  await myInfoObject.get('privateUserInfo').then(async (tmpUserInfo) => {
+    if (!tmpUserInfo) {
+      hasError = true
+      return
+    }
     tmpUserInfo.set(
       'customAppearance',
       appearanceList.value
@@ -330,19 +334,19 @@ onUnmounted(() => {
     <h1>设置</h1>
     <mdui-button @click="saveSetting()">保存设置</mdui-button>
     <mdui-tabs value="global" full-width variant="secondary">
-      <mdui-tab value="global" inline>
+      <mdui-tab value="global">
         全局设置
         <mdui-icon-settings slot="icon"></mdui-icon-settings>
       </mdui-tab>
-      <mdui-tab value="security" inline>
+      <mdui-tab value="security">
         安全
         <mdui-icon-security slot="icon"></mdui-icon-security>
       </mdui-tab>
-      <mdui-tab value="game" inline>
+      <mdui-tab value="game">
         游戏设置
         <mdui-icon-videogame-asset slot="icon"></mdui-icon-videogame-asset>
       </mdui-tab>
-      <mdui-tab value="appearance" inline>
+      <mdui-tab value="appearance">
         外观
         <mdui-icon-palette slot="icon"></mdui-icon-palette>
       </mdui-tab>
@@ -356,6 +360,7 @@ onUnmounted(() => {
           :value="username"
         ></mdui-text-field>
         <mdui-text-field label="昵称" v-model="nickname"></mdui-text-field>
+        <h3>邮箱</h3>
         <mdui-text-field type="email" label="邮箱" v-model="email">
           <span slot="helper" class="error-info">{{ emailErrorInfo }}</span>
         </mdui-text-field>
@@ -380,6 +385,7 @@ onUnmounted(() => {
 
       <mdui-tab-panel slot="panel" value="security">
         <h2>安全</h2>
+        <h3>修改密码</h3>
         <mdui-text-field type="password" toggle-password label="新密码" v-model="pass">
           <span slot="helper" class="error-info">{{ passErrorInfo.password }}</span>
         </mdui-text-field>

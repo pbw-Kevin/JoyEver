@@ -28,11 +28,13 @@ UpdateNavOpened()
 <template>
   <mdui-navigation-drawer
     :open="navOpened"
+    @open="navOpened = true"
+    @close="navOpened = false"
     close-on-overlay-click
     :class="{ withBgImg: backgroundImageLoaded }"
   >
-    <mdui-list class="nav-drawer-list" :style="{ 'margin-bottom': isDesktop ? '80px' : '' }">
-      <mdui-list-subheader>{{ isDesktop ? '' : '菜单' }}</mdui-list-subheader>
+    <mdui-list class="nav-drawer-list" :style="{ margin: isDesktop ? '50px 12px 80px 12px' : '' }">
+      <mdui-list-subheader>菜单</mdui-list-subheader>
       <NavigationDrawerItem to="/" :belonged-routes="['Home']">
         <mdui-icon-home slot="icon"></mdui-icon-home>
         首页

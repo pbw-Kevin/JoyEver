@@ -7,7 +7,7 @@ import { setColorScheme, setTheme, breakpoint, observeResize } from 'mdui'
 import type { Theme } from 'mdui/internal/theme'
 import { AV } from './main.ts'
 import { sendNoti } from './notifications.ts'
-import { getPrivateUserInfo, isLoggedIn } from './account.ts'
+import { myInfoObject } from './account.ts'
 
 var generalAppearanceQuery = new AV.Query('GeneralAppearance')
 
@@ -64,43 +64,42 @@ export async function fetchAppearance(force = false) {
         sendNoti('获取默认外观列表失败', true)
       },
     )
-    if (isLoggedIn()) {
-      await getPrivateUserInfo().then((userInfo) => {
-        if (userInfo.get('customAppearance')) {
-          var customAppearance = userInfo.get('customAppearance')
-          customAppearance.forEach(
-            (item: {
-              name?: string
-              theme?: Theme
-              colorScheme?: string
-              backgroundImage?: string
-              backgroundImageOpacity?: number
-              sidebarOpacity?: number
-            }) => {
-              var itemJSON = {
-                name: item.name || '',
-                isGeneral: false,
-                theme: item.theme || 'auto',
-                colorScheme: item.colorScheme || '#ffffff',
-                backgroundImage: item.backgroundImage || '',
-                backgroundImageOpacity: item.backgroundImageOpacity || 0,
-                sidebarOpacity: item.sidebarOpacity || 1,
-              }
-              appearanceSettingList.push(itemJSON)
-            },
-          )
+    await myInfoObject.get('privateUserInfo').then((userInfo) => {
+      if (!userInfo) return
+      if (userInfo.get('customAppearance')) {
+        var customAppearance = userInfo.get('customAppearance')
+        customAppearance.forEach(
+          (item: {
+            name?: string
+            theme?: Theme
+            colorScheme?: string
+            backgroundImage?: string
+            backgroundImageOpacity?: number
+            sidebarOpacity?: number
+          }) => {
+            var itemJSON = {
+              name: item.name || '',
+              isGeneral: false,
+              theme: item.theme || 'auto',
+              colorScheme: item.colorScheme || '#ffffff',
+              backgroundImage: item.backgroundImage || '',
+              backgroundImageOpacity: item.backgroundImageOpacity || 0,
+              sidebarOpacity: item.sidebarOpacity || 1,
+            }
+            appearanceSettingList.push(itemJSON)
+          },
+        )
+      }
+      if (userInfo.get('activeAppearance')) {
+        var activeAppearanceName = userInfo.get('activeAppearance')
+        var activeAppearanceItem = appearanceSettingList.find(
+          (item) => item.name === activeAppearanceName,
+        )
+        if (activeAppearanceItem) {
+          activeAppearance = { ...activeAppearanceItem }
         }
-        if (userInfo.get('activeAppearance')) {
-          var activeAppearanceName = userInfo.get('activeAppearance')
-          var activeAppearanceItem = appearanceSettingList.find(
-            (item) => item.name === activeAppearanceName,
-          )
-          if (activeAppearanceItem) {
-            activeAppearance = { ...activeAppearanceItem }
-          }
-        }
-      })
-    }
+      }
+    })
     appearanceSetting.value = activeAppearance
     sessionStorage.setItem('appearance', JSON.stringify(activeAppearance))
     fetched.value = true

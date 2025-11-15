@@ -4,7 +4,7 @@
 
 import { AV } from './main.ts'
 import { ref, computed } from 'vue'
-import { getPrivateUserInfo, isLoggedIn } from './account.ts'
+import { myInfoObject } from './account.ts'
 
 export async function getLastReadAnnouncement() {
   var ret = new Date('2000/01/01 00:00:00')
@@ -12,17 +12,16 @@ export async function getLastReadAnnouncement() {
   if (lclStr) {
     ret = new Date(lclStr)
   }
-  if (isLoggedIn()) {
-    await getPrivateUserInfo().then((privateUserInfo) => {
-      var prvStr = privateUserInfo.get('lastReadAnnouncement')
-      if (prvStr) {
-        var prvStrDate = new Date(prvStr)
-        if (prvStrDate > ret) {
-          ret = prvStrDate
-        }
+  await myInfoObject.get('privateUserInfo').then((privateUserInfo) => {
+    if (!privateUserInfo) return
+    var prvStr = privateUserInfo.get('lastReadAnnouncement')
+    if (prvStr) {
+      var prvStrDate = new Date(prvStr)
+      if (prvStrDate > ret) {
+        ret = prvStrDate
       }
-    })
-  }
+    }
+  })
   return ret
 }
 
@@ -49,12 +48,11 @@ export async function updateAnnouncement(visit: boolean = false) {
   if (visit) {
     localInfo.value = new Date()
     localStorage.setItem('last-read-announcement', localInfo.value.toLocaleString('zh-CN'))
-    if (isLoggedIn()) {
-      getPrivateUserInfo().then((privateUserInfo) => {
-        privateUserInfo.set('lastReadAnnouncement', localInfo.value)
-        privateUserInfo.save()
-      })
-    }
+    await myInfoObject.get('privateUserInfo').then((privateUserInfo) => {
+      if (!privateUserInfo) return
+      privateUserInfo.set('lastReadAnnouncement', localInfo.value)
+      privateUserInfo.save()
+    })
   } else {
     localInfo.value = await getLastReadAnnouncement()
     localStorage.setItem('last-read-announcement', localInfo.value.toLocaleString('zh-CN'))

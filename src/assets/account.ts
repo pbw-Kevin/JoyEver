@@ -2,7 +2,7 @@
   Asset for account service of JoyEver
 */
 
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendNoti } from './notifications.ts'
 import { AV } from './main.ts'
@@ -13,50 +13,160 @@ export function getUser(fetch = false) {
   return AV.User.current()
 }
 
-export var emailQuery = new AV.Query('Email')
-export var userInfoQuery = new AV.Query('UserInfo')
-export var userRolesQuery = new AV.Query('UserRoles')
-export var privateUserInfoQuery = new AV.Query('PrivateUserInfo')
-export var roleQuery = new AV.Query('_Role')
+export var infoObjectQuery = {
+  query: {
+    email: new AV.Query('Email'),
+    userInfo: new AV.Query('UserInfo'),
+    privateUserInfo: new AV.Query('PrivateUserInfo'),
+    userRoles: new AV.Query('UserRoles'),
+  },
+  async get(
+    type: 'email' | 'userInfo' | 'privateUserInfo' | 'userRoles',
+    name = '',
+  ): Promise<AV.Object | null> {
+    if (!name) {
+      if (requireLogin()) return null
+      return myInfoObject.get(type)
+    }
+    this.query[type].equalTo('username', name)
+    if (type === 'email' || type === 'userRoles') {
+      this.query[type].includeACL(true)
+    }
+    var ret: AV.Object | null = null
+    await this.query[type].find().then((users) => {
+      if (users.length == 1) {
+        ret = users[0] as typeof ret
+      }
+    })
+    return ret
+  },
+}
 
-export var myEmailObject = new AV.Object('Email')
-export var myUserInfoObject = new AV.Object('UserInfo')
-export var myPrivateUserInfoObject = new AV.Object('PrivateUserInfo')
-export var myUserRolesObject = new AV.Object('UserRoles')
-export var myEmailObjectFetched = false
-export var myUserInfoObjectFetched = false
-export var myPrivateUserInfoObjectFetched = false
-export var myUserRolesObjectFetched = false
+export var myInfoObject = {
+  fetched: {
+    email: false,
+    userInfo: false,
+    privateUserInfo: false,
+    userRoles: false,
+  },
+  object: {
+    email: new AV.Object('Email'),
+    userInfo: new AV.Object('UserInfo'),
+    privateUserInfo: new AV.Object('PrivateUserInfo'),
+    userRoles: new AV.Object('UserRoles'),
+  },
+  async get(
+    type: 'email' | 'userInfo' | 'privateUserInfo' | 'userRoles',
+  ): Promise<AV.Object | null> {
+    if (!isLoggedIn()) return null
+    if (this.fetched[type]) {
+      return this.object[type]
+    }
+    switch (type) {
+      case 'email':
+        await infoObjectQuery.get('email', getUser().get('username')).then((email) => {
+          if (email) {
+            this.object.email = email
+            this.fetched.email = true
+            return
+          }
+          var emailObject = new AV.Object('Email')
+          emailObject.set('email', getUser().get('username'))
+          emailObject.set('username', getUser().get('username'))
+          emailObject.save().then((emailObject) => {
+            this.object.email = emailObject
+            this.fetched.email = true
+          })
+        })
+        break
+      case 'userInfo':
+        await infoObjectQuery.get('userInfo', getUser().get('username')).then((userInfo) => {
+          if (userInfo) {
+            this.object.userInfo = userInfo
+            this.fetched.userInfo = true
+            return
+          }
+          var userInfoObject = new AV.Object('UserInfo')
+          userInfoObject.set('nickname', getUser().get('username'))
+          userInfoObject.set('username', getUser().get('username'))
+          userInfoObject.save().then((userInfoObject) => {
+            this.object.userInfo = userInfoObject
+            this.fetched.userInfo = true
+          })
+        })
+        break
+      case 'privateUserInfo':
+        await infoObjectQuery
+          .get('privateUserInfo', getUser().get('username'))
+          .then((privateUserInfo) => {
+            if (privateUserInfo) {
+              this.object.privateUserInfo = privateUserInfo
+              this.fetched.privateUserInfo = true
+              return
+            }
+            var privateUserInfoObject = new AV.Object('PrivateUserInfo')
+            privateUserInfoObject.set('username', getUser().get('username'))
+            privateUserInfoObject.save().then((privateUserInfoObject) => {
+              this.object.privateUserInfo = privateUserInfoObject
+              this.fetched.privateUserInfo = true
+            })
+          })
+        break
+      case 'userRoles':
+        await infoObjectQuery.get('userRoles', getUser().get('username')).then((userRoles) => {
+          if (userRoles) {
+            this.object.userRoles = userRoles
+            this.fetched.userRoles = true
+            return
+          }
+          var userRolesObject = new AV.Object('UserRoles')
+          userRolesObject.set('username', getUser().get('username'))
+          userRolesObject.set('roles', [])
+          userRolesObject.save().then((userRolesObject) => {
+            this.object.userRoles = userRolesObject
+            this.fetched.userRoles = true
+          })
+        })
+        if (this.fetched.userRoles) {
+          curRole.value = this.object.userRoles.get('roles') || []
+        }
+        break
+    }
+    return this.object[type]
+  },
+}
 
 export type RoleName = 'admin' | 'super_admin' | 'site_owner' | 'banned'
 export type RoleNames = RoleName[]
 
-var adminRole = new AV.Object('_Role') as AV.Role
-var superAdminRole = new AV.Object('_Role') as AV.Role
-var siteOwnerRole = new AV.Object('_Role') as AV.Role
-
-;(async function () {
-  roleQuery.equalTo('name', 'admin')
-  await roleQuery.find().then((roles) => {
-    if (roles.length > 0) {
-      adminRole = roles[0] as AV.Role
-    }
-  })
-
-  roleQuery.equalTo('name', 'super_admin')
-  await roleQuery.find().then((roles) => {
-    if (roles.length > 0) {
-      superAdminRole = roles[0] as AV.Role
-    }
-  })
-
-  roleQuery.equalTo('name', 'site_owner')
-  await roleQuery.find().then((roles) => {
-    if (roles.length > 0) {
-      siteOwnerRole = roles[0] as AV.Role
-    }
-  })
-})()
+export var roleObject: {
+  fetched: boolean
+  object: {
+    [key in RoleName]?: AV.Role
+  }
+  fetch(): void
+  get(name: RoleName): AV.Role | null
+} = {
+  fetched: false,
+  object: {},
+  async fetch() {
+    if (this.fetched) return
+    var query = new AV.Query('_Role')
+    query.find().then((roles) => {
+      roles.forEach((role) => {
+        const name = role.get('name')
+        if (name in (['admin', 'super_admin', 'site_owner'] as RoleName[])) {
+          this.object[name as RoleName] = role as AV.Role
+        }
+      })
+    })
+    this.fetched = true
+  },
+  get(name: RoleName) {
+    if (!this.fetched) this.fetch()
+    return this.object[name] || null
+  },
+}
 
 export function isLoggedIn(): boolean {
   return Boolean(getUser()) && !getUser().isAnonymous()
@@ -78,7 +188,7 @@ watch(
 export function updateLoggedInStat() {
   isLoggedInStat.value = isLoggedIn()
   if (!isLoggedIn()) curRole.value = []
-  else getUserRoles()
+  else myInfoObject.get('userRoles')
 }
 
 export function isEmail(s: string) {
@@ -91,145 +201,6 @@ export function isFormattedUsername(name: string) {
 
 export function isFormattedPassword(pass: string) {
   return /^[\S]{8,}$/.test(pass)
-}
-
-export async function getUserInfo(noti = true, name = '') {
-  if (!name) {
-    requireLogin()
-    if (myUserInfoObjectFetched) return myUserInfoObject
-  }
-  userInfoQuery.equalTo('username', name || getUser().get('username'))
-  var ret = new AV.Object('UserInfo')
-  await userInfoQuery.find().then((users) => {
-    if (users.length > 1) {
-      if (noti) sendNoti('该用户异常', true)
-    } else if (users.length == 0) {
-      if (name) {
-        if (noti) sendNoti('该用户不存在', true)
-      } else {
-        var userInfoObject = new AV.Object('UserInfo')
-        userInfoObject.set('nickname', getUser().get('username'))
-        userInfoObject.set('username', getUser().get('username'))
-        userInfoObject.save().then((userInfoObject) => {
-          ret = userInfoObject
-        })
-      }
-    } else {
-      ret = users[0] as typeof ret
-    }
-  })
-  if (!name) {
-    myUserInfoObject = ret
-    myUserInfoObjectFetched = true
-  }
-  return ret
-}
-
-export async function getEmail(noti = true, name = '') {
-  if (!name) {
-    requireLogin()
-    if (myEmailObjectFetched) return myEmailObject
-  }
-  emailQuery.equalTo('username', name || getUser().get('username'))
-  emailQuery.includeACL(true)
-  var ret = new AV.Object('Email')
-  await emailQuery.find().then((emails) => {
-    if (emails.length > 1) {
-      if (noti) sendNoti('该用户异常', true)
-    } else if (emails.length == 0) {
-      if (name) {
-        ret = new AV.Object('Email')
-      } else {
-        var emailObject = new AV.Object('Email')
-        emailObject.set('email', getUser().get('email'))
-        emailObject.set('username', getUser().get('username'))
-        var created = false
-        emailObject.save().then(
-          (emailObject) => {
-            ret = emailObject
-          },
-          (error) => {},
-        )
-      }
-    } else {
-      ret = emails[0] as typeof ret
-    }
-  })
-  if (!name) {
-    myEmailObject = ret
-    myEmailObjectFetched = true
-  }
-  return ret
-}
-
-export async function getPrivateUserInfo(noti = false, name = '') {
-  if (!name) {
-    requireLogin()
-    if (myPrivateUserInfoObjectFetched) return myPrivateUserInfoObject
-  }
-  privateUserInfoQuery.equalTo('username', name || getUser().get('username'))
-  var ret = new AV.Object('PrivateUserInfo')
-  await privateUserInfoQuery.find().then((users) => {
-    if (users.length > 1) {
-      if (noti) sendNoti('该用户异常', true)
-    } else if (users.length == 0) {
-      if (name) {
-        if (noti) sendNoti('该用户不存在', true)
-      } else {
-        var privateUserInfoObject = new AV.Object('PrivateUserInfo')
-        privateUserInfoObject.set('username', getUser().get('username'))
-        privateUserInfoObject.save().then((privateUserInfoObject) => {
-          ret = privateUserInfoObject
-        })
-      }
-    } else {
-      ret = users[0] as typeof ret
-    }
-  })
-  if (!name) {
-    myPrivateUserInfoObject = ret
-    myPrivateUserInfoObjectFetched = true
-  }
-  return ret
-}
-
-export async function getUserRoles(noti = false, name = '') {
-  if (!name) {
-    requireLogin()
-    if (myUserRolesObjectFetched) {
-      curRole.value = myUserRolesObject.get('roles') || []
-      return myUserRolesObject
-    }
-  }
-  userRolesQuery.equalTo('username', name || getUser().get('username'))
-  userRolesQuery.includeACL(true)
-  var ret = new AV.Object('UserRoles')
-  await userRolesQuery.find().then((users) => {
-    if (users.length > 1) {
-      if (noti) sendNoti('该用户异常', true)
-    } else if (users.length == 0) {
-      if (name) {
-        if (noti) sendNoti('该用户不存在', true)
-      } else {
-        var userRolesObject = new AV.Object('UserRoles')
-        userRolesObject.set('username', getUser().get('username'))
-        userRolesObject.set('roles', [])
-        userRolesObject.save().then((userRolesObject) => {
-          ret = userRolesObject
-        })
-      }
-    } else {
-      ret = users[0] as typeof ret
-      if (!name) {
-        curRole.value = ret.get('roles') || []
-      }
-    }
-  })
-  if (!name) {
-    myUserRolesObject = ret
-    myUserRolesObjectFetched = true
-  }
-  return ret
 }
 
 export function isAdmin(tmpRole: RoleNames = curRole.value): boolean {
@@ -254,7 +225,7 @@ export async function login(name: string, pass: string) {
     },
   )
   updateLoggedInStat()
-  getUserRoles()
+  myInfoObject.get('userRoles')
   return ret
 }
 
@@ -265,12 +236,14 @@ export async function logout() {
   sendNoti('登出成功！')
 }
 
-export const requireLogin = () => {
+export const requireLogin = (): boolean => {
   var router = useRouter()
   if (!isLoggedIn()) {
     sendNoti('请先登录！')
     router.push({ name: 'Login' })
+    return true
   }
+  return false
 }
 
 export function requireUser() {
@@ -308,8 +281,8 @@ export async function register(name: string, pass: string, passAgain: string, em
         var emailACL = new AV.ACL()
         emailACL.setReadAccess(user, true)
         emailACL.setWriteAccess(user, true)
-        emailACL.setRoleReadAccess(superAdminRole, true)
-        emailACL.setRoleWriteAccess(superAdminRole, true)
+        emailACL.setRoleReadAccess(roleObject.get('super_admin') as AV.Role, true)
+        emailACL.setRoleWriteAccess(roleObject.get('super_admin') as AV.Role, true)
         emailObject.setACL(emailACL)
         emailObject.save().then(
           (emailObject) => {},
@@ -324,7 +297,7 @@ export async function register(name: string, pass: string, passAgain: string, em
       var userInfoACL = new AV.ACL()
       userInfoACL.setPublicReadAccess(true)
       userInfoACL.setWriteAccess(user, true)
-      userInfoACL.setRoleWriteAccess(superAdminRole, true)
+      userInfoACL.setRoleWriteAccess(roleObject.get('super_admin') as AV.Role, true)
       userInfoObject.setACL(userInfoACL)
       userInfoObject.save().then(
         (userInfoObject) => {},
@@ -338,8 +311,8 @@ export async function register(name: string, pass: string, passAgain: string, em
       var privateUserInfoACL = new AV.ACL()
       privateUserInfoACL.setReadAccess(user, true)
       privateUserInfoACL.setWriteAccess(user, true)
-      privateUserInfoACL.setRoleReadAccess(superAdminRole, true)
-      privateUserInfoACL.setRoleWriteAccess(superAdminRole, true)
+      privateUserInfoACL.setRoleReadAccess(roleObject.get('super_admin') as AV.Role, true)
+      privateUserInfoACL.setRoleWriteAccess(roleObject.get('super_admin') as AV.Role, true)
       privateUserInfoObject.setACL(privateUserInfoACL)
       privateUserInfoObject.save().then(
         (privateUserInfoObject) => {},
