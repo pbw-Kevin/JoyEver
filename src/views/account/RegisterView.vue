@@ -7,9 +7,9 @@ import {
   isFormattedPassword,
   isFormattedUsername,
   register,
-} from '@/assets/account.ts'
-import { sendNoti } from '@/assets/notifications.ts'
-import { setTopNotification } from '@/assets/topNotification.ts'
+} from '@/assets/account'
+import { sendNoti } from '@/assets/notifications'
+import { setTopNotification } from '@/assets/topNotification'
 
 var router = useRouter()
 
@@ -33,14 +33,14 @@ function registerAccount() {
     errorInfo.value.username = '用户名不能为空。'
   } else if (!isFormattedUsername(name.value)) {
     errorInfo.value.username =
-      '用户名格式不正确。用户名的长度应在 5 到 16 个字符之间，且只能包含字母、数字和下划线，其中第一个字符必须是字母。'
+      '用户名格式不正确。用户名的长度应在 2 到 16 个字符之间，且只能包含字母、数字和下划线，其中第一个字符必须是字母。'
   } else if (isEmail(name.value)) {
     errorInfo.value.username = '用户名格式不正确。用户名不应具有邮箱的格式。'
   }
   if (!pass.value) {
     errorInfo.value.password = '密码不能为空。'
   } else if (!isFormattedPassword(pass.value)) {
-    errorInfo.value.password = '密码格式不正确。密码的长度应至少为 8个字符，且不为空白字符。'
+    errorInfo.value.password = '密码格式不正确。密码的长度应至少为 8 个字符，且不为空白字符。'
   }
   if (pass.value !== passAgain.value) {
     errorInfo.value.passwordAgain = '两次输入的密码不一致。'
@@ -65,7 +65,7 @@ function registerAccount() {
         errorInfo.value.email = '邮箱已被注册。'
       } else if (ret.code == 15) {
         errorInfo.value.general =
-          '注册完成，但是在创建账号相关的必要 Objects 时发生错误。现在可以正常登录并使用，但可能会有潜在的一些功能性问题。如必要，请联系管理员以获取帮助。'
+          '注册完成，但是在创建账号相关的必要对象时发生错误。现在可以正常登录并使用，但可能会有潜在的一些功能性问题。如必要，请联系管理员以获取帮助。'
       } else {
         errorInfo.value.general = `注册失败，错误代码：${ret.code}。错误信息： ${ret.message}。如必要，请联系管理员以获取帮助。`
         // console.log(ret) // Need better solution
@@ -84,7 +84,7 @@ watch(
 
 <template>
   <div class="content">
-    <h1>注册新用户</h1>
+    <h1>{{ $t('account.operation.register') }}</h1>
     <p class="error-info" v-if="errorInfo.general">{{ errorInfo.general }}</p>
     <form @submit.prevent="registerAccount()">
       <mdui-text-field label="用户名" maxlength="16" required v-model="name">

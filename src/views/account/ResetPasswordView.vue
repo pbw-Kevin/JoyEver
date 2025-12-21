@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { serverURL } from '@/assets/main.ts'
+import { serverURL } from '@/assets/main'
 import { useRoute, useRouter } from 'vue-router'
-import { Axios } from 'axios'
 import { ref } from 'vue'
-import { setTopNotification } from '@/assets/topNotification.ts'
-import { logout } from '@/assets/account.ts'
+import { setTopNotification } from '@/assets/topNotification'
+import { logout } from '@/assets/account'
 
 const route = useRoute()
 const router = useRouter()
@@ -17,45 +16,49 @@ var errorInfo = ref('')
 var pass = ref('')
 var passAgain = ref('')
 
+var formDisabled = ref(false)
+
 function submitForm() {
   errorInfo.value = ''
+  formDisabled.value = true
   if (route.query.token) {
     if (!pass.value || !passAgain.value) {
       errorInfo.value = '请填写密码。'
+      formDisabled.value = false
       return
     }
     if (pass.value !== passAgain.value) {
       errorInfo.value = '两次输入的密码不一致。'
+      formDisabled.value = false
       return
     }
-    var axios = new Axios()
-    axios
-      .get(fullVerifyURL, {
-        params: {
-          password: pass.value,
-        },
-      })
-      .then((response) => {
-        if (response.data && JSON.parse(response.data).error) {
-          errorInfo.value = 'Token 无效或已过期。'
-        } else {
+    var passQuery = new XMLHttpRequest()
+    passQuery.open('GET', fullVerifyURL + '?password=' + encodeURIComponent(pass.value), true)
+    passQuery.onreadystatechange = () => {
+      if (passQuery.readyState === 4) {
+        if (passQuery.status === 200) {
           logout()
           setTopNotification('重置密码成功。')
           router.push({ name: 'Home' })
+        } else if (JSON.parse(passQuery.responseText).error) {
+          errorInfo.value = 'Token 无效或已过期。'
+        } else {
+          errorInfo.value = '连接服务器时失败。'
+          formDisabled.value = false
         }
-      })
-      .catch((error) => {
-        errorInfo.value = '连接服务器时失败。'
-      })
+      }
+    }
+    passQuery.send()
   } else {
     errorInfo.value = '缺少 Token。'
+    formDisabled.value = false
   }
 }
 </script>
 
 <template>
   <div class="content">
-    <h1>重置密码</h1>
+    <h1>{{ $t('account.operation.resetPassword') }}</h1>
     <p class="error-info" v-if="errorInfo">{{ errorInfo }}</p>
     <form @submit.prevent="submitForm()">
       <mdui-text-field
@@ -70,7 +73,7 @@ function submitForm() {
         label="确认密码"
         v-model="passAgain"
       ></mdui-text-field>
-      <mdui-button type="submit">重置密码</mdui-button>
+      <mdui-button type="submit" :disabled="formDisabled">重置密码</mdui-button>
     </form>
   </div>
 </template>

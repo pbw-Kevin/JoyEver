@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { backgroundImageLoaded } from '@/assets/appearance.ts'
+import { backgroundImageLoaded } from '@/assets/appearance'
 </script>
 
 <template>

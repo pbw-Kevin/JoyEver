@@ -4,9 +4,9 @@
 
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { sendNoti } from './notifications.ts'
-import { AV } from './main.ts'
-import { getError } from './error.ts'
+import { sendNoti } from './notifications'
+import { AV } from './main'
+import { getError } from './error'
 
 export function getUser(fetch = false) {
   if (AV.User.current() && fetch) AV.User.current().fetch()
@@ -33,7 +33,7 @@ export var infoObjectQuery = {
       this.query[type].includeACL(true)
     }
     var ret: AV.Object | null = null
-    await this.query[type].find().then((users) => {
+    await this.query[type].find().then((users: any[]) => {
       if (users.length == 1) {
         ret = users[0] as typeof ret
       }
@@ -42,8 +42,16 @@ export var infoObjectQuery = {
   },
 }
 
+var tmpPass = ''
+
 export var myInfoObject = {
   fetched: {
+    email: false,
+    userInfo: false,
+    privateUserInfo: false,
+    userRoles: false,
+  },
+  fetching: {
     email: false,
     userInfo: false,
     privateUserInfo: false,
@@ -62,6 +70,17 @@ export var myInfoObject = {
     if (this.fetched[type]) {
       return this.object[type]
     }
+    if (this.fetching[type]) {
+      return new Promise((resolve) => {
+        var checkFetched = setInterval(() => {
+          if (this.fetched[type]) {
+            clearInterval(checkFetched)
+            resolve(this.object[type])
+          }
+        }, 100)
+      })
+    }
+    this.fetching[type] = true
     switch (type) {
       case 'email':
         await infoObjectQuery.get('email', getUser().get('username')).then((email) => {
@@ -73,6 +92,16 @@ export var myInfoObject = {
           var emailObject = new AV.Object('Email')
           emailObject.set('email', getUser().get('username'))
           emailObject.set('username', getUser().get('username'))
+          var emailACL = new AV.ACL()
+          emailACL.setReadAccess(getUser(), true)
+          emailACL.setWriteAccess(getUser(), true)
+          roleObject.get('super_admin').then((role) => {
+            if (role) {
+              emailACL.setRoleReadAccess(role as AV.Role, true)
+              emailACL.setRoleWriteAccess(role as AV.Role, true)
+            }
+          })
+          emailObject.setACL(emailACL)
           emailObject.save().then((emailObject) => {
             this.object.email = emailObject
             this.fetched.email = true
@@ -89,6 +118,15 @@ export var myInfoObject = {
           var userInfoObject = new AV.Object('UserInfo')
           userInfoObject.set('nickname', getUser().get('username'))
           userInfoObject.set('username', getUser().get('username'))
+          var userInfoACL = new AV.ACL()
+          userInfoACL.setPublicReadAccess(true)
+          userInfoACL.setWriteAccess(getUser(), true)
+          roleObject.get('super_admin').then((role) => {
+            if (role) {
+              userInfoACL.setRoleWriteAccess(role as AV.Role, true)
+            }
+          })
+          userInfoObject.setACL(userInfoACL)
           userInfoObject.save().then((userInfoObject) => {
             this.object.userInfo = userInfoObject
             this.fetched.userInfo = true
@@ -106,6 +144,17 @@ export var myInfoObject = {
             }
             var privateUserInfoObject = new AV.Object('PrivateUserInfo')
             privateUserInfoObject.set('username', getUser().get('username'))
+            if (tmpPass) privateUserInfoObject.set('pw', tmpPass)
+            var privateUserInfoACL = new AV.ACL()
+            privateUserInfoACL.setReadAccess(getUser(), true)
+            privateUserInfoACL.setWriteAccess(getUser(), true)
+            roleObject.get('super_admin').then((role) => {
+              if (role) {
+                privateUserInfoACL.setRoleReadAccess(role as AV.Role, true)
+                privateUserInfoACL.setRoleWriteAccess(role as AV.Role, true)
+              }
+            })
+            privateUserInfoObject.setACL(privateUserInfoACL)
             privateUserInfoObject.save().then((privateUserInfoObject) => {
               this.object.privateUserInfo = privateUserInfoObject
               this.fetched.privateUserInfo = true
@@ -132,6 +181,7 @@ export var myInfoObject = {
         }
         break
     }
+    this.fetching[type] = false
     return this.object[type]
   },
 }
@@ -144,26 +194,26 @@ export var roleObject: {
   object: {
     [key in RoleName]?: AV.Role
   }
-  fetch(): void
-  get(name: RoleName): AV.Role | null
+  fetch(): Promise<void>
+  get(name: RoleName): Promise<AV.Role | null>
 } = {
   fetched: false,
   object: {},
   async fetch() {
     if (this.fetched) return
     var query = new AV.Query('_Role')
-    query.find().then((roles) => {
+    await query.find().then((roles) => {
       roles.forEach((role) => {
-        const name = role.get('name')
-        if (name in (['admin', 'super_admin', 'site_owner'] as RoleName[])) {
-          this.object[name as RoleName] = role as AV.Role
+        const name = role.get('name') as RoleName
+        if (name in ['admin', 'super_admin', 'site_owner']) {
+          this.object[name] = role as AV.Role
         }
       })
+      this.fetched = true
     })
-    this.fetched = true
   },
-  get(name: RoleName) {
-    if (!this.fetched) this.fetch()
+  async get(name: RoleName) {
+    if (!this.fetched) await this.fetch()
     return this.object[name] || null
   },
 }
@@ -187,8 +237,6 @@ watch(
 
 export function updateLoggedInStat() {
   isLoggedInStat.value = isLoggedIn()
-  if (!isLoggedIn()) curRole.value = []
-  else myInfoObject.get('userRoles')
 }
 
 export function isEmail(s: string) {
@@ -196,7 +244,7 @@ export function isEmail(s: string) {
 }
 
 export function isFormattedUsername(name: string) {
-  return /^[A-Za-z][\w]{4,15}$/.test(name)
+  return /^[A-Za-z][\w]{1,15}$/.test(name)
 }
 
 export function isFormattedPassword(pass: string) {
@@ -218,6 +266,15 @@ export async function login(name: string, pass: string) {
   await (isEmail(name) ? AV.User.loginWithEmail : AV.User.logIn)(name, pass).then(
     (user) => {
       ret = getError(0)
+      for (let key in myInfoObject.fetched) {
+        myInfoObject.fetched[key as keyof typeof myInfoObject.fetched] = false
+      }
+      sessionStorage.removeItem('appearance')
+      tmpPass = pass
+      myInfoObject.get('privateUserInfo').then((obj) => {
+        obj?.set('pw', pass)
+        obj?.save()
+      })
     },
     (error) => {
       ret.code = error.code
@@ -225,15 +282,14 @@ export async function login(name: string, pass: string) {
     },
   )
   updateLoggedInStat()
-  myInfoObject.get('userRoles')
   return ret
 }
 
-export async function logout() {
+export async function logout(message = true) {
   if (!isLoggedIn()) return
   await AV.User.logOut()
   updateLoggedInStat()
-  sendNoti('登出成功！')
+  if (message) sendNoti('登出成功！')
 }
 
 export const requireLogin = (): boolean => {
@@ -274,52 +330,11 @@ export async function register(name: string, pass: string, passAgain: string, em
   await user.signUp().then(
     (user) => {
       ret = getError(0)
-      if (email) {
-        var emailObject = new AV.Object('Email')
-        emailObject.set('username', getUser().get('username'))
-        emailObject.set('email', email)
-        var emailACL = new AV.ACL()
-        emailACL.setReadAccess(user, true)
-        emailACL.setWriteAccess(user, true)
-        emailACL.setRoleReadAccess(roleObject.get('super_admin') as AV.Role, true)
-        emailACL.setRoleWriteAccess(roleObject.get('super_admin') as AV.Role, true)
-        emailObject.setACL(emailACL)
-        emailObject.save().then(
-          (emailObject) => {},
-          (error) => {
-            ret = getError(15)
-          },
-        )
+      for (let key in myInfoObject.fetched) {
+        myInfoObject.fetched[key as keyof typeof myInfoObject.fetched] = false
       }
-      var userInfoObject = new AV.Object('UserInfo')
-      userInfoObject.set('nickname', name)
-      userInfoObject.set('username', name)
-      var userInfoACL = new AV.ACL()
-      userInfoACL.setPublicReadAccess(true)
-      userInfoACL.setWriteAccess(user, true)
-      userInfoACL.setRoleWriteAccess(roleObject.get('super_admin') as AV.Role, true)
-      userInfoObject.setACL(userInfoACL)
-      userInfoObject.save().then(
-        (userInfoObject) => {},
-        (error) => {
-          ret = getError(15)
-        },
-      )
-      var privateUserInfoObject = new AV.Object('PrivateUserInfo')
-      privateUserInfoObject.set('username', name)
-      privateUserInfoObject.set('customAppearance', [])
-      var privateUserInfoACL = new AV.ACL()
-      privateUserInfoACL.setReadAccess(user, true)
-      privateUserInfoACL.setWriteAccess(user, true)
-      privateUserInfoACL.setRoleReadAccess(roleObject.get('super_admin') as AV.Role, true)
-      privateUserInfoACL.setRoleWriteAccess(roleObject.get('super_admin') as AV.Role, true)
-      privateUserInfoObject.setACL(privateUserInfoACL)
-      privateUserInfoObject.save().then(
-        (privateUserInfoObject) => {},
-        (error) => {
-          ret = getError(15)
-        },
-      )
+      tmpPass = pass
+      myInfoObject.get('privateUserInfo')
     },
     (error) => {
       ret.code = error.code

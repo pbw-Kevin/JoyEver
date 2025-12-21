@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import '@mdui/icons/announcement.js'
+import '@mdui/icons/announcement'
 import UserAvatar from './UserAvatar.vue'
 
 const router = useRouter()

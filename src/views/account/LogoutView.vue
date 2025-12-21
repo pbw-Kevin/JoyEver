@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { logout } from '@/assets/account.ts'
+import { logout } from '@/assets/account'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -11,6 +11,6 @@ router.push({ name: 'Home' })
 
 <template>
   <div class="content">
-    <h1>登出</h1>
+    <h1>{{ $t('account.operation.logout') }}</h1>
   </div>
 </template>

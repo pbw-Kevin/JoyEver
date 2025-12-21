@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import '@mdui/icons/arrow-back.js'
-import '@mdui/icons/more-vert.js'
-import '@mdui/icons/send.js'
+import '@mdui/icons/arrow-back'
+import '@mdui/icons/more-vert'
+import '@mdui/icons/send'
 
 import { onMounted, onUpdated } from 'vue'
 import MessageChatList from '@/components/message/MessageChatList.vue'
 import MessagePiece from '@/components/message/MessagePiece.vue'
-import { requireLogin } from '@/assets/account.ts'
-import { chatContainerHeight } from '@/assets/height.ts'
-import { isDesktop } from '@/assets/appearance.ts'
-import { messageList, GotoBottom } from '@/assets/message.ts'
+import { requireLogin } from '@/assets/account'
+import { chatContainerHeight } from '@/assets/height'
+import { isDesktop } from '@/assets/appearance'
+import { messageList, GotoBottom } from '@/assets/message'
 
 requireLogin()
 onMounted(() => setTimeout(GotoBottom, 0, '.chat-message-container'))
@@ -18,7 +18,7 @@ onUpdated(() => GotoBottom('.chat-message-container')) // Too brute actions
 
 <template>
   <div class="content">
-    <h1>站内消息</h1>
+    <h1>{{ $t('message.title') }}</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
       <MessageChatList
         :style="{ width: isDesktop ? '250px' : '100%', minWidth: isDesktop ? '250px' : '100%' }"
@@ -31,7 +31,9 @@ onUpdated(() => GotoBottom('.chat-message-container')) // Too brute actions
               <mdui-icon-arrow-back></mdui-icon-arrow-back>
             </mdui-button-icon>
           </RouterLink>
-          <mdui-top-app-bar-title> 聊天：{{ $route.params.id }} </mdui-top-app-bar-title>
+          <mdui-top-app-bar-title>
+            {{ $t('chat.titleInTopAppBar', { user: $route.params.id }) }}
+          </mdui-top-app-bar-title>
           <mdui-button-icon>
             <mdui-icon-more-vert></mdui-icon-more-vert>
           </mdui-button-icon>
@@ -52,9 +54,9 @@ onUpdated(() => GotoBottom('.chat-message-container')) // Too brute actions
               {{ para }}
             </p>
           </MessagePiece>
-          <p v-if="messageList.length == 0" class="no-message">暂无消息</p>
+          <p v-if="messageList.length == 0" class="no-message">{{ $t('chat.message.no.title') }}</p>
         </div>
-        <mdui-text-field placeholder="发送消息" autosize max-rows="3">
+        <mdui-text-field :placeholder="$t('chat.operation.send')" autosize max-rows="3">
           <mdui-button-icon slot="end-icon">
             <mdui-icon-send></mdui-icon-send>
           </mdui-button-icon>
@@ -118,5 +120,7 @@ p {
   font-size: 24px;
   color: rgb(var(--mdui-color-on-surface-variant));
   text-align: center;
+  user-select: none;
+  --webkit-user-select: none;
 }
 </style>

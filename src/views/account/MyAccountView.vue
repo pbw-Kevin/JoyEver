@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
-import { curRole, requireLogin, getUser, myInfoObject } from '@/assets/account.ts'
+import { curRole, requireLogin, getUser, myInfoObject } from '@/assets/account'
 import UserAvatar from '@/components/account/UserAvatar.vue'
 import UserTagPack from '@/components/account/UserTagPack.vue'
 
@@ -27,14 +27,14 @@ var userInfo: Ref<{
 
 myInfoObject.get('userRoles')
 myInfoObject.get('userInfo').then((tmpUserInfo) => {
-  console.log(tmpUserInfo)
+  // console.log(tmpUserInfo)
   if (tmpUserInfo) userInfo.value = tmpUserInfo.toJSON()
 })
 </script>
 
 <template>
   <div class="content">
-    <h1>我的账号</h1>
+    <h1>{{ $t('account.my.title') }}</h1>
     <div class="user-head">
       <UserAvatar class="user-avatar" :url="userInfo.avatarURL" />
       <div class="user-head-info">
@@ -51,23 +51,23 @@ myInfoObject.get('userInfo').then((tmpUserInfo) => {
         class="user-email"
         variant="outlined"
         readonly
-        label="邮箱"
+        :label="$t('account.email.title')"
         :value="email"
         v-if="email"
       ></mdui-text-field>
       <br />
       <RouterLink :to="`/account/${user.get('username')}`">
-        <mdui-button>访客视角</mdui-button>
+        <mdui-button>{{ $t('account.view.visitor') }}</mdui-button>
       </RouterLink>
       <RouterLink to="/history">
-        <mdui-button>历史对局</mdui-button>
+        <mdui-button>{{ $t('game.history.my.title') }}</mdui-button>
       </RouterLink>
       <br />
       <RouterLink to="/setting">
-        <mdui-button>账号设置</mdui-button>
+        <mdui-button>{{ $t('setting.title') }}</mdui-button>
       </RouterLink>
       <RouterLink to="/logout">
-        <mdui-button>登出账号</mdui-button>
+        <mdui-button>{{ $t('account.operation.logout') }}</mdui-button>
       </RouterLink>
     </div>
   </div>

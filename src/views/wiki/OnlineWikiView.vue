@@ -4,7 +4,10 @@ import { RouterLink } from 'vue-router'
 
 <template>
   <div class="content">
-    <h1>在线大典</h1>
-    <p>开发中。可以先访问 <RouterLink to="/wiki/docx">Docx 版大典</RouterLink>。</p>
+    <h1>{{ $t('wiki.online.title') }}</h1>
+    <p>
+      {{ $t('developing.title') }}<br />
+      可以先访问 <RouterLink to="/wiki/docx">Docx 版大典</RouterLink>。
+    </p>
   </div>
 </template>

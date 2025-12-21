@@ -4,7 +4,7 @@ var routes = [
     name: 'Home',
     component: () => import('@/views/home/HomeView.vue'),
     meta: {
-      title: '首页 - 永乐大典',
+      title: 'home.title',
     },
   },
   {
@@ -12,7 +12,7 @@ var routes = [
     name: 'GameHome',
     component: () => import('@/views/game/GameHomeView.vue'),
     meta: {
-      title: '游戏 - 永乐大典',
+      title: 'game.title',
     },
   },
   {
@@ -20,7 +20,7 @@ var routes = [
     name: 'RoomList',
     component: () => import('@/views/game/RoomListView.vue'),
     meta: {
-      title: '房间列表 - 永乐大典',
+      title: 'game.room.list.title',
     },
   },
   {
@@ -28,7 +28,7 @@ var routes = [
     name: 'Room',
     component: () => import('@/views/game/RoomView.vue'),
     meta: {
-      title: '房间 - 永乐大典',
+      title: 'game.room.title',
     },
   },
   {
@@ -36,7 +36,7 @@ var routes = [
     name: 'Message',
     component: () => import('@/views/message/MessageView.vue'),
     meta: {
-      title: '站内消息 - 永乐大典',
+      title: 'message.title',
     },
   },
   {
@@ -44,7 +44,7 @@ var routes = [
     name: 'MessageDetail',
     component: () => import('@/views/message/MessageDetailView.vue'),
     meta: {
-      title: '站内消息 - 永乐大典',
+      title: 'message.title',
     },
   },
   {
@@ -52,7 +52,7 @@ var routes = [
     name: 'Announcement',
     component: () => import('@/views/message/AnnouncementView.vue'),
     meta: {
-      title: '公告 - 永乐大典',
+      title: 'announcement.title',
     },
   },
   {
@@ -60,7 +60,7 @@ var routes = [
     name: 'Wiki',
     component: () => import('@/views/wiki/WikiView.vue'),
     meta: {
-      title: '大典Wiki - 永乐大典',
+      title: 'wiki.title',
     },
   },
   {
@@ -68,7 +68,7 @@ var routes = [
     name: 'OnlineWiki',
     component: () => import('@/views/wiki/OnlineWikiView.vue'),
     meta: {
-      title: '在线大典 - 永乐大典',
+      title: 'wiki.online.title',
     },
   },
   {
@@ -76,7 +76,7 @@ var routes = [
     name: 'DocxWiki',
     component: () => import('@/views/wiki/DocxWikiView.vue'),
     meta: {
-      title: '大典Docx - 永乐大典',
+      title: 'wiki.docx.title',
     },
   },
   {
@@ -84,7 +84,7 @@ var routes = [
     name: 'Test',
     component: () => import('@/views/wiki/TestView.vue'),
     meta: {
-      title: '在线试验 - 永乐大典',
+      title: 'wiki.test.title',
     },
   },
   {
@@ -92,7 +92,7 @@ var routes = [
     name: 'MyAccount',
     component: () => import('@/views/account/MyAccountView.vue'),
     meta: {
-      title: '我的账号 - 永乐大典',
+      title: 'account.my.title',
     },
   },
   {
@@ -100,7 +100,7 @@ var routes = [
     name: 'Account',
     component: () => import('@/views/account/AccountView.vue'),
     meta: {
-      title: '账号 - 永乐大典',
+      title: 'account.title',
     },
   },
   {
@@ -108,7 +108,7 @@ var routes = [
     name: 'MyHistory',
     component: () => import('@/views/history/MyHistoryView.vue'),
     meta: {
-      title: '历史对局 - 永乐大典',
+      title: 'game.history.my.title',
     },
   },
   {
@@ -116,7 +116,7 @@ var routes = [
     name: 'History',
     component: () => import('@/views/history/HistoryView.vue'),
     meta: {
-      title: '历史对局 - 永乐大典',
+      title: 'game.history.title',
     },
   },
   {
@@ -124,7 +124,15 @@ var routes = [
     name: 'Setting',
     component: () => import('@/views/account/SettingView.vue'),
     meta: {
-      title: '设置 - 永乐大典',
+      title: 'setting.title',
+    },
+  },
+  {
+    path: '/ticket/new',
+    name: 'NewTicket',
+    component: () => import('@/views/ticket/NewTicketView.vue'),
+    meta: {
+      title: 'ticket.new.title',
     },
   },
   {
@@ -132,15 +140,7 @@ var routes = [
     name: 'Ticket',
     component: () => import('@/views/ticket/TicketView.vue'),
     meta: {
-      title: '工单 - 永乐大典',
-    },
-  },
-  {
-    path: '/myticket',
-    name: 'MyTicket',
-    component: () => import('@/views/ticket/MyTicketView.vue'),
-    meta: {
-      title: '我的工单 - 永乐大典',
+      title: 'ticket.title',
     },
   },
   {
@@ -148,7 +148,7 @@ var routes = [
     name: 'Changelog',
     component: () => import('@/views/changelog/ChangelogView.vue'),
     meta: {
-      title: '更新日志 - 永乐大典',
+      title: 'changelog.title',
     },
   },
   {
@@ -156,7 +156,7 @@ var routes = [
     name: 'About',
     component: () => import('@/views/about/AboutView.vue'),
     meta: {
-      title: '关于 - 永乐大典',
+      title: 'about.title',
     },
   },
   {
@@ -164,7 +164,7 @@ var routes = [
     name: 'Admin',
     component: () => import('@/views/admin/AdminView.vue'),
     meta: {
-      title: '管理 - 永乐大典',
+      title: 'admin.title',
     },
   },
   {
@@ -172,7 +172,7 @@ var routes = [
     name: 'Login',
     component: () => import('@/views/account/LoginView.vue'),
     meta: {
-      title: '登录 - 永乐大典',
+      title: 'account.operation.login',
     },
   },
   {
@@ -180,7 +180,7 @@ var routes = [
     name: 'Register',
     component: () => import('@/views/account/RegisterView.vue'),
     meta: {
-      title: '注册新账号 - 永乐大典',
+      title: 'account.operation.register',
     },
   },
   {
@@ -188,7 +188,7 @@ var routes = [
     name: 'Logout',
     component: () => import('@/views/account/LogoutView.vue'),
     meta: {
-      title: '登出 - 永乐大典',
+      title: 'account.operation.logout',
     },
   },
   {
@@ -196,7 +196,7 @@ var routes = [
     name: 'PreResetPassword',
     component: () => import('@/views/account/PreResetPasswordView.vue'),
     meta: {
-      title: '重置密码 - 永乐大典',
+      title: 'account.operation.resetPassword',
     },
   },
   {
@@ -204,7 +204,7 @@ var routes = [
     name: 'ResetPassword',
     component: () => import('@/views/account/ResetPasswordView.vue'),
     meta: {
-      title: '重置密码 - 永乐大典',
+      title: 'account.operation.resetPassword',
     },
   },
   {
@@ -212,7 +212,7 @@ var routes = [
     name: 'EmailVerify',
     component: () => import('@/views/account/EmailVerifyView.vue'),
     meta: {
-      title: '邮箱验证 - 永乐大典',
+      title: 'account.operation.emailVerify',
     },
   },
   // {

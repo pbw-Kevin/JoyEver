@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { UpdateNavOpened, checkRoute } from '@/assets/navDrawer.ts'
+import { UpdateNavOpened, checkRoute } from '@/assets/navDrawer'
 
 const props = defineProps<{
   to?: string

@@ -2,7 +2,7 @@
 
 <template>
   <div class="content">
-    <h1>更新日志</h1>
+    <h1>{{ $t('changelog.title') }}</h1>
     <h2>v1.0-rc1 -- W.I.P.</h2>
     <p>
       发布于：未发布<br />

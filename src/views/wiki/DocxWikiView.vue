@@ -2,11 +2,11 @@
 
 <template>
   <div class="content">
-    <h1>大典Docx</h1>
-    <h2>在线访问 Docx 版永乐大典</h2>
-    链接：<br />
+    <h1>{{ $t('wiki.docx.title') }}</h1>
+    <h2>{{ $t('wiki.docx.visitOnline.title') }}</h2>
+    {{ $t('wiki.docx.visitOnline.disc') }}<br />
     <a href="https://kdocs.cn/l/cbMVSVdlq8Ro" target="_blank">https://kdocs.cn/l/cbMVSVdlq8Ro</a>
-    <h2>关于</h2>
-    由 @syq 制作。
+    <h2>{{ $t('wiki.docx.about.title') }}</h2>
+    {{ $t('wiki.docx.about.disc') }}
   </div>
 </template>

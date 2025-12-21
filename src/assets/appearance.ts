@@ -5,9 +5,9 @@
 import { ref, watch } from 'vue'
 import { setColorScheme, setTheme, breakpoint, observeResize } from 'mdui'
 import type { Theme } from 'mdui/internal/theme'
-import { AV } from './main.ts'
-import { sendNoti } from './notifications.ts'
-import { myInfoObject } from './account.ts'
+import { AV } from './main'
+import { sendNoti } from './notifications'
+import { myInfoObject } from './account'
 
 var generalAppearanceQuery = new AV.Query('GeneralAppearance')
 
@@ -17,17 +17,22 @@ var backgroundImage = ''
 var backgroundImageOpacity = 0
 var sidebarOpacity = 1
 
+export function proceedOpacity(opa: any) {
+  if (opa === 0) return 0
+  return opa || 1
+}
+
 const localGeneralAppearance = {
   name: '',
   isGeneral: true,
   theme: (theme as Theme) || 'auto',
   colorScheme: colorScheme || '#ffffff',
   backgroundImage: backgroundImage || '',
-  backgroundImageOpacity: backgroundImageOpacity || 0,
-  sidebarOpacity: sidebarOpacity || 1,
+  backgroundImageOpacity: proceedOpacity(backgroundImageOpacity),
+  sidebarOpacity: proceedOpacity(sidebarOpacity),
 }
 
-var appearanceSetting = ref(localGeneralAppearance)
+export var appearanceSetting = ref(localGeneralAppearance)
 
 export var appearanceSettingList = [localGeneralAppearance]
 
@@ -51,8 +56,8 @@ export async function fetchAppearance(force = false) {
             theme: item.get('theme') || 'auto',
             colorScheme: item.get('colorScheme') || '#ffffff',
             backgroundImage: item.get('backgroundImage') || '',
-            backgroundImageOpacity: item.get('backgroundImageOpacity') || 0,
-            sidebarOpacity: item.get('sidebarOpacity') || 1,
+            backgroundImageOpacity: proceedOpacity(item.get('backgroundImageOpacity')),
+            sidebarOpacity: proceedOpacity(item.get('sidebarOpacity')),
           }
           if (item.get('isDefault') && !rawLocalAppearance) {
             activeAppearance = itemJSON
@@ -83,8 +88,8 @@ export async function fetchAppearance(force = false) {
               theme: item.theme || 'auto',
               colorScheme: item.colorScheme || '#ffffff',
               backgroundImage: item.backgroundImage || '',
-              backgroundImageOpacity: item.backgroundImageOpacity || 0,
-              sidebarOpacity: item.sidebarOpacity || 1,
+              backgroundImageOpacity: proceedOpacity(item.backgroundImageOpacity),
+              sidebarOpacity: proceedOpacity(item.sidebarOpacity),
             }
             appearanceSettingList.push(itemJSON)
           },
@@ -104,10 +109,6 @@ export async function fetchAppearance(force = false) {
     sessionStorage.setItem('appearance', JSON.stringify(activeAppearance))
     fetched.value = true
   }
-}
-
-export function getAppearance() {
-  return appearanceSetting
 }
 
 export function setAppearance(appe: typeof localGeneralAppearance) {

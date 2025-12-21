@@ -2,9 +2,9 @@
   Asset for announcement service of JoyEver
 */
 
-import { AV } from './main.ts'
+import { AV } from './main'
 import { ref, computed } from 'vue'
-import { myInfoObject } from './account.ts'
+import { myInfoObject } from './account'
 
 export async function getLastReadAnnouncement() {
   var ret = new Date('2000/01/01 00:00:00')

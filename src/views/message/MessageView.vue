@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import '@mdui/icons/chat.js'
+import '@mdui/icons/chat'
 import MessageChatList from '@/components/message/MessageChatList.vue'
-import { chatContainerHeight } from '@/assets/height.ts'
-import { isDesktop } from '@/assets/appearance.ts'
+import { chatContainerHeight } from '@/assets/height'
+import { isDesktop } from '@/assets/appearance'
 </script>
 
 <template>
   <div class="content">
-    <h1>站内消息</h1>
+    <h1>{{ $t('message.title') }}</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
       <MessageChatList
         :style="{ width: isDesktop ? '250px' : '100%', minWidth: isDesktop ? '250px' : '100%' }"

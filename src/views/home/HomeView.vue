@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import { isLoggedInStat } from '@/assets/account.ts'
+import { isLoggedInStat } from '@/assets/account'
 </script>
 
 <template>
   <div class="content">
-    <h1>首页</h1>
-    欢迎来到永乐大典在线游戏！<br />
-    你可以：<br />
+    <h1>{{ $t('home.title') }}</h1>
+    {{ $t('home.disc') }}<br />
+    {{ $t('home.options.title') }}<br />
     <ul>
-      <li>立刻<RouterLink to="/game">开始游戏</RouterLink></li>
-      <li>在线查看<RouterLink to="/wiki/online">永乐大典（Wiki）</RouterLink></li>
+      <li>
+        {{ $t('home.options.startGame.pre')
+        }}<RouterLink to="/game">{{ $t('home.options.startGame.title') }}</RouterLink
+        >{{ $t('home.options.startGame.suf') }}
+      </li>
+      <li>
+        {{ $t('home.options.viewWiki.pre')
+        }}<RouterLink to="/wiki/online">{{ $t('home.options.viewWiki.title') }}</RouterLink
+        >{{ $t('home.options.viewWiki.suf') }}
+      </li>
       <li v-if="!isLoggedInStat">
-        <RouterLink to="/login">登录账号</RouterLink><br />
-        （推荐，登录后可以查看历史对局，启用聊天功能）
+        <RouterLink to="/login">{{ $t('home.options.login.title') }}</RouterLink
+        ><br />
+        {{ $t('home.options.login.disc') }}
       </li>
     </ul>
   </div>

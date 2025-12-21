@@ -1,110 +1,139 @@
 <script setup lang="ts">
-import '@mdui/icons/keyboard-arrow-down.js'
-import '@mdui/icons/settings.js'
-import '@mdui/icons/security.js'
-import '@mdui/icons/videogame-asset.js'
-import '@mdui/icons/palette.js'
+import '@mdui/icons/keyboard-arrow-down'
+import '@mdui/icons/settings'
+import '@mdui/icons/security'
+import '@mdui/icons/videogame-asset'
+import '@mdui/icons/palette'
 
-import { computed, onUnmounted, ref, watch } from 'vue'
-import { confirm, prompt, getColorFromImage, throttle } from 'mdui'
+import { computed, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+import { confirm, prompt, getColorFromImage } from 'mdui'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import {
   requireLogin,
   getUser,
   myInfoObject,
   isFormattedPassword,
   isEmail,
-} from '@/assets/account.ts'
+  logout,
+} from '@/assets/account'
 import {
   appearanceSettingList,
   fetched,
-  getAppearance,
+  appearanceSetting,
   setAppearance,
-} from '@/assets/appearance.ts'
-import { AV } from '@/assets/main.ts'
-import { sendNoti } from '@/assets/notifications.ts'
+} from '@/assets/appearance'
+import { AV, debounce } from '@/assets/main'
+import { sendNoti } from '@/assets/notifications'
+import UserTag from '@/components/account/UserTag.vue'
 
 requireLogin()
 
 var user = getUser()
 var username = user.getUsername()
 var userInfo = new AV.Object('UserInfo')
-var nickname = ref('')
-var email = ref(user.get('email'))
-var hasEmail = ref(!!email.value)
 var emailInfo = new AV.Object('Email')
-var isPublicEmail = ref(false)
-var isVerifiedEmail = ref(user.get('emailVerified'))
-var verifyEmailClicked = ref(false)
-var verifyEmailFailed = ref(false)
+
+const localSetting = reactive({
+  nickname: '',
+  email: (user.get('email') as string | undefined) || '',
+  hasEmail: !!user.get('email'),
+  emailChanged: false,
+  isPublicEmail: false,
+  isVerifiedEmail: (user.get('emailVerified') as boolean) || false,
+  verifyEmailClicked: false,
+  verifyEmailFailed: false,
+  emailErrorInfo: '',
+})
+
 myInfoObject.get('userInfo').then((tmpUserInfo) => {
   if (!tmpUserInfo) return
   userInfo = tmpUserInfo
-  nickname.value = userInfo.get('nickname')
+  localSetting.nickname = userInfo.get('nickname')
 })
 myInfoObject.get('email').then((tmpEmailInfo) => {
   if (!tmpEmailInfo) return
   emailInfo = tmpEmailInfo
-  isPublicEmail.value = tmpEmailInfo.getACL().getPublicReadAccess()
+  localSetting.isPublicEmail = tmpEmailInfo.getACL()?.getPublicReadAccess()
 })
 
-watch(nickname, (newNickname) => {
-  userInfo.set('nickname', newNickname)
-})
+function failedAutoSave() {
+  sendNoti(t('setting.message.failedAutoSave'), true)
+}
 
-var emailErrorInfo = ref('')
+watch(
+  () => localSetting.nickname,
+  debounce((newNickname: string) => {
+    if (!newNickname) return
+    userInfo.set('nickname', newNickname)
+    userInfo.save().catch(() => {
+      failedAutoSave()
+    })
+  }, 1000),
+)
+
+watch(
+  () => localSetting.email,
+  (newEmail) => {
+    localSetting.emailErrorInfo = ''
+    localSetting.hasEmail = !!newEmail
+    localSetting.emailChanged = newEmail !== (user.get('email') as string | undefined)
+    if (newEmail && !isEmail(newEmail)) {
+      localSetting.emailErrorInfo = t('setting.message.incorrectEmailFormat')
+    }
+  },
+)
 
 function saveEmail() {
-  emailErrorInfo.value = ''
-  if (email.value && !isEmail(email.value)) {
-    emailErrorInfo.value = '邮箱格式不正确。'
+  localSetting.emailErrorInfo = ''
+  if (localSetting.email && !isEmail(localSetting.email)) {
+    localSetting.emailErrorInfo = t('setting.message.incorrectEmailFormat')
     return
   }
-  user.setEmail(email.value)
+  user.setEmail(localSetting.email)
   user
     .save()
     .then((user) => {
-      isVerifiedEmail.value = user.get('emailVerified')
-      hasEmail.value = !!email.value
-      return emailInfo.set('email', email.value)
+      localSetting.isVerifiedEmail = user.get('emailVerified')
+      return emailInfo.set('email', localSetting.email)
     })
     .then(() => {
-      sendNoti('邮箱已保存！', true)
+      localSetting.emailChanged = false
+      sendNoti(t('setting.message.emailSaved'), true)
     })
     .catch((error) => {
       if (error.code == 203) {
-        emailErrorInfo.value = '邮箱已被使用。请尝试其他邮箱。'
+        localSetting.emailErrorInfo = t('setting.message.emailUsed')
         return
       }
-      emailErrorInfo.value = '保存邮箱时出现问题。'
+      localSetting.emailErrorInfo = t('setting.message.failedSaveEmail')
     })
-  verifyEmailClicked.value = false
-  verifyEmailFailed.value = false
+  localSetting.verifyEmailClicked = false
+  localSetting.verifyEmailFailed = false
 }
 
-watch(email, () => {
-  emailErrorInfo.value = ''
-})
-
 function updateIsPublicEmail(newValue: boolean) {
-  isPublicEmail.value = newValue
+  localSetting.isPublicEmail = newValue
   emailInfo.getACL().setPublicReadAccess(newValue)
   emailInfo
     .save()
     .then(() => {
-      sendNoti('邮箱隐私设置已更新！', true)
+      sendNoti(t('setting.message.emailPublicChanged'), true)
     })
     .catch((error) => {
-      sendNoti('更新邮箱隐私设置时出现问题。', true)
+      sendNoti(t('setting.message.failedChangeEmailPublic'), true)
     })
 }
 
 function sendEmailVerification() {
-  AV.User.requestEmailVerify(email.value)
+  AV.User.requestEmailVerify(localSetting.email)
     .then(() => {
-      verifyEmailClicked.value = true
+      localSetting.verifyEmailClicked = true
     })
     .catch((error) => {
-      verifyEmailFailed.value = true
+      localSetting.verifyEmailFailed = true
     })
 }
 
@@ -124,23 +153,31 @@ function savePassword() {
   }
   passwordChanged.value = false
   if (!pass.value) {
-    passErrorInfo.value.password = '请填写密码。'
+    passErrorInfo.value.password = t('setting.message.emptyPassword')
     return
   } else if (!isFormattedPassword(pass.value)) {
-    passErrorInfo.value.password = '密码格式不正确。密码的长度应至少为 8 个字符，且不为空白字符。'
+    passErrorInfo.value.password = t('setting.message.incorrectPasswordFormat')
     return
   } else if (pass.value !== passAgain.value) {
-    passErrorInfo.value.passwordAgain = '两次输入的密码不一致。'
+    passErrorInfo.value.passwordAgain = t('setting.message.differentPassword')
     return
   } else {
     user.setPassword(pass.value)
-    passwordChanged.value = true
+    user
+      .save()
+      .then(() => {
+        sendNoti(t('setting.security.password.message.changed'))
+        logout(false)
+        router.push({ name: 'Login' })
+      })
+      .catch(() => {
+        passErrorInfo.value.password = t('setting.message.failedSave')
+      })
   }
 }
 
-var appearanceSetting = getAppearance()
 var appearanceList = ref(appearanceSettingList)
-var activeAppearance = ref({ ...getAppearance().value })
+var activeAppearance = ref({ ...appearanceSetting.value })
 var activeAppearanceName = ref(activeAppearance.value.name)
 var appliedAppearanceName = ref(activeAppearance.value.name)
 var appearanceChanged = computed(() => {
@@ -154,7 +191,7 @@ var appearanceChanged = computed(() => {
 watch(fetched, (fetched) => {
   if (fetched) {
     appearanceList.value = appearanceSettingList
-    activeAppearance.value = { ...getAppearance().value }
+    activeAppearance.value = { ...appearanceSetting.value }
     activeAppearanceName.value = activeAppearance.value.name
     appliedAppearanceName.value = activeAppearance.value.name
   }
@@ -178,7 +215,7 @@ watch(
   { deep: true },
 )
 
-var throttledSetImage = throttle((image: string) => {
+var debouncedSetImage = debounce((image: string) => {
   activeAppearance.value.backgroundImage = image
 }, 1000)
 
@@ -190,7 +227,7 @@ watch(tmpImg, (newImage, oldImage) => {
     activeAppearance.value.backgroundImageOpacity = 0.3
     activeAppearance.value.sidebarOpacity = 0.7
     activeAppearance.value.backgroundImage = newImage
-  } else throttledSetImage(newImage)
+  } else debouncedSetImage(newImage)
 })
 
 var colorErrorInfo = ref('')
@@ -210,7 +247,7 @@ function getColor() {
       })
   }
   image.onerror = (error) => {
-    colorErrorInfo.value = '无法加载背景图片。可能是跨域问题或图片不存在。'
+    colorErrorInfo.value = t('setting.message.failedLoadBackgroundImage')
   }
 }
 
@@ -226,7 +263,7 @@ function saveAppearance() {
       (setting) => setting.name === activeAppearance.value.name,
     )
     if (tmpAppearance && tmpAppearance !== existingAppearance) {
-      savingErrorInfo.value = '主题名已存在'
+      savingErrorInfo.value = '主题名已存在。'
       return
     }
     Object.assign(existingAppearance, { ...activeAppearance.value })
@@ -242,12 +279,12 @@ function saveAppearance() {
 function saveAsNewAppearance() {
   prompt({
     headline: '另存为新的主题',
-    description: '在此处键入主题名',
+    description: '在此处键入主题名。',
     confirmText: '完成',
     cancelText: '取消',
     onConfirm: (value) => {
       if (!value) {
-        savingErrorInfo.value = '主题名不能为空'
+        savingErrorInfo.value = '主题名不能为空。'
         return
       }
       if (appearanceList.value.some((setting) => setting.name === value)) {
@@ -269,7 +306,7 @@ function applyAppearance() {
 function deleteAppearance() {
   confirm({
     headline: '确认要删除主题吗？',
-    description: '此操作不可撤销',
+    description: '此操作不可撤销。',
     confirmText: '删除',
     cancelText: '取消',
     onConfirm: () => {
@@ -285,7 +322,10 @@ function deleteAppearance() {
   })
 }
 
+var saving = ref(false)
+
 async function saveSetting() {
+  saving.value = true
   var hasError = false
   await user.save().catch((err) => {
     hasError = true
@@ -319,97 +359,134 @@ async function saveSetting() {
       hasError = true
     })
   })
-  if (hasError) sendNoti('保存时出现问题。', true)
-  else sendNoti('保存成功！', true)
+  if (hasError) sendNoti(t('setting.message.failedSave'), true)
+  else sendNoti(t('setting.message.saved'), true)
+  saving.value = false
 }
-
-onUnmounted(() => {
-  saveSetting() // Should have better solution
-  // Solution: Remind user with unsaved setting
-})
 </script>
 
 <template>
   <div class="content">
-    <h1>设置</h1>
-    <mdui-button @click="saveSetting()">保存设置</mdui-button>
+    <h1>{{ $t('setting.title') }}</h1>
+    <mdui-button @click="saveSetting()" :disabled="saving">{{
+      $t('setting.operation.save')
+    }}</mdui-button>
     <mdui-tabs value="global" full-width variant="secondary">
       <mdui-tab value="global">
-        全局设置
+        {{ $t('setting.global.title') }}
         <mdui-icon-settings slot="icon"></mdui-icon-settings>
       </mdui-tab>
       <mdui-tab value="security">
-        安全
+        {{ $t('setting.security.title') }}
         <mdui-icon-security slot="icon"></mdui-icon-security>
       </mdui-tab>
       <mdui-tab value="game">
-        游戏设置
+        {{ $t('setting.game.title') }}
         <mdui-icon-videogame-asset slot="icon"></mdui-icon-videogame-asset>
       </mdui-tab>
       <mdui-tab value="appearance">
-        外观
+        {{ $t('setting.appearance.title') }}
         <mdui-icon-palette slot="icon"></mdui-icon-palette>
       </mdui-tab>
 
       <mdui-tab-panel slot="panel" value="global">
-        <h2>全局设置</h2>
+        <h2>{{ $t('setting.global.title') }}</h2>
         <mdui-text-field
-          label="用户名"
+          :label="$t('setting.global.username.title')"
           variant="outlined"
           readonly
           :value="username"
         ></mdui-text-field>
-        <mdui-text-field label="昵称" v-model="nickname"></mdui-text-field>
-        <h3>邮箱</h3>
-        <mdui-text-field type="email" label="邮箱" v-model="email">
-          <span slot="helper" class="error-info">{{ emailErrorInfo }}</span>
+        <mdui-text-field
+          :label="$t('setting.global.nickname.title')"
+          :value="localSetting.nickname"
+          @input="localSetting.nickname = $event.target.value"
+          required
+        >
         </mdui-text-field>
-        <mdui-button @click="saveEmail()">保存邮箱</mdui-button>
-        <div v-if="hasEmail">
-          <mdui-checkbox
-            :checked="isPublicEmail"
-            @input="updateIsPublicEmail(!$event.target.checked)"
-            >公开邮箱</mdui-checkbox
-          >
-          邮箱状态：<span v-if="isVerifiedEmail">已验证✔</span><span v-else>未验证❌</span>
+        <h3>{{ $t('setting.global.email.title') }}</h3>
+        <mdui-text-field
+          type="email"
+          :label="$t('setting.global.email.title')"
+          :value="localSetting.email"
+          @input="localSetting.email = $event.target.value"
+        >
+          <span slot="helper" class="error-info">{{ localSetting.emailErrorInfo }}</span>
+        </mdui-text-field>
+        <mdui-button :disabled="!localSetting.emailChanged" @click="saveEmail()">{{
+          $t('setting.global.email.operation.save')
+        }}</mdui-button>
+        <mdui-checkbox
+          v-if="localSetting.hasEmail"
+          :checked="localSetting.isPublicEmail"
+          @input="updateIsPublicEmail(!$event.target.checked)"
+          >{{ $t('setting.global.email.operation.madePublic') }}</mdui-checkbox
+        >
+        <div v-if="localSetting.hasEmail">
+          {{
+            $t('setting.global.email.status.title', {
+              status: localSetting.isVerifiedEmail
+                ? $t('setting.global.email.status.verified')
+                : $t('setting.global.email.status.unverified'),
+            })
+          }}
           <mdui-button
-            v-if="!isVerifiedEmail"
+            v-if="!localSetting.isVerifiedEmail"
             @click="sendEmailVerification()"
-            :disabled="verifyEmailClicked"
-            >邮箱验证</mdui-button
+            :disabled="
+              !localSetting.emailChanged && localSetting.hasEmail && localSetting.verifyEmailClicked
+            "
+            >{{ $t('setting.global.email.operation.verify') }}</mdui-button
           >
-          <span v-if="verifyEmailClicked">验证邮件已发送</span>
-          <span v-if="verifyEmailFailed">发送验证邮件失败</span>
+          <span v-if="localSetting.verifyEmailClicked">{{
+            $t('setting.global.email.status.message.clicked')
+          }}</span>
+          <span v-if="localSetting.verifyEmailFailed">{{
+            $t('setting.global.email.status.message.failed')
+          }}</span>
         </div>
       </mdui-tab-panel>
 
       <mdui-tab-panel slot="panel" value="security">
-        <h2>安全</h2>
-        <h3>修改密码</h3>
-        <mdui-text-field type="password" toggle-password label="新密码" v-model="pass">
+        <h2>{{ $t('setting.security.title') }}</h2>
+        <h3>{{ $t('setting.security.password.change.title') }}</h3>
+        <mdui-text-field
+          type="password"
+          toggle-password
+          :label="$t('setting.security.password.new.title')"
+          :value="pass"
+          @input="pass = $event.target.value"
+        >
           <span slot="helper" class="error-info">{{ passErrorInfo.password }}</span>
         </mdui-text-field>
-        <mdui-text-field type="password" toggle-password label="确认新密码" v-model="passAgain">
+        <mdui-text-field
+          type="password"
+          toggle-password
+          :label="$t('setting.security.password.ensureNew.title')"
+          :value="passAgain"
+          @input="passAgain = $event.target.value"
+        >
           <span slot="helper" class="error-info">{{ passErrorInfo.passwordAgain }}</span>
         </mdui-text-field>
-        <mdui-button @click="savePassword()">更改密码</mdui-button>
-        <span v-if="passwordChanged">密码已更改！</span>
+        <mdui-button @click="savePassword()">{{
+          $t('setting.security.password.operation.change')
+        }}</mdui-button>
       </mdui-tab-panel>
 
       <mdui-tab-panel slot="panel" value="game">
-        <h2>游戏设置</h2>
-        <mdui-checkbox>公开历史记录</mdui-checkbox>
+        <h2>{{ $t('setting.game.title') }}</h2>
+        <mdui-checkbox>{{ $t('setting.game.madeHistoryPublic.title') }}</mdui-checkbox>
         <br />
-        <mdui-checkbox>自动禁用不可用手势</mdui-checkbox>
-        <h3>自定义手势</h3>
-        <p>自定义手势会被自动判定为爆盾。</p>
+        <mdui-checkbox>{{ $t('setting.game.autoDisableUnavailableSkill.title') }}</mdui-checkbox>
+        <h3>{{ $t('setting.game.customSkill.title') }}</h3>
+        <p>{{ $t('setting.game.customSkill.disc') }}</p>
       </mdui-tab-panel>
 
       <mdui-tab-panel slot="panel" value="appearance">
-        <h2>外观</h2>
-        <h3>主题</h3>
+        <h2>{{ $t('setting.appearance.title') }}</h2>
+        <h3>{{ $t('setting.appearance.theme.title') }}</h3>
         <mdui-select
-          label="选择主题"
+          :label="$t('setting.appearance.theme.select.title')"
           :value="activeAppearanceName"
           @change="activeAppearanceName = $event.target.value"
         >
@@ -421,36 +498,55 @@ onUnmounted(() => {
           </mdui-button-icon>
         </mdui-select>
         <mdui-card class="appearance-card" v-if="activeAppearanceName">
-          <span v-if="activeAppearance.isGeneral">系统主题</span>
-          <span v-else>自定义主题</span>
-          <span v-if="activeAppearanceName == appliedAppearanceName">&nbsp;已应用✔</span>
-          <mdui-text-field label="主题名称" v-model="activeAppearance.name"></mdui-text-field>
+          <UserTag
+            color="grey"
+            :tag="
+              activeAppearance.isGeneral
+                ? $t('setting.appearance.theme.type.general')
+                : $t('setting.appearance.theme.type.custom')
+            "
+          ></UserTag>
+          <UserTag
+            v-if="activeAppearanceName == appliedAppearanceName"
+            color="green"
+            :tag="$t('setting.appearance.theme.applied.title')"
+          ></UserTag>
+          <mdui-text-field
+            :label="$t('setting.appearance.theme.name.title')"
+            :value="activeAppearance.name"
+            @input="activeAppearance.name = $event.target.value"
+          ></mdui-text-field>
           <mdui-select
-            label="深色/浅色模式"
+            :label="$t('setting.appearance.theme.lightDark.title')"
             :value="activeAppearance.theme"
             @change="activeAppearance.theme = $event.target.value"
           >
-            <mdui-menu-item value="auto">跟随系统</mdui-menu-item>
-            <mdui-menu-item value="light">浅色模式</mdui-menu-item>
-            <mdui-menu-item value="dark">深色模式</mdui-menu-item>
+            <mdui-menu-item v-for="lightDark in ['auto', 'light', 'dark']" :value="lightDark">{{
+              $t('setting.appearance.theme.lightDark.' + lightDark)
+            }}</mdui-menu-item>
             <mdui-button-icon slot="end-icon">
               <mdui-icon-keyboard-arrow-down></mdui-icon-keyboard-arrow-down>
             </mdui-button-icon>
           </mdui-select>
           <mdui-text-field
-            label="背景图片URL"
+            :label="$t('setting.appearance.theme.backgroundImage.title')"
             :value="tmpImg"
             @input="tmpImg = $event.target.value"
           ></mdui-text-field>
           <div class="color-scheme">
-            配色方案：<input type="color" v-model="activeAppearance.colorScheme" />
-            <mdui-button @click="getColor()" :disabled="!activeAppearance.backgroundImage"
-              >从背景图片中提取</mdui-button
+            {{ $t('setting.appearance.theme.colorScheme.title')
+            }}<input type="color" v-model="activeAppearance.colorScheme" style="margin-left: 4px" />
+            <mdui-button
+              @click="getColor()"
+              :disabled="!tmpImg || !activeAppearance.backgroundImage"
+              >{{ $t('setting.appearance.theme.colorScheme.getColorFromImage') }}</mdui-button
             >
           </div>
-          <div class="error-info" v-if="colorErrorInfo">提取失败。错误：{{ colorErrorInfo }}</div>
+          <div class="error-info" v-if="colorErrorInfo">
+            {{ $t('setting.appearance.theme.colorScheme.error', { colorErrorInfo }) }}
+          </div>
           <div v-if="tmpImg">
-            背景图片不透明度：
+            {{ $t('setting.appearance.theme.opacity.backgroundImage') }}
             <mdui-slider
               tickmarks
               max="10"
@@ -458,7 +554,7 @@ onUnmounted(() => {
               :value="activeAppearance.backgroundImageOpacity * 10"
               @input="activeAppearance.backgroundImageOpacity = $event.target.value / 10"
             ></mdui-slider>
-            侧边栏不透明度：
+            {{ $t('setting.appearance.theme.opacity.sidebar') }}
             <mdui-slider
               tickmarks
               max="10"
@@ -470,18 +566,27 @@ onUnmounted(() => {
           <mdui-button
             @click="saveAppearance()"
             :disabled="!appearanceChanged || activeAppearance.isGeneral"
-            >保存主题</mdui-button
+            >{{ $t('setting.appearance.theme.operation.save') }}</mdui-button
           >
-          <mdui-button @click="saveAsNewAppearance()">另存为新的主题</mdui-button>
+          <mdui-button @click="saveAsNewAppearance()">{{
+            $t('setting.appearance.theme.operation.saveAs')
+          }}</mdui-button>
           <mdui-button
             @click="applyAppearance()"
             :disabled="activeAppearanceName == appliedAppearanceName"
-            >应用该主题</mdui-button
+            >{{ $t('setting.appearance.theme.operation.apply') }}</mdui-button
           >
-          <mdui-button @click="deleteAppearance()" :disabled="activeAppearance.isGeneral"
-            >删除主题</mdui-button
+          <mdui-button
+            @click="deleteAppearance()"
+            :disabled="activeAppearance.isGeneral"
+            :style="{
+              backgroundColor: activeAppearance.isGeneral ? '' : 'rgb(var(--mdui-color-error))',
+            }"
+            >{{ $t('setting.appearance.theme.operation.delete') }}</mdui-button
           >
-          <div class="error-info" v-if="savingErrorInfo">保存失败。{{ savingErrorInfo }}</div>
+          <div class="error-info" v-if="savingErrorInfo">
+            {{ $t('setting.appearance.theme.message.failedSave', { savingErrorInfo }) }}
+          </div>
         </mdui-card>
       </mdui-tab-panel>
     </mdui-tabs>

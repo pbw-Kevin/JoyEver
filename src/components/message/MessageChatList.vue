@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import '@mdui/icons/search.js'
-import '@mdui/icons/warning.js'
+import '@mdui/icons/search'
+import '@mdui/icons/warning'
 
 import UserCard from '../account/UserCard.vue'
 import MessageCount from './MessageCount.vue'
-import { announcementMsgcnt } from '@/assets/announcement.ts'
-import { chatList } from '@/assets/message.ts'
-import type { MessageChatListType } from '@/assets/message.ts'
-import { isLoggedInStat } from '@/assets/account.ts'
+import { announcementMsgcnt } from '@/assets/announcement'
+import { chatList } from '@/assets/message'
+import type { MessageChatListType } from '@/assets/message'
+import { isLoggedInStat } from '@/assets/account'
 
 const prop = defineProps<{
   list?: MessageChatListType
@@ -16,14 +16,18 @@ const prop = defineProps<{
 
 <template>
   <div class="chat-list">
-    <mdui-text-field label="搜索" disabled>
+    <mdui-text-field :label="$t('search.title')" disabled>
       <mdui-button-icon slot="end-icon">
         <mdui-icon-search></mdui-icon-search>
       </mdui-button-icon>
     </mdui-text-field>
     <div class="chat-list-body">
       <mdui-list>
-        <UserCard nickname="公告" isAnnouncement :active="$route.name == 'Announcement'">
+        <UserCard
+          :nickname="$t('announcement.title')"
+          isAnnouncement
+          :active="$route.name == 'Announcement'"
+        >
           <MessageCount :msgcnt="announcementMsgcnt" />
         </UserCard>
         <mdui-divider></mdui-divider>
@@ -41,7 +45,7 @@ const prop = defineProps<{
       <div class="chat-disabled" v-if="!isLoggedInStat">
         <div class="chat-disabled-info">
           <mdui-icon-warning class="chat-disabled-icon"></mdui-icon-warning>
-          <p>登录后方可与好友聊天！</p>
+          <p>{{ $t('message.tips.chatDisabledBeforeLogin') }}</p>
         </div>
       </div>
     </div>

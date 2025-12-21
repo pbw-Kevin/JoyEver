@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUpdated } from 'vue'
 
-import '@mdui/icons/arrow-back.js'
-import '@mdui/icons/keyboard-arrow-down.js'
+import '@mdui/icons/arrow-back'
+import '@mdui/icons/keyboard-arrow-down'
 
 import MessageChatList from '@/components/message/MessageChatList.vue'
 import AnnouncementPiece from '@/components/message/AnnouncementPiece.vue'
-import { localInfo, AnnouncementList, updateAnnouncement } from '@/assets/announcement.ts'
-import { GotoBottom } from '@/assets/message.ts'
-import { chatContainerHeight } from '@/assets/height.ts'
-import { isDesktop } from '@/assets/appearance.ts'
+import { localInfo, AnnouncementList, updateAnnouncement } from '@/assets/announcement'
+import { GotoBottom } from '@/assets/message'
+import { chatContainerHeight } from '@/assets/height'
+import { isDesktop } from '@/assets/appearance'
 
 var lastTime = ref(localInfo.value)
 
@@ -23,7 +23,7 @@ onUpdated(() => GotoBottom('.chat-announcement-container')) // Too brute actions
 
 <template>
   <div class="content">
-    <h1>站内消息</h1>
+    <h1>{{ $t('message.title') }}</h1>
     <div class="chat-container" :style="{ height: chatContainerHeight + 'px' }">
       <MessageChatList
         :style="{ width: isDesktop ? '250px' : '100%', minWidth: isDesktop ? '250px' : '100%' }"
@@ -36,7 +36,7 @@ onUpdated(() => GotoBottom('.chat-announcement-container')) // Too brute actions
               <mdui-icon-arrow-back></mdui-icon-arrow-back>
             </mdui-button-icon>
           </RouterLink>
-          <mdui-top-app-bar-title> 公告 </mdui-top-app-bar-title>
+          <mdui-top-app-bar-title> {{ $t('announcement.title') }} </mdui-top-app-bar-title>
         </mdui-top-app-bar>
         <div class="chat-announcement-container">
           <AnnouncementPiece
@@ -55,7 +55,7 @@ onUpdated(() => GotoBottom('.chat-announcement-container')) // Too brute actions
             "
             class="new-announcement"
           >
-            新公告
+            {{ $t('announcement.new.title') }}
             <mdui-icon-keyboard-arrow-down></mdui-icon-keyboard-arrow-down>
           </div>
           <AnnouncementPiece
@@ -66,7 +66,9 @@ onUpdated(() => GotoBottom('.chat-announcement-container')) // Too brute actions
           >
             <p v-for="para in announcement.text.split('\n')">{{ para }}</p>
           </AnnouncementPiece>
-          <p v-if="AnnouncementList.length == 0" class="no-announcement">暂无公告</p>
+          <p v-if="AnnouncementList.length == 0" class="no-announcement">
+            {{ $t('announcement.no.title') }}
+          </p>
         </div>
       </div>
     </div>
@@ -102,6 +104,8 @@ p {
   font-size: 30px;
   color: rgb(var(--mdui-color-on-surface-variant));
   text-align: center;
+  user-select: none;
+  --webkit-user-select: none;
 }
 
 .new-announcement {
@@ -111,5 +115,7 @@ p {
   margin: 10px 0;
   color: rgb(var(--mdui-color-on-surface-variant));
   line-height: 30px;
+  user-select: none;
+  --webkit-user-select: none;
 }
 </style>

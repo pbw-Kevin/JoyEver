@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import UserTag from '../account/UserTag.vue'
-import '@mdui/icons/announcement.js'
+import '@mdui/icons/announcement'
 
 const props = defineProps<{
   time?: string
@@ -17,8 +17,8 @@ var router = useRouter()
     <div class="announcement-box">
       <div class="announcement-head">
         <div class="announcement-nickname">
-          公告
-          <UserTag tag="官方公告" color="green"></UserTag>
+          {{ $t('announcement.title') }}
+          <UserTag :tag="$t('announcement.tags.official')" color="green"></UserTag>
         </div>
         <div class="announcement-time" v-if="props.time">{{ props.time }}</div>
       </div>

@@ -4,18 +4,22 @@ import { RouterLink } from 'vue-router'
 
 <template>
   <div class="content">
-    <h1>大典Wiki</h1>
+    <h1>{{ $t('wiki.title') }}</h1>
     <div>
-      <p>你可以访问：</p>
+      <p>{{ $t('wiki.home.title') }}</p>
       <ul>
         <li>
-          <RouterLink to="/wiki/online">在线大典</RouterLink>
+          <RouterLink to="/wiki/online">{{ $t('wiki.online.title') }}</RouterLink>
         </li>
         <li>
-          <RouterLink to="/wiki/online">大典Docx</RouterLink>
+          <RouterLink to="/wiki/online">{{ $t('wiki.docx.title') }}</RouterLink>
         </li>
       </ul>
-      <p>大典不能解决的困惑，可以在<RouterLink to="/wiki/test">在线试验</RouterLink>中自行尝试。</p>
+      <p>
+        {{ $t('wiki.home.test.pre')
+        }}<RouterLink to="/wiki/test">{{ $t('wiki.test.title') }}</RouterLink
+        >{{ $t('wiki.home.test.suf') }}
+      </p>
     </div>
   </div>
 </template>

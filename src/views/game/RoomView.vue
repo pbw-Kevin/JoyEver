@@ -2,7 +2,7 @@
 
 <template>
   <div class="content">
-    <h1>房间：{{ $route.params.id }}</h1>
-    <p>开发中。</p>
+    <h1>{{ $t('game.room.titleInTopAppBar', { room: $route.params.id }) }}</h1>
+    <p>{{ $t('developing.title') }}</p>
   </div>
 </template>

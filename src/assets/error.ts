@@ -10,7 +10,7 @@ var errors = [
   {
     code: 2,
     message:
-      'Username is not formatted. The length of username should be between 5 and 16(include), only contains A-Za-z0-9_(underline), and begins with A-Za-z.',
+      'Username is not formatted. The length of username should be between 2 and 16(include), only contains A-Za-z0-9_(underline), and begins with A-Za-z.',
   },
   {
     code: 3,

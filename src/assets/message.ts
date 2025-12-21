@@ -3,7 +3,7 @@
 */
 
 import { computed, ref } from 'vue'
-import { announcementMsgcnt } from './announcement.ts'
+import { announcementMsgcnt } from './announcement'
 
 export type MessageChatListItemType = {
   username: string

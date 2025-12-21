@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import '@mdui/icons/question-mark.js'
-import { getHint } from '@/assets/hints.js'
+import '@mdui/icons/question-mark'
+import { getHint } from '@/assets/hints'
 
 var hint = ref(getHint())
 </script>
@@ -12,7 +12,7 @@ var hint = ref(getHint())
       <mdui-icon-question-mark></mdui-icon-question-mark>
     </div>
     <div class="hint-content">
-      <h3>你知道吗？</h3>
+      <h3>{{ $t('hint.title') }}</h3>
       <div class="hint-text">{{ hint }}</div>
     </div>
   </div>

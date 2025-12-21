@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { AV } from '@/assets/main.ts'
-import { isEmail } from '@/assets/account.ts'
+import { AV } from '@/assets/main'
+import { isEmail } from '@/assets/account'
 
 var email = ref('')
 var errorInfo = ref('')
@@ -39,7 +39,7 @@ function submitResetPassword() {
 
 <template>
   <div class="content">
-    <h1>重置密码</h1>
+    <h1>{{ $t('account.operation.resetPassword') }}</h1>
     <p>此功能要求账号已绑定邮箱。</p>
     <p>请输入账号绑定的邮箱地址，我们将向该邮箱发送重置密码的链接。</p>
     <mdui-text-field label="邮箱" v-model="email" type="email" required>

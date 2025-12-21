@@ -1,26 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import '@mdui/icons/home.js'
-import '@mdui/icons/videogame-asset.js'
-import '@mdui/icons/message.js'
-import '@mdui/icons/library-books.js'
-import '@mdui/icons/keyboard-arrow-up.js'
-import '@mdui/icons/keyboard-arrow-down.js'
-import '@mdui/icons/person.js'
-import '@mdui/icons/admin-panel-settings.js'
-import '@mdui/icons/contact-support.js'
-import '@mdui/icons/assignment.js'
-import '@mdui/icons/info.js'
+import '@mdui/icons/home'
+import '@mdui/icons/videogame-asset'
+import '@mdui/icons/message'
+import '@mdui/icons/library-books'
+import '@mdui/icons/keyboard-arrow-up'
+import '@mdui/icons/keyboard-arrow-down'
+import '@mdui/icons/person'
+import '@mdui/icons/admin-panel-settings'
+import '@mdui/icons/contact-support'
+import '@mdui/icons/assignment'
+import '@mdui/icons/info'
 
-import { msgcnt } from '@/assets/message.ts'
-import { navOpened, UpdateNavOpened } from '@/assets/navDrawer.ts'
-import { isLoggedInStat, curIsAdmin } from '@/assets/account.ts'
-import { backgroundImageLoaded, isDesktop } from '@/assets/appearance.ts'
+import { msgcnt } from '@/assets/message'
+import { navOpened, UpdateNavOpened, WikiCollActive } from '@/assets/navDrawer'
+import { isLoggedInStat, curIsAdmin } from '@/assets/account'
+import { backgroundImageLoaded, isDesktop } from '@/assets/appearance'
 import NavigationDrawerItem from './NavigationDrawerItem.vue'
 import MessageCount from '../message/MessageCount.vue'
-
-var WikiCollActive = ref(false)
 
 UpdateNavOpened()
 </script>
@@ -34,21 +32,21 @@ UpdateNavOpened()
     :class="{ withBgImg: backgroundImageLoaded }"
   >
     <mdui-list class="nav-drawer-list" :style="{ margin: isDesktop ? '50px 12px 80px 12px' : '' }">
-      <mdui-list-subheader>菜单</mdui-list-subheader>
+      <mdui-list-subheader>{{ $t('menu.title') }}</mdui-list-subheader>
       <NavigationDrawerItem to="/" :belonged-routes="['Home']">
         <mdui-icon-home slot="icon"></mdui-icon-home>
-        首页
+        {{ $t('home.title') }}
       </NavigationDrawerItem>
       <NavigationDrawerItem to="/game" :belonged-routes="['GameHome', 'RoomList', 'Room']">
         <mdui-icon-videogame-asset slot="icon"></mdui-icon-videogame-asset>
-        游戏
+        {{ $t('game.title') }}
       </NavigationDrawerItem>
       <NavigationDrawerItem
         to="/message"
         :belonged-routes="['Message', 'MessageDetail', 'Announcement']"
       >
         <mdui-icon-message slot="icon"></mdui-icon-message>
-        消息
+        {{ $t('message.title') }}
         <MessageCount :msgcnt />
       </NavigationDrawerItem>
       <mdui-collapse>
@@ -59,7 +57,7 @@ UpdateNavOpened()
         >
           <NavigationDrawerItem slot="header" :belonged-routes="['Wiki']">
             <mdui-icon-library-books slot="icon"></mdui-icon-library-books>
-            大典
+            {{ $t('wiki.title') }}
             <mdui-icon-keyboard-arrow-up
               slot="end-icon"
               v-if="WikiCollActive"
@@ -68,17 +66,17 @@ UpdateNavOpened()
           </NavigationDrawerItem>
           <div class="nav-drawer-subitem">
             <NavigationDrawerItem to="/wiki/online" :belonged-routes="['OnlineWiki']">
-              在线大典
+              {{ $t('wiki.online.title') }}
             </NavigationDrawerItem>
           </div>
           <div class="nav-drawer-subitem">
             <NavigationDrawerItem to="/wiki/docx" :belonged-routes="['DocxWiki']">
-              大典Docx
+              {{ $t('wiki.docx.title') }}
             </NavigationDrawerItem>
           </div>
           <div class="nav-drawer-subitem">
             <NavigationDrawerItem to="/wiki/test" :belonged-routes="['Test']">
-              试验
+              {{ $t('wiki.test.title') }}
             </NavigationDrawerItem>
           </div>
         </mdui-collapse-item>
@@ -89,23 +87,23 @@ UpdateNavOpened()
         v-if="isLoggedInStat"
       >
         <mdui-icon-person slot="icon"></mdui-icon-person>
-        账号
+        {{ $t('account.title') }}
       </NavigationDrawerItem>
       <NavigationDrawerItem to="/admin" :belonged-routes="['Admin']" v-if="curIsAdmin">
         <mdui-icon-admin-panel-settings slot="icon"></mdui-icon-admin-panel-settings>
-        管理
+        {{ $t('admin.title') }}
       </NavigationDrawerItem>
       <NavigationDrawerItem to="/ticket" :belonged-routes="['Ticket', 'MyTicket']">
         <mdui-icon-contact-support slot="icon"></mdui-icon-contact-support>
-        工单
+        {{ $t('ticket.title') }}
       </NavigationDrawerItem>
       <NavigationDrawerItem to="/changelog" :belonged-routes="['Changelog']">
         <mdui-icon-assignment slot="icon"></mdui-icon-assignment>
-        更新日志
+        {{ $t('changelog.title') }}
       </NavigationDrawerItem>
       <NavigationDrawerItem to="/about" :belonged-routes="['About']">
         <mdui-icon-info slot="icon"></mdui-icon-info>
-        关于
+        {{ $t('about.title') }}
       </NavigationDrawerItem>
     </mdui-list>
   </mdui-navigation-drawer>

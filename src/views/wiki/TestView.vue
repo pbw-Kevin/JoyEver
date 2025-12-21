@@ -2,7 +2,7 @@
 
 <template>
   <div class="content">
-    <h1>在线试验</h1>
-    <p>开发中。</p>
+    <h1>{{ $t('wiki.test.title') }}</h1>
+    <p>{{ $t('developing.title') }}</p>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { isLoggedIn, getUser, type RoleNames, infoObjectQuery } from '@/assets/account.ts'
+import { isLoggedIn, getUser, type RoleNames, infoObjectQuery } from '@/assets/account'
 import UserAvatar from '@/components/account/UserAvatar.vue'
 import UserTagPack from '@/components/account/UserTagPack.vue'
 import { ref, type Ref } from 'vue'
@@ -55,7 +55,7 @@ infoObjectQuery.get('userInfo').then((tmpUserInfo) => {
 
 <template>
   <div class="content">
-    <h1>账号</h1>
+    <h1>{{ $t('account.title') }}</h1>
     <div class="user-head">
       <UserAvatar class="user-avatar" :url="userInfo.avatarURL" />
       <div class="user-head-info">
@@ -72,17 +72,17 @@ infoObjectQuery.get('userInfo').then((tmpUserInfo) => {
         class="user-email"
         variant="outlined"
         readonly
-        label="邮箱"
+        :label="$t('account.email.title')"
         :value="email"
         v-if="email"
       ></mdui-text-field>
       <br />
       <mdui-button v-if="isNotMe" disabled>添加好友</mdui-button>
       <RouterLink to="/myaccount" v-if="isMe">
-        <mdui-button>个人视角</mdui-button>
+        <mdui-button>{{ $t('account.view.my') }}</mdui-button>
       </RouterLink>
       <RouterLink :to="`/history/${username}`" v-if="false">
-        <mdui-button>历史对局</mdui-button>
+        <mdui-button>{{ $t('game.history.title') }}</mdui-button>
       </RouterLink>
     </div>
   </div>

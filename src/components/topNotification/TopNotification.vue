@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { notiContentRef } from '@/assets/topNotification'
 
-import '@mdui/icons/info.js'
-import '@mdui/icons/close.js'
+import '@mdui/icons/info'
+import '@mdui/icons/close'
 </script>
 
 <template>

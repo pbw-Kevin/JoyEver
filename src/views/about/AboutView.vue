@@ -2,7 +2,7 @@
 
 <template>
   <div class="content">
-    <h1>关于</h1>
+    <h1>{{ $t('about.title') }}</h1>
     <h2>About system</h2>
     <p>
       App version: v1.0-rc1 -- W.I.P.<br />

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { serverURL } from '@/assets/main.ts'
+import { serverURL } from '@/assets/main'
 import { useRoute, useRouter } from 'vue-router'
-import { Axios } from 'axios'
 import { ref } from 'vue'
-import { setTopNotification } from '@/assets/topNotification.ts'
+import { setTopNotification } from '@/assets/topNotification'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,20 +14,20 @@ var errorInfo = ref('')
 
 if (route.query.token) {
   errorInfo.value = ''
-  var axios = new Axios()
-  axios
-    .post(fullVerifyURL)
-    .then((response) => {
-      if (response.data && JSON.parse(response.data).error) {
-        errorInfo.value = 'Token 无效或已过期。'
-      } else {
+  var passQuery = new XMLHttpRequest()
+  passQuery.open('GET', fullVerifyURL, true)
+  passQuery.onreadystatechange = () => {
+    if (passQuery.readyState === 4) {
+      if (passQuery.status === 200) {
         setTopNotification('邮箱验证成功。')
         router.push({ name: 'Home' })
+      } else if (JSON.parse(passQuery.responseText).error) {
+        errorInfo.value = 'Token 无效或已过期。'
+      } else {
+        errorInfo.value = '连接服务器时失败。'
       }
-    })
-    .catch((error) => {
-      errorInfo.value = '连接服务器时失败。'
-    })
+    }
+  }
 } else {
   errorInfo.value = '缺少 Token。'
 }
@@ -36,7 +35,7 @@ if (route.query.token) {
 
 <template>
   <div class="content">
-    <h1>邮箱验证</h1>
+    <h1>{{ $t('account.operation.emailVerify') }}</h1>
     <p class="error-info" v-if="errorInfo">
       验证失败。<br />
       错误：{{ errorInfo }}

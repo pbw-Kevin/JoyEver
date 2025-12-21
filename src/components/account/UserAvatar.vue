@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import '@mdui/icons/person.js'
+import '@mdui/icons/person'
 
 const prop = defineProps<{
   url?: string

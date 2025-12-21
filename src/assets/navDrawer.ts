@@ -8,6 +8,8 @@ import { useRoute } from 'vue-router'
 
 export var navOpened = ref(breakpoint().up('md'))
 
+export var WikiCollActive = ref(false)
+
 export function UpdateNavOpened(val: boolean = breakpoint().up('md')) {
   navOpened.value = val
 }

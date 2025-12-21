@@ -1,0 +1,54 @@
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+import '@mdui/icons/keyboard-arrow-down'
+
+const ticketTypes = [
+  { value: 'report-abuse', label: '滥用举报' },
+  { value: 'report-bug', label: 'Bug 反馈' },
+  { value: 'help-improve', label: '改进建议' },
+  { value: 'complain', label: '申诉' },
+  { value: 'contact-admin', label: '联系管理' },
+  { value: 'other', label: '其他' },
+]
+
+function submitTicket() {
+  // console.log('submitted')
+}
+</script>
+
+<template>
+  <div class="content">
+    <h1>{{ $t('ticket.new.title') }}</h1>
+    <RouterLink to="/ticket"
+      ><mdui-button>{{ $t('ticket.title') }}</mdui-button></RouterLink
+    >
+    <form @submit.prevent="submitTicket()">
+      <mdui-text-field required label="工单主题"></mdui-text-field>
+      <mdui-select required label="工单类型">
+        <mdui-menu-item v-for="type in ticketTypes" :value="type.value">{{
+          type.label
+        }}</mdui-menu-item>
+        <mdui-button-icon slot="end-icon">
+          <mdui-icon-keyboard-arrow-down></mdui-icon-keyboard-arrow-down>
+        </mdui-button-icon>
+      </mdui-select>
+      <mdui-text-field
+        required
+        autosize
+        min-rows="5"
+        max-rows="10"
+        label="工单内容"
+        placeholder="如果没有登录账号，请在此留下你的联系方式，以便我们联系到你"
+      ></mdui-text-field>
+      <mdui-button type="submit">提交工单</mdui-button>
+    </form>
+  </div>
+</template>
+
+<style scoped>
+mdui-text-field,
+mdui-select,
+mdui-button {
+  margin: 5px 0;
+}
+</style>
