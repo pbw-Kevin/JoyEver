@@ -1,0 +1,1 @@
+import{_ as l,c as a,o as r,a as t,t as o,b as s}from"./index-Bgua-Nis.js";const i={},c={class:"content"};function d(n,e){return r(),a("div",c,[t("h1",null,o(n.$t("game.title")),1),t("p",null,[s(o(n.$t("developing.title")),1),e[0]||(e[0]=t("br",null,null,-1)),e[1]||(e[1]=s(" 敬请期待。 ",-1))])])}const p=l(i,[["render",d]]);export{p as default};

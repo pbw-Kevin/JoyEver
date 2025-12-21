@@ -1,0 +1,1 @@
+import{_ as n,c as o,o as a,a as t,t as s}from"./index-Bgua-Nis.js";const c={},i={class:"content"};function l(e,r){return a(),o("div",i,[t("h1",null,s(e.$t("wiki.test.title")),1),t("p",null,s(e.$t("developing.title")),1)])}const d=n(c,[["render",l]]);export{d as default};
