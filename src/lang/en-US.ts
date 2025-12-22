@@ -116,7 +116,7 @@ export default {
       },
       about: {
         title: 'About',
-        disc: 'Made by @syq.',
+        disc: "Made by {'@'}syq.",
       },
     },
     test: {
@@ -196,7 +196,7 @@ export default {
         'Failed to load background image. It may be a cross-origin issue or the image does not exist.',
     },
     global: {
-      title: 'Global Setting',
+      title: 'Global',
       username: {
         title: 'Username',
       },
@@ -243,7 +243,7 @@ export default {
       },
     },
     game: {
-      title: 'Game Setting',
+      title: 'Game',
       madeHistoryPublic: {
         title: 'Make History Public',
       },
@@ -252,7 +252,7 @@ export default {
       },
       customSkill: {
         title: 'Custom Skill',
-        disc: 'Custom skills will be automatically judged as breaking into shield.',
+        disc: 'Custom skills will be automatically judged as breaking to shield.',
       },
     },
     appearance: {

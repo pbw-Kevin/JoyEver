@@ -116,7 +116,7 @@ export default {
       },
       about: {
         title: '关于',
-        disc: '由 @syq 制作。',
+        disc: "由 {'@'}syq 制作。",
       },
     },
     test: {
