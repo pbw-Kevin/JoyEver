@@ -1,0 +1,1 @@
+import{_ as a,c as n,o as r,a as o,t}from"./index-0UQCc8bI.js";const s={},c={class:"content"};function l(e,i){return r(),n("div",c,[o("h1",null,t(e.$t("game.room.titleInTopAppBar",{room:e.$route.params.id})),1),o("p",null,t(e.$t("developing.title")),1)])}const m=a(s,[["render",l]]);export{m as default};

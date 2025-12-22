@@ -1,1 +1,0 @@
-import{_ as s,c as r,o as a,a as t,t as l,b as n}from"./index-Bgua-Nis.js";const c={},i={class:"content"};function d(o,e){return a(),r("div",i,[t("h1",null,l(o.$t("changelog.title")),1),e[0]||(e[0]=t("h2",null,"v1.0-rc1 -- W.I.P.",-1)),e[1]||(e[1]=t("p",null,[n(" 发布于：未发布"),t("br"),n(" 初步完成基础功能。 ")],-1))])}const p=s(c,[["render",d]]);export{p as default};
