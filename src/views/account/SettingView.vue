@@ -20,10 +20,11 @@ import {
   logout,
 } from '@/assets/account'
 import {
-  appearanceSettingList,
-  fetched,
   appearanceSetting,
+  appearanceSettingList,
   setAppearance,
+  type AppearanceSetting,
+  fetched as appearanceFetched
 } from '@/assets/appearance'
 import { AV, debounce } from '@/assets/main'
 import { sendNoti } from '@/assets/notifications'
@@ -35,6 +36,7 @@ var user = getUser()
 var username = user.getUsername()
 var userInfo = new AV.Object('UserInfo')
 var emailInfo = new AV.Object('Email')
+var privateUserInfo = new AV.Object('PrivateUserInfo')
 
 const localSetting = reactive({
   nickname: '',
@@ -48,6 +50,10 @@ const localSetting = reactive({
   emailErrorInfo: '',
 })
 
+var appearanceList = reactive(appearanceSettingList)
+var activeAppearance = ref(appearanceSetting.value)
+var activeAppearanceName = ref(appearanceSetting.value.name)
+
 myInfoObject.get('userInfo').then((tmpUserInfo) => {
   if (!tmpUserInfo) return
   userInfo = tmpUserInfo
@@ -57,6 +63,10 @@ myInfoObject.get('email').then((tmpEmailInfo) => {
   if (!tmpEmailInfo) return
   emailInfo = tmpEmailInfo
   localSetting.isPublicEmail = tmpEmailInfo.getACL()?.getPublicReadAccess()
+})
+myInfoObject.get('privateUserInfo').then((tmpPrivate) => {
+  if (!tmpPrivate) return
+  privateUserInfo = tmpPrivate
 })
 
 function failedAutoSave() {
@@ -176,58 +186,41 @@ function savePassword() {
   }
 }
 
-var appearanceList = ref(appearanceSettingList)
-var activeAppearance = ref({ ...appearanceSetting.value })
-var activeAppearanceName = ref(activeAppearance.value.name)
-var appliedAppearanceName = ref(activeAppearance.value.name)
-var appearanceChanged = computed(() => {
-  return (
-    JSON.stringify(
-      appearanceList.value.find((setting) => setting.name === activeAppearanceName.value),
-    ) !== JSON.stringify(activeAppearance.value)
+watch(appearanceFetched, (val) => {
+  if (val) {
+    appearanceList.splice(0, appearanceList.length, ...appearanceSettingList)
+  }
+})
+
+var appearanceChanged = computed(() => 
+  JSON.stringify(activeAppearance.value) !== JSON.stringify(
+    appearanceList.find((setting: AppearanceSetting) => setting.name === activeAppearanceName.value)
   )
-})
-
-watch(fetched, (fetched) => {
-  if (fetched) {
-    appearanceList.value = appearanceSettingList
-    activeAppearance.value = { ...appearanceSetting.value }
-    activeAppearanceName.value = activeAppearance.value.name
-    appliedAppearanceName.value = activeAppearance.value.name
-  }
-})
-
-var tmpImg = ref(activeAppearance.value.backgroundImage)
-
-watch(activeAppearanceName, (newName) => {
-  var newAppearance = appearanceList.value.find((setting) => setting.name === newName)
-  if (newAppearance) {
-    activeAppearance.value = { ...newAppearance }
-    tmpImg.value = newAppearance.backgroundImage
-  }
-})
-
-watch(
-  activeAppearance,
-  (newAppearance) => {
-    appearanceSetting.value = { ...newAppearance }
-  },
-  { deep: true },
 )
 
-var debouncedSetImage = debounce((image: string) => {
-  activeAppearance.value.backgroundImage = image
-}, 1000)
+watch(activeAppearanceName, (newName, oldName) => {
+  if (!newName) {
+    activeAppearanceName.value = oldName
+    return
+  }
+  var appe = appearanceList.find((setting) => setting.name === newName)
+  if (!appe) return
+  activeAppearance.value = appe
+  appearanceSetting.value = { ...activeAppearance.value }
+})
 
-watch(tmpImg, (newImage, oldImage) => {
+watch(activeAppearance, (appe) => {
+  appearanceSetting.value = appe
+})
+
+watch(() => activeAppearance.value.backgroundImage, (newImage, oldImage) => {
   if (!newImage) {
-    activeAppearance.value.backgroundImageOpacity = 0
-    activeAppearance.value.sidebarOpacity = 1
+    activeAppearance.value.backgroundImageOpacity = 0.3
+    activeAppearance.value.sidebarOpacity = 0.7
   } else if (!oldImage) {
     activeAppearance.value.backgroundImageOpacity = 0.3
     activeAppearance.value.sidebarOpacity = 0.7
-    activeAppearance.value.backgroundImage = newImage
-  } else debouncedSetImage(newImage)
+  }
 })
 
 var colorErrorInfo = ref('')
@@ -253,13 +246,20 @@ function getColor() {
 
 var savingErrorInfo = ref('')
 
+function saveAppearanceList(msg?: string) {
+  privateUserInfo.set('customAppearance', appearanceList.filter((setting) => !setting.isGeneral ))
+  privateUserInfo.save().catch(() => {
+    if (msg) savingErrorInfo.value = msg
+  })
+}
+
 function saveAppearance() {
   savingErrorInfo.value = ''
-  var existingAppearance = appearanceList.value.find(
+  var existingAppearance = appearanceList.find(
     (setting) => setting.name === activeAppearanceName.value,
   )
   if (existingAppearance) {
-    var tmpAppearance = appearanceList.value.find(
+    var tmpAppearance = appearanceList.find(
       (setting) => setting.name === activeAppearance.value.name,
     )
     if (tmpAppearance && tmpAppearance !== existingAppearance) {
@@ -268,15 +268,16 @@ function saveAppearance() {
     }
     Object.assign(existingAppearance, { ...activeAppearance.value })
   } else {
-    appearanceList.value.push({ ...activeAppearance.value })
+    appearanceList.push({ ...activeAppearance.value })
   }
-  if (appliedAppearanceName.value === activeAppearanceName.value) {
-    appliedAppearanceName.value = activeAppearance.value.name
+  if (privateUserInfo.get('activeAppearance') === activeAppearanceName.value) {
+    privateUserInfo.set('activeAppearance', activeAppearance.value.name)
   }
-  activeAppearanceName.value = activeAppearance.value.name
+  saveAppearanceList('保存时出现问题。请检查网络连接。')
 }
 
 function saveAsNewAppearance() {
+  savingErrorInfo.value = ''
   prompt({
     headline: '另存为新的主题',
     description: '在此处键入主题名。',
@@ -287,90 +288,99 @@ function saveAsNewAppearance() {
         savingErrorInfo.value = '主题名不能为空。'
         return
       }
-      if (appearanceList.value.some((setting) => setting.name === value)) {
+      if (appearanceList.some((setting) => setting.name === value)) {
         savingErrorInfo.value = '主题名已存在。'
         return
       }
       var newAppearance = { ...activeAppearance.value, name: value, isGeneral: false }
-      appearanceList.value.push(newAppearance)
+      appearanceList.push(newAppearance)
       activeAppearanceName.value = value
+      saveAppearanceList('')
     },
   })
 }
 
 function applyAppearance() {
-  appliedAppearanceName.value = activeAppearanceName.value
-  setAppearance(activeAppearance.value)
+  savingErrorInfo.value = ''
+  privateUserInfo.set('activeAppearance', activeAppearanceName.value)
+  privateUserInfo.save().then(() => {
+    setAppearance(activeAppearance.value)
+  }).catch(() => {
+    savingErrorInfo.value = '应用时出现问题。请检查网络连接。'
+  })
 }
 
 function deleteAppearance() {
+  savingErrorInfo.value = ''
   confirm({
     headline: '确认要删除主题吗？',
     description: '此操作不可撤销。',
     confirmText: '删除',
     cancelText: '取消',
     onConfirm: () => {
-      appearanceList.value = appearanceList.value.filter(
+      appearanceList = appearanceList.filter(
         (setting) => setting.name !== activeAppearanceName.value,
       )
-      if (activeAppearanceName.value == appliedAppearanceName.value) {
-        appliedAppearanceName.value =
-          appearanceList.value.find((setting) => setting.isGeneral)?.name || ''
+      if (activeAppearanceName.value == privateUserInfo.get('activeAppearance')) {
+        privateUserInfo.set('activeAppearance',appearanceList.find((setting) => setting.isGeneral)?.name || '')
       }
-      activeAppearanceName.value = appliedAppearanceName.value
+      activeAppearanceName.value = privateUserInfo.get('activeAppearance')
+      privateUserInfo.save().catch(() => {
+        savingErrorInfo.value = '删除失败。请检查网络连接。'
+      })
     },
   })
 }
 
-var saving = ref(false)
+// var saving = ref(false)
 
-async function saveSetting() {
-  saving.value = true
-  var hasError = false
-  await user.save().catch((err) => {
-    hasError = true
-  })
-  await userInfo.save().catch((err) => {
-    hasError = true
-  })
-  await emailInfo.save().catch((err) => {
-    hasError = true
-  })
-  await myInfoObject.get('privateUserInfo').then(async (tmpUserInfo) => {
-    if (!tmpUserInfo) {
-      hasError = true
-      return
-    }
-    tmpUserInfo.set(
-      'customAppearance',
-      appearanceList.value
-        .filter((setting) => !setting.isGeneral)
-        .map((setting) => ({
-          name: setting.name,
-          theme: setting.theme,
-          backgroundImage: setting.backgroundImage,
-          colorScheme: setting.colorScheme,
-          backgroundImageOpacity: setting.backgroundImageOpacity,
-          sidebarOpacity: setting.sidebarOpacity,
-        })),
-    )
-    tmpUserInfo.set('activeAppearance', appliedAppearanceName.value)
-    await tmpUserInfo.save().catch((err) => {
-      hasError = true
-    })
-  })
-  if (hasError) sendNoti(t('setting.message.failedSave'), true)
-  else sendNoti(t('setting.message.saved'), true)
-  saving.value = false
-}
+// async function saveSetting() {
+//   saving.value = true
+//   var hasError = false
+//   await user.save().catch((err) => {
+//     hasError = true
+//   })
+//   await userInfo.save().catch((err) => {
+//     hasError = true
+//   })
+//   await emailInfo.save().catch((err) => {
+//     hasError = true
+//   })
+//   await myInfoObject.get('privateUserInfo').then(async (tmpUserInfo) => {
+//     if (!tmpUserInfo) {
+//       hasError = true
+//       return
+//     }
+//     tmpUserInfo.set(
+//       'customAppearance',
+//       appearanceList.value
+//         .filter((setting) => !setting.isGeneral)
+//         .map((setting) => ({
+//           name: setting.name,
+//           theme: setting.theme,
+//           backgroundImage: setting.backgroundImage,
+//           colorScheme: setting.colorScheme,
+//           backgroundImageOpacity: setting.backgroundImageOpacity,
+//           sidebarOpacity: setting.sidebarOpacity,
+//         })),
+//     )
+//     tmpUserInfo.set('activeAppearance', appliedAppearanceName.value)
+//     await tmpUserInfo.save().catch((err) => {
+//       hasError = true
+//     })
+//   })
+//   if (hasError) sendNoti(t('setting.message.failedSave'), true)
+//   else sendNoti(t('setting.message.saved'), true)
+//   saving.value = false
+// }
 </script>
 
 <template>
   <div class="content">
     <h1>{{ $t('setting.title') }}</h1>
-    <mdui-button @click="saveSetting()" :disabled="saving">{{
+    <!-- <mdui-button @click="saveSetting()" :disabled="saving">{{
       $t('setting.operation.save')
-    }}</mdui-button>
+    }}</mdui-button> -->
     <mdui-tabs value="global" full-width variant="secondary">
       <mdui-tab value="global">
         {{ $t('setting.global.title') }}
@@ -507,7 +517,7 @@ async function saveSetting() {
             "
           ></UserTag>
           <UserTag
-            v-if="activeAppearanceName == appliedAppearanceName"
+            v-if="activeAppearanceName == privateUserInfo.get('activeAppearance')"
             color="green"
             :tag="$t('setting.appearance.theme.applied.title')"
           ></UserTag>
@@ -530,22 +540,22 @@ async function saveSetting() {
           </mdui-select>
           <mdui-text-field
             :label="$t('setting.appearance.theme.backgroundImage.title')"
-            :value="tmpImg"
-            @input="tmpImg = $event.target.value"
+            :value="activeAppearance.backgroundImage"
+            @input="activeAppearance.backgroundImage = $event.target.value"
           ></mdui-text-field>
           <div class="color-scheme">
             {{ $t('setting.appearance.theme.colorScheme.title')
             }}<input type="color" v-model="activeAppearance.colorScheme" style="margin-left: 4px" />
             <mdui-button
               @click="getColor()"
-              :disabled="!tmpImg || !activeAppearance.backgroundImage"
+              :disabled="!activeAppearance.backgroundImage"
               >{{ $t('setting.appearance.theme.colorScheme.getColorFromImage') }}</mdui-button
             >
           </div>
           <div class="error-info" v-if="colorErrorInfo">
             {{ $t('setting.appearance.theme.colorScheme.error', { colorErrorInfo }) }}
           </div>
-          <div v-if="tmpImg">
+          <div v-if="activeAppearance.backgroundImage">
             {{ $t('setting.appearance.theme.opacity.backgroundImage') }}
             <mdui-slider
               tickmarks
@@ -573,7 +583,7 @@ async function saveSetting() {
           }}</mdui-button>
           <mdui-button
             @click="applyAppearance()"
-            :disabled="activeAppearanceName == appliedAppearanceName"
+            :disabled="activeAppearanceName == privateUserInfo.get('activeAppearance')"
             >{{ $t('setting.appearance.theme.operation.apply') }}</mdui-button
           >
           <mdui-button

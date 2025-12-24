@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { appearanceSetting } from '@/assets/appearance'
-import { backgroundImageLoaded } from '@/assets/appearance'
+import { appearanceSetting, backgroundImageSetting } from '@/assets/appearance'
 </script>
 
 <template>
-  <div class="bg-img-container" v-if="appearanceSetting.backgroundImage">
+  <div class="bg-img-container" v-if="backgroundImageSetting.url">
     <img
       class="bg-img"
       draggable="false"
-      :src="appearanceSetting.backgroundImage"
-      :style="{ opacity: backgroundImageLoaded ? appearanceSetting.backgroundImageOpacity : 0 }"
-      @load="backgroundImageLoaded = true"
+      :src="backgroundImageSetting.url"
+      :style="{ opacity: backgroundImageSetting.loaded ? appearanceSetting.backgroundImageOpacity : 0 }"
+      @load="backgroundImageSetting.loaded = true"
     />
   </div>
 </template>

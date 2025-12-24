@@ -13,7 +13,7 @@ import '@mdui/icons/translate'
 import { msgcnt } from '@/assets/message'
 import { navOpened } from '@/assets/navDrawer'
 import { isLoggedInStat } from '@/assets/account'
-import { backgroundImageLoaded } from '@/assets/appearance'
+import { backgroundImageSetting } from '@/assets/appearance'
 import MessageCount from '../message/MessageCount.vue'
 import { currentLanguage } from '@/assets/lang'
 
@@ -21,7 +21,7 @@ var room = ref('')
 </script>
 
 <template>
-  <mdui-top-app-bar scroll-behavior="elevate" :class="{ withBgImg: backgroundImageLoaded }">
+  <mdui-top-app-bar scroll-behavior="elevate" :class="{ withBgImg: backgroundImageSetting.loaded }">
     <mdui-button-icon @click="navOpened = !navOpened">
       <mdui-icon-menu></mdui-icon-menu>
     </mdui-button-icon>

@@ -16,7 +16,7 @@ import '@mdui/icons/info'
 import { msgcnt } from '@/assets/message'
 import { navOpened, UpdateNavOpened, WikiCollActive } from '@/assets/navDrawer'
 import { isLoggedInStat, curIsAdmin } from '@/assets/account'
-import { backgroundImageLoaded, isDesktop } from '@/assets/appearance'
+import { backgroundImageSetting, isDesktop } from '@/assets/appearance'
 import NavigationDrawerItem from './NavigationDrawerItem.vue'
 import MessageCount from '../message/MessageCount.vue'
 
@@ -29,7 +29,7 @@ UpdateNavOpened()
     @open="navOpened = true"
     @close="navOpened = false"
     close-on-overlay-click
-    :class="{ withBgImg: backgroundImageLoaded }"
+    :class="{ withBgImg: backgroundImageSetting.loaded }"
   >
     <mdui-list class="nav-drawer-list" :style="{ margin: isDesktop ? '50px 12px 80px 12px' : '' }">
       <mdui-list-subheader>{{ $t('menu.title') }}</mdui-list-subheader>

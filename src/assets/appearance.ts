@@ -2,10 +2,10 @@
   Asset for appearance service of JoyEver
 */
 
-import { ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { setColorScheme, setTheme, breakpoint, observeResize } from 'mdui'
 import type { Theme } from 'mdui/internal/theme'
-import { AV } from './main'
+import { AV, debounce } from './main'
 import { sendNoti } from './notifications'
 import { myInfoObject } from './account'
 
@@ -31,6 +31,8 @@ const localGeneralAppearance = {
   backgroundImageOpacity: proceedOpacity(backgroundImageOpacity),
   sidebarOpacity: proceedOpacity(sidebarOpacity),
 }
+
+export type AppearanceSetting = typeof localGeneralAppearance
 
 export var appearanceSetting = ref(localGeneralAppearance)
 
@@ -111,14 +113,24 @@ export async function fetchAppearance(force = false) {
   }
 }
 
-export function setAppearance(appe: typeof localGeneralAppearance) {
+export function setAppearance(appe: AppearanceSetting) {
   sessionStorage.setItem('appearance', JSON.stringify(appe))
   appearanceSetting.value = appe
 }
 
 export var isDesktop = ref(breakpoint().up('md'))
 
-export var backgroundImageLoaded = ref(false)
+export var backgroundImageSetting = reactive({
+  loaded: false,
+  url: '',
+})
+
+export const changeBackgroundImage = debounce((img: string, oldImg?: string) => {
+  if (img !== oldImg) {
+    backgroundImageSetting.loaded = false
+  }
+  backgroundImageSetting.url = img
+}, 1000)
 
 const observer = observeResize(document.body, function (entry, observer) {
   isDesktop.value = breakpoint().up('md')
@@ -127,9 +139,7 @@ const observer = observeResize(document.body, function (entry, observer) {
 watch(
   appearanceSetting,
   (val, oldVal) => {
-    if (val.backgroundImage !== oldVal?.backgroundImage) {
-      backgroundImageLoaded.value = false
-    }
+    changeBackgroundImage(val.backgroundImage, oldVal?.backgroundImage)
     setTheme(val.theme)
     setColorScheme(val.colorScheme)
     document
