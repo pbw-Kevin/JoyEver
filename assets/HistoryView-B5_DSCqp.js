@@ -1,1 +1,0 @@
-import{_ as s,c as n,o as a,a as t,t as o}from"./index-0UQCc8bI.js";const c={},r={class:"content"};function i(e,l){return a(),n("div",r,[t("h1",null,o(e.$t("game.history.title")),1),t("p",null,o(e.$t("developing.title")),1)])}const d=s(c,[["render",i]]);export{d as default};
