@@ -7,6 +7,8 @@ import { useRouter } from 'vue-router'
 import { sendNoti } from './notifications'
 import { AV } from './main'
 import { getError } from './error'
+import { _t } from './lang'
+const { t } = _t
 
 export function getUser(fetch = false) {
   if (AV.User.current() && fetch) AV.User.current().fetch()
@@ -289,13 +291,13 @@ export async function logout(message = true) {
   if (!isLoggedIn()) return
   await AV.User.logOut()
   updateLoggedInStat()
-  if (message) sendNoti('登出成功！')
+  if (message) sendNoti(t('account.logout.message.success'))
 }
 
 export const requireLogin = (): boolean => {
   var router = useRouter()
   if (!isLoggedIn()) {
-    sendNoti('请先登录！')
+    sendNoti(t('account.requireLogin.message'))
     router.push({ name: 'Login' })
     return true
   }

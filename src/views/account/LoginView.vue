@@ -6,7 +6,7 @@ import { sendNoti } from '@/assets/notifications'
 import { setTopNotification } from '@/assets/topNotification'
 import { fetchAppearance } from '@/assets/appearance'
 import { useI18n } from 'vue-i18n'
-const t = useI18n().t
+const { t } = useI18n()
 
 var router = useRouter()
 

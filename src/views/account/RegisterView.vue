@@ -10,6 +10,8 @@ import {
 } from '@/assets/account'
 import { sendNoti } from '@/assets/notifications'
 import { setTopNotification } from '@/assets/topNotification'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 var router = useRouter()
 
@@ -30,23 +32,22 @@ var errorInfo = ref(errorInfoEmpty)
 function registerAccount() {
   errorInfo.value = { ...errorInfoEmpty }
   if (!name.value) {
-    errorInfo.value.username = '用户名不能为空。'
+    errorInfo.value.username = t('account.register.message.emptyUsername')
   } else if (!isFormattedUsername(name.value)) {
-    errorInfo.value.username =
-      '用户名格式不正确。用户名的长度应在 2 到 16 个字符之间，且只能包含字母、数字和下划线，其中第一个字符必须是字母。'
+    errorInfo.value.username = t('account.register.message.invalidUsername')
   } else if (isEmail(name.value)) {
-    errorInfo.value.username = '用户名格式不正确。用户名不应具有邮箱的格式。'
+    errorInfo.value.username = t('account.register.message.usernameWithEmailFormat')
   }
   if (!pass.value) {
-    errorInfo.value.password = '密码不能为空。'
+    errorInfo.value.password = t('account.register.message.emptyPassword')
   } else if (!isFormattedPassword(pass.value)) {
-    errorInfo.value.password = '密码格式不正确。密码的长度应至少为 8 个字符，且不为空白字符。'
+    errorInfo.value.password = t('account.register.message.invalidPassword')
   }
   if (pass.value !== passAgain.value) {
-    errorInfo.value.passwordAgain = '两次输入的密码不一致。'
+    errorInfo.value.passwordAgain = t('account.register.message.differentPassword')
   }
   if (email.value && !isEmail(email.value)) {
-    errorInfo.value.email = '邮箱格式不正确。'
+    errorInfo.value.email = t('account.register.message.invalidEmail')
   }
   if (Object.values(errorInfo.value).some((msg) => msg)) {
     return
@@ -54,21 +55,22 @@ function registerAccount() {
   register(name.value, pass.value, passAgain.value, email.value).then((ret) => {
     if (ret) {
       if (ret.code == 0) {
-        sendNoti('注册成功！')
+        sendNoti(t('account.register.message.success'))
         if (getUser().get('email') && !getUser().get('emailVerified')) {
-          setTopNotification('尚未验证邮箱。验证邮箱以获得更安全的账号体验。转到“账号设置”以验证。')
+          setTopNotification(t('account.register.message.unverifiedEmail'))
         }
         router.push({ name: 'Home' })
       } else if (ret.code == 202) {
-        errorInfo.value.username = '用户名已被注册。'
+        errorInfo.value.username = t('account.register.message.usernameUsed')
       } else if (ret.code == 203) {
-        errorInfo.value.email = '邮箱已被注册。'
+        errorInfo.value.email = t('account.register.message.emailUsed')
       } else if (ret.code == 15) {
-        errorInfo.value.general =
-          '注册完成，但是在创建账号相关的必要对象时发生错误。现在可以正常登录并使用，但可能会有潜在的一些功能性问题。如必要，请联系管理员以获取帮助。'
+        errorInfo.value.general = t('account.register.message.createObjectsError')
       } else {
-        errorInfo.value.general = `注册失败，错误代码：${ret.code}。错误信息： ${ret.message}。如必要，请联系管理员以获取帮助。`
-        // console.log(ret) // Need better solution
+        errorInfo.value.general = t('account.register.message.unknownError', {
+          code: ret.code,
+          message: ret.message,
+        })
       }
     }
   })
@@ -84,30 +86,44 @@ watch(
 
 <template>
   <div class="content">
-    <h1>{{ $t('account.operation.register') }}</h1>
+    <h1>{{ $t('account.register.title') }}</h1>
     <p class="error-info" v-if="errorInfo.general">{{ errorInfo.general }}</p>
     <form @submit.prevent="registerAccount()">
-      <mdui-text-field label="用户名" maxlength="16" required v-model="name">
+      <mdui-text-field
+        :label="$t('account.register.username.title')"
+        maxlength="16"
+        required
+        v-model="name"
+      >
         <span slot="helper" class="error-info">{{ errorInfo.username }}</span>
       </mdui-text-field>
-      <mdui-text-field type="password" toggle-password label="密码" required v-model="pass">
+      <mdui-text-field
+        type="password"
+        toggle-password
+        :label="$t('account.register.password.title')"
+        required
+        v-model="pass"
+      >
         <span slot="helper" class="error-info">{{ errorInfo.password }}</span>
       </mdui-text-field>
       <mdui-text-field
         type="password"
         toggle-password
-        label="确认密码"
+        :label="$t('account.register.ensurePassword.title')"
         required
         v-model="passAgain"
       >
         <span slot="helper" class="error-info">{{ errorInfo.passwordAgain }}</span>
       </mdui-text-field>
-      <mdui-text-field type="email" label="邮箱（可选）" v-model="email">
+      <mdui-text-field type="email" :label="$t('account.register.email.title')" v-model="email">
         <span slot="helper" class="error-info">{{ errorInfo.email }}</span>
       </mdui-text-field>
-      <mdui-button type="submit">注册</mdui-button>
+      <mdui-button type="submit">{{ $t('account.operation.register') }}</mdui-button>
     </form>
-    <div>已有账号？<RouterLink to="/login">登录</RouterLink></div>
+    <div>
+      {{ $t('account.register.message.alreadyHaveAccount')
+      }}<RouterLink to="/login">{{ $t('account.operation.login') }}</RouterLink>
+    </div>
   </div>
 </template>
 

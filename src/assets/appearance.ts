@@ -17,28 +17,55 @@ var backgroundImage = ''
 var backgroundImageOpacity = 0
 var sidebarOpacity = 1
 
-export function proceedOpacity(opa: any) {
-  if (opa === 0) return 0
-  return opa || 1
-}
-
 const localGeneralAppearance = {
   name: '',
   isGeneral: true,
   theme: (theme as Theme) || 'auto',
   colorScheme: colorScheme || '#ffffff',
   backgroundImage: backgroundImage || '',
-  backgroundImageOpacity: proceedOpacity(backgroundImageOpacity),
-  sidebarOpacity: proceedOpacity(sidebarOpacity),
+  backgroundImageOpacity: proceedOpacity(backgroundImageOpacity, 0),
+  sidebarOpacity: proceedOpacity(sidebarOpacity, 1),
 }
 
 export type AppearanceSetting = typeof localGeneralAppearance
 
 export var appearanceSetting = ref(localGeneralAppearance)
 
-export var appearanceSettingList = [localGeneralAppearance]
+export var appearanceSettingList = reactive([localGeneralAppearance])
 
 export var fetched = ref(false)
+
+export var backgroundImageSetting = reactive({
+  loaded: false,
+  url: '',
+})
+
+export function proceedOpacity(opa: any, dft: number) {
+  if (opa === 0) return 0
+  return opa || dft
+}
+
+export const changeBackgroundImage = debounce((img: string, oldImg?: string) => {
+  if (img !== oldImg) {
+    backgroundImageSetting.loaded = false
+  }
+  backgroundImageSetting.url = img
+}, 500)
+
+watch(
+  appearanceSetting,
+  (val, oldVal) => {
+    changeBackgroundImage(val.backgroundImage, oldVal?.backgroundImage)
+    setTheme(val.theme)
+    setColorScheme(val.colorScheme)
+    document
+      .querySelector('body')
+      ?.style.setProperty('--sidebar-opacity', val.sidebarOpacity.toString())
+  },
+  { immediate: true, deep: true },
+)
+
+// var listWatcher = watch(appearanceSettingList, (val) => {})
 
 export async function fetchAppearance(force = false) {
   var activeAppearance = localGeneralAppearance
@@ -58,8 +85,8 @@ export async function fetchAppearance(force = false) {
             theme: item.get('theme') || 'auto',
             colorScheme: item.get('colorScheme') || '#ffffff',
             backgroundImage: item.get('backgroundImage') || '',
-            backgroundImageOpacity: proceedOpacity(item.get('backgroundImageOpacity')),
-            sidebarOpacity: proceedOpacity(item.get('sidebarOpacity')),
+            backgroundImageOpacity: proceedOpacity(item.get('backgroundImageOpacity'), 0),
+            sidebarOpacity: proceedOpacity(item.get('sidebarOpacity'), 1),
           }
           if (item.get('isDefault') && !rawLocalAppearance) {
             activeAppearance = itemJSON
@@ -90,8 +117,8 @@ export async function fetchAppearance(force = false) {
               theme: item.theme || 'auto',
               colorScheme: item.colorScheme || '#ffffff',
               backgroundImage: item.backgroundImage || '',
-              backgroundImageOpacity: proceedOpacity(item.backgroundImageOpacity),
-              sidebarOpacity: proceedOpacity(item.sidebarOpacity),
+              backgroundImageOpacity: proceedOpacity(item.backgroundImageOpacity, 0),
+              sidebarOpacity: proceedOpacity(item.sidebarOpacity, 1),
             }
             appearanceSettingList.push(itemJSON)
           },
@@ -120,31 +147,6 @@ export function setAppearance(appe: AppearanceSetting) {
 
 export var isDesktop = ref(breakpoint().up('md'))
 
-export var backgroundImageSetting = reactive({
-  loaded: false,
-  url: '',
-})
-
-export const changeBackgroundImage = debounce((img: string, oldImg?: string) => {
-  if (img !== oldImg) {
-    backgroundImageSetting.loaded = false
-  }
-  backgroundImageSetting.url = img
-}, 1000)
-
 const observer = observeResize(document.body, function (entry, observer) {
   isDesktop.value = breakpoint().up('md')
 })
-
-watch(
-  appearanceSetting,
-  (val, oldVal) => {
-    changeBackgroundImage(val.backgroundImage, oldVal?.backgroundImage)
-    setTheme(val.theme)
-    setColorScheme(val.colorScheme)
-    document
-      .querySelector('body')
-      ?.style.setProperty('--sidebar-opacity', val.sidebarOpacity.toString())
-  },
-  { immediate: true, deep: true },
-)

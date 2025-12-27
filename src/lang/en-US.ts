@@ -171,6 +171,99 @@ export default {
           'Failed to login. Error code: {code}。Error message: {message}。If neccesary, contact the admin.',
       },
     },
+    logout: {
+      title: 'Logout',
+      message: {
+        success: 'Successfully logged out!',
+      },
+    },
+    register: {
+      title: 'Register',
+      username: {
+        title: 'Username',
+      },
+      password: {
+        title: 'Password',
+      },
+      ensurePassword: {
+        title: 'Ensure Password',
+      },
+      email: {
+        title: 'Email (Optional)',
+      },
+      message: {
+        success: 'Successfully registered!',
+        alreadyHaveAccount: 'Already have an account? ',
+        emptyUsername: 'Username should not be empty.',
+        invalidUsername:
+          'Username is not formatted. The length of username should be between 2 and 16(include), only contains A-Za-z0-9_(underline), and begins with A-Za-z.',
+        usernameWithEmailFormat:
+          'Username is not formatted. Username should not be in email format.',
+        emptyPassword: 'Password should not be empty.',
+        invalidPassword:
+          'Password is not formatted. The length of password should be at least 8, and does not contain empty chars.',
+        differentPassword: 'The two passwords are different.',
+        invalidEmail: 'Email is not formatted.',
+        unverifiedEmail: 'Email is not verified. Please check the verify email in your inbox.',
+        usernameUsed: 'Username is already used.',
+        emailUsed: 'Email is already used.',
+        createObjectsError:
+          'Registration completed, but an error occurred while creating necessary objects related to the account. You can now log in and use it normally, but there may be some potential functional issues. If necessary, contact the admin for help.',
+        failedRegister:
+          'Failed to register. Error code: {code}. Error message: {message}. If necessary, contact the admin.',
+      },
+    },
+    preResetPassword: {
+      title: 'Reset Password',
+      disc: 'Please enter your email to reset your password.<br />A reset link will be sent to your email inbox.',
+      email: {
+        title: 'Email',
+      },
+      operation: {
+        send: 'Send Reset Link',
+      },
+      message: {
+        success: 'Reset link sent. Please check your email inbox.',
+        emptyEmail: 'Please enter your email address.',
+        invalidEmail: 'Please enter a valid email address.',
+        cannotFindEmailUser: 'A user with the specified email is not found.',
+        unknownError:
+          'An error occured. Code: {code}. Message: {message}. If necessary, contact the admin.',
+      },
+    },
+    resetPassword: {
+      title: 'Reset Password',
+      password: {
+        title: 'Password',
+      },
+      ensurePassword: {
+        title: 'Ensure Password',
+      },
+      message: {
+        success: 'Password reset successfully! Please login again.',
+        emptyPassword: 'Password should not be empty.',
+        differentPassword: 'The two passwords are different.',
+        invalidPassword:
+          'Password is not formatted. The length of password should be at least 8, and does not contain empty chars.',
+        expiredToken: 'The reset token has expired or is invalid.',
+        failedConnectServer: 'Failed to connect to server. Please check your network connection.',
+        emptyToken: 'Missed Token.',
+      },
+    },
+    emailVerify: {
+      title: 'Email Verification',
+      message: {
+        success: 'Email verified successfully! Please login again.',
+        failed: 'Verification failed.',
+        error: 'Error: {errorInfo}',
+        expiredToken: 'The verification token has expired or is invalid.',
+        failedConnectServer: 'Failed to connect to server. Please check your network connection.',
+        emptyToken: 'Missed Token.',
+      },
+    },
+    requireLogin: {
+      message: 'Please login first!',
+    },
   },
   setting: {
     title: 'Setting',
@@ -183,7 +276,7 @@ export default {
       failedSave: 'A problem occured while saving.',
       saved: 'Settings saved!',
       incorrectEmailFormat: 'Incorrect email format.',
-      emailSaved: 'Email saved.',
+      emailSaved: 'Email saved. Check your inbox to verify email.',
       emailUsed: 'Email is already used. Please try another email.',
       failedEmailSave: 'A problem occured while saving email.',
       emailPublicChanged: 'Email privacy setting updated!',
@@ -210,8 +303,10 @@ export default {
           save: 'Save Email',
           madePublic: 'Make Email Public',
         },
-        status: {
-          title: 'Email Status: {status}',
+        verify: {
+          title: 'Verify Email',
+          disc: 'If your email is unverified, please click the button below to get a verification email.',
+          status: 'Email Status: {status}',
           unverified: 'Unverified ❌',
           verified: 'Verified ✔',
           message: {

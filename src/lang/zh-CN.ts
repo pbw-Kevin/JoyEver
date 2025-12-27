@@ -169,6 +169,96 @@ export default {
           '登录失败。错误码：{code}。错误信息：{message}。如必要，请联系管理员以获取帮助。',
       },
     },
+    logout: {
+      title: '登出',
+      message: {
+        success: '登出成功！',
+      },
+    },
+    register: {
+      title: '注册',
+      username: {
+        title: '用户名',
+      },
+      password: {
+        title: '密码',
+      },
+      ensurePassword: {
+        title: '确认密码',
+      },
+      email: {
+        title: '邮箱（可选）',
+      },
+      message: {
+        success: '注册成功！',
+        alreadyHaveAccount: '已有账号？',
+        emptyUsername: '用户名不能为空。',
+        invalidUsername:
+          '用户名格式不正确。用户名的长度应在 2 到 16 个字符之间，且只能包含字母、数字和下划线，其中第一个字符必须是字母。',
+        usernameWithEmailFormat: '用户名格式不正确。用户名不应具有邮箱的格式。',
+        emptyPassword: '密码不能为空。',
+        invalidPassword: '密码格式不正确。密码的长度应至少为 8 个字符，且不为空白字符。',
+        differentPassword: '两次输入的密码不一致。',
+        invalidEmail: '邮箱格式不正确。',
+        unverifiedEmail: '尚未验证邮箱。请检查收件箱中的验证邮件。',
+        usernameUsed: '用户名已被注册。',
+        emailUsed: '邮箱已被注册。',
+        createObjectsError:
+          '注册完成，但是在创建账号相关的必要对象时发生错误。现在可以正常登录并使用，但可能会有潜在的一些功能性问题。如必要，请联系管理员以获取帮助。',
+        unknownError:
+          '注册失败。错误代码：{code}。错误信息：{message}。如必要，请联系管理员以获取帮助。',
+      },
+    },
+    preResetPassword: {
+      title: '重置密码',
+      disc: '此功能要求账号已绑定邮箱。<br />请输入账号绑定的邮箱地址，我们将向该邮箱发送重置密码的链接。',
+      email: {
+        title: '邮箱',
+      },
+      operation: {
+        send: '发送重置链接',
+      },
+      message: {
+        success: '重置链接已发送到您的邮箱，请检查您的收件箱。',
+        emptyEmail: '请输入绑定的邮箱地址。',
+        invalidEmail: '请输入有效的邮箱地址。',
+        cannotFindEmailUser: '找不到绑定该邮箱的用户。',
+        unknownError:
+          '发生错误。错误码：{code}。错误信息：{message}。如必要，请联系管理员以获取帮助。',
+      },
+    },
+    resetPassword: {
+      title: '重置密码',
+      password: {
+        title: '密码',
+      },
+      ensurePassword: {
+        title: '确认密码',
+      },
+      message: {
+        success: '重置密码成功！',
+        emptyPassword: '请填写密码。',
+        differentPassword: '两次输入的密码不一致。',
+        invalidPassword: '密码格式不正确。密码的长度应至少为 8 个字符，且不为空白字符。',
+        expiredToken: 'Token 无效或已过期。',
+        failedConnectServer: '连接服务器时失败。',
+        emptyToken: '缺少 Token。',
+      },
+    },
+    emailVerify: {
+      title: '邮箱验证',
+      message: {
+        success: '邮箱验证成功！',
+        failed: '验证失败。',
+        error: '错误：{errorInfo}',
+        expiredToken: 'Token 无效或已过期。',
+        failedConnectServer: '连接服务器时失败。',
+        emptyToken: '缺少 Token。',
+      },
+    },
+    requireLogin: {
+      message: '请先登录！',
+    },
   },
   setting: {
     title: '设置',
@@ -180,7 +270,7 @@ export default {
       failedSave: '保存时出现问题。',
       saved: '保存成功！',
       incorrectEmailFormat: '邮箱格式不正确。',
-      emailSaved: '邮箱已保存！',
+      emailSaved: '邮箱已保存。请检查收件箱以验证邮箱。',
       emailUsed: '邮箱已被使用。请尝试其他邮箱。',
       failedEmailSave: '保存邮箱时出现问题。',
       emailPublicChanged: '邮箱隐私设置已更新！',
@@ -205,8 +295,10 @@ export default {
           madePublic: '公开邮箱',
           verify: '邮箱验证',
         },
-        status: {
-          title: '邮箱状态：{status}',
+        verify: {
+          title: '邮箱验证',
+          disc: '如果邮箱未验证，请点击下方按钮以获取验证邮件。',
+          status: '邮箱状态：{status}',
           unverified: '未验证 ❌',
           verified: '已验证 ✔',
           message: {

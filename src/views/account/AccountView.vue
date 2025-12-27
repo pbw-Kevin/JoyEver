@@ -8,7 +8,7 @@ import { sendNoti } from '@/assets/notifications'
 
 var route = useRoute()
 
-var username = route.params.id
+var username = route.params.id as string
 
 var isMe = isLoggedIn() && getUser().get('username') == username
 var isNotMe = isLoggedIn() && getUser().get('username') != username
@@ -31,21 +31,21 @@ var userInfo: Ref<{
 })
 var email = ref('')
 var roles = ref([] as RoleNames)
-infoObjectQuery.get('userInfo').then
-infoObjectQuery.get('userInfo').then((tmpUserInfo) => {
+infoObjectQuery.get('userInfo', username).then
+infoObjectQuery.get('userInfo', username).then((tmpUserInfo) => {
   if (!tmpUserInfo) {
-    sendNoti('该用户不存在或出现异常', true)
+    // sendNoti('该用户不存在或出现异常', true)
     return
   }
   userInfo.value = tmpUserInfo.toJSON()
-  infoObjectQuery.get('email').then((tmpEmailInfo) => {
+  infoObjectQuery.get('email', username).then((tmpEmailInfo) => {
     if (!tmpEmailInfo) {
-      sendNoti('该用户不存在或出现异常', true)
+      // sendNoti('该用户不存在或出现异常', true)
       return
     }
     if (tmpEmailInfo.getACL()?.getPublicReadAccess()) email.value = tmpEmailInfo.get('email')
   })
-  infoObjectQuery.get('userRoles').then((tmpRoles) => {
+  infoObjectQuery.get('userRoles', username).then((tmpRoles) => {
     if (tmpRoles) {
       roles.value = tmpRoles.get('roles')
     }
@@ -77,7 +77,7 @@ infoObjectQuery.get('userInfo').then((tmpUserInfo) => {
         v-if="email"
       ></mdui-text-field>
       <br />
-      <mdui-button v-if="isNotMe" disabled>添加好友</mdui-button>
+      <!-- <mdui-button v-if="isNotMe" disabled>添加好友</mdui-button> -->
       <RouterLink to="/myaccount" v-if="isMe">
         <mdui-button>{{ $t('account.view.my') }}</mdui-button>
       </RouterLink>

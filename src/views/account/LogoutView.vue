@@ -11,6 +11,6 @@ router.push({ name: 'Home' })
 
 <template>
   <div class="content">
-    <h1>{{ $t('account.operation.logout') }}</h1>
+    <h1>{{ $t('account.logout.title') }}</h1>
   </div>
 </template>

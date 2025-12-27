@@ -3,7 +3,7 @@ import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router
 import routes from './routes'
 import { dispNoti } from '@/assets/notifications'
 import { myInfoObject, isLoggedIn, updateLoggedInStat } from '@/assets/account'
-import { updateAnnouncement } from '@/assets/announcement'
+// import { updateAnnouncement } from '@/assets/announcement'
 import { fetchAppearance } from '@/assets/appearance'
 import { updateTopNotificationRef } from '@/assets/topNotification'
 import { _t, updateLang } from '@/assets/lang'
@@ -27,7 +27,7 @@ watch(title, updatePageTitle)
 router.beforeEach((to, from, next) => {
   title.value = to.meta.title as string
   updateLoggedInStat()
-  updateAnnouncement(false)
+  // updateAnnouncement(false)
   updateTopNotificationRef()
   updateLang()
   fetchAppearance()

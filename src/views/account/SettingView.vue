@@ -5,7 +5,7 @@ import '@mdui/icons/security'
 import '@mdui/icons/videogame-asset'
 import '@mdui/icons/palette'
 
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import { confirm, prompt, getColorFromImage } from 'mdui'
@@ -24,27 +24,25 @@ import {
   appearanceSettingList,
   setAppearance,
   type AppearanceSetting,
-  fetched as appearanceFetched
+  fetched as appearanceFetched,
 } from '@/assets/appearance'
 import { AV, debounce } from '@/assets/main'
 import { sendNoti } from '@/assets/notifications'
 import UserTag from '@/components/account/UserTag.vue'
 
-requireLogin()
-
-var user = getUser()
-var username = user.getUsername()
+var user: AV.User
+var username = ''
 var userInfo = new AV.Object('UserInfo')
 var emailInfo = new AV.Object('Email')
 var privateUserInfo = new AV.Object('PrivateUserInfo')
 
 const localSetting = reactive({
   nickname: '',
-  email: (user.get('email') as string | undefined) || '',
-  hasEmail: !!user.get('email'),
+  email: '',
+  hasEmail: false,
   emailChanged: false,
   isPublicEmail: false,
-  isVerifiedEmail: (user.get('emailVerified') as boolean) || false,
+  isVerifiedEmail: false,
   verifyEmailClicked: false,
   verifyEmailFailed: false,
   emailErrorInfo: '',
@@ -54,47 +52,9 @@ var appearanceList = reactive(appearanceSettingList)
 var activeAppearance = ref(appearanceSetting.value)
 var activeAppearanceName = ref(appearanceSetting.value.name)
 
-myInfoObject.get('userInfo').then((tmpUserInfo) => {
-  if (!tmpUserInfo) return
-  userInfo = tmpUserInfo
-  localSetting.nickname = userInfo.get('nickname')
-})
-myInfoObject.get('email').then((tmpEmailInfo) => {
-  if (!tmpEmailInfo) return
-  emailInfo = tmpEmailInfo
-  localSetting.isPublicEmail = tmpEmailInfo.getACL()?.getPublicReadAccess()
-})
-myInfoObject.get('privateUserInfo').then((tmpPrivate) => {
-  if (!tmpPrivate) return
-  privateUserInfo = tmpPrivate
-})
-
 function failedAutoSave() {
   sendNoti(t('setting.message.failedAutoSave'), true)
 }
-
-watch(
-  () => localSetting.nickname,
-  debounce((newNickname: string) => {
-    if (!newNickname) return
-    userInfo.set('nickname', newNickname)
-    userInfo.save().catch(() => {
-      failedAutoSave()
-    })
-  }, 1000),
-)
-
-watch(
-  () => localSetting.email,
-  (newEmail) => {
-    localSetting.emailErrorInfo = ''
-    localSetting.hasEmail = !!newEmail
-    localSetting.emailChanged = newEmail !== (user.get('email') as string | undefined)
-    if (newEmail && !isEmail(newEmail)) {
-      localSetting.emailErrorInfo = t('setting.message.incorrectEmailFormat')
-    }
-  },
-)
 
 function saveEmail() {
   localSetting.emailErrorInfo = ''
@@ -106,8 +66,12 @@ function saveEmail() {
   user
     .save()
     .then((user) => {
+      return getUser().fetch()
+    })
+    .then(() => {
       localSetting.isVerifiedEmail = user.get('emailVerified')
-      return emailInfo.set('email', localSetting.email)
+      emailInfo.set('email', localSetting.email)
+      return emailInfo.save()
     })
     .then(() => {
       localSetting.emailChanged = false
@@ -132,7 +96,7 @@ function updateIsPublicEmail(newValue: boolean) {
     .then(() => {
       sendNoti(t('setting.message.emailPublicChanged'), true)
     })
-    .catch((error) => {
+    .catch(() => {
       sendNoti(t('setting.message.failedChangeEmailPublic'), true)
     })
 }
@@ -142,7 +106,7 @@ function sendEmailVerification() {
     .then(() => {
       localSetting.verifyEmailClicked = true
     })
-    .catch((error) => {
+    .catch(() => {
       localSetting.verifyEmailFailed = true
     })
 }
@@ -186,42 +150,15 @@ function savePassword() {
   }
 }
 
-watch(appearanceFetched, (val) => {
-  if (val) {
-    appearanceList.splice(0, appearanceList.length, ...appearanceSettingList)
-  }
-})
-
-var appearanceChanged = computed(() => 
-  JSON.stringify(activeAppearance.value) !== JSON.stringify(
-    appearanceList.find((setting: AppearanceSetting) => setting.name === activeAppearanceName.value)
-  )
+var appearanceChanged = computed(
+  () =>
+    JSON.stringify(activeAppearance.value) !==
+    JSON.stringify(
+      appearanceList.find(
+        (setting: AppearanceSetting) => setting.name === activeAppearanceName.value,
+      ),
+    ),
 )
-
-watch(activeAppearanceName, (newName, oldName) => {
-  if (!newName) {
-    activeAppearanceName.value = oldName
-    return
-  }
-  var appe = appearanceList.find((setting) => setting.name === newName)
-  if (!appe) return
-  activeAppearance.value = appe
-  appearanceSetting.value = { ...activeAppearance.value }
-})
-
-watch(activeAppearance, (appe) => {
-  appearanceSetting.value = appe
-})
-
-watch(() => activeAppearance.value.backgroundImage, (newImage, oldImage) => {
-  if (!newImage) {
-    activeAppearance.value.backgroundImageOpacity = 0.3
-    activeAppearance.value.sidebarOpacity = 0.7
-  } else if (!oldImage) {
-    activeAppearance.value.backgroundImageOpacity = 0.3
-    activeAppearance.value.sidebarOpacity = 0.7
-  }
-})
 
 var colorErrorInfo = ref('')
 
@@ -247,7 +184,10 @@ function getColor() {
 var savingErrorInfo = ref('')
 
 function saveAppearanceList(msg?: string) {
-  privateUserInfo.set('customAppearance', appearanceList.filter((setting) => !setting.isGeneral ))
+  privateUserInfo.set(
+    'customAppearance',
+    appearanceList.filter((setting) => !setting.isGeneral),
+  )
   privateUserInfo.save().catch(() => {
     if (msg) savingErrorInfo.value = msg
   })
@@ -303,11 +243,14 @@ function saveAsNewAppearance() {
 function applyAppearance() {
   savingErrorInfo.value = ''
   privateUserInfo.set('activeAppearance', activeAppearanceName.value)
-  privateUserInfo.save().then(() => {
-    setAppearance(activeAppearance.value)
-  }).catch(() => {
-    savingErrorInfo.value = '应用时出现问题。请检查网络连接。'
-  })
+  privateUserInfo
+    .save()
+    .then(() => {
+      setAppearance(activeAppearance.value)
+    })
+    .catch(() => {
+      savingErrorInfo.value = '应用时出现问题。请检查网络连接。'
+    })
 }
 
 function deleteAppearance() {
@@ -322,7 +265,10 @@ function deleteAppearance() {
         (setting) => setting.name !== activeAppearanceName.value,
       )
       if (activeAppearanceName.value == privateUserInfo.get('activeAppearance')) {
-        privateUserInfo.set('activeAppearance',appearanceList.find((setting) => setting.isGeneral)?.name || '')
+        privateUserInfo.set(
+          'activeAppearance',
+          appearanceList.find((setting) => setting.isGeneral)?.name || '',
+        )
       }
       activeAppearanceName.value = privateUserInfo.get('activeAppearance')
       privateUserInfo.save().catch(() => {
@@ -331,6 +277,89 @@ function deleteAppearance() {
     },
   })
 }
+
+onMounted(() => {
+  if (requireLogin()) return
+
+  user = getUser()
+  var email = user.get('email') as string | undefined
+  if (email) localSetting.email = email
+  if (user.get('emailVerified') as boolean) localSetting.isVerifiedEmail = true
+  localSetting.hasEmail = !!email
+  username = user.get('username') as string
+
+  myInfoObject.get('userInfo').then((tmpUserInfo) => {
+    if (!tmpUserInfo) return
+    userInfo = tmpUserInfo
+    localSetting.nickname = userInfo.get('nickname')
+  })
+  myInfoObject.get('email').then((tmpEmailInfo) => {
+    if (!tmpEmailInfo) return
+    emailInfo = tmpEmailInfo
+    localSetting.isPublicEmail = tmpEmailInfo.getACL()?.getPublicReadAccess()
+  })
+  myInfoObject.get('privateUserInfo').then((tmpPrivate) => {
+    if (!tmpPrivate) return
+    privateUserInfo = tmpPrivate
+  })
+
+  watch(
+    () => localSetting.nickname,
+    debounce((newNickname: string) => {
+      if (!newNickname) return
+      userInfo.set('nickname', newNickname)
+      userInfo.save().catch(() => {
+        failedAutoSave()
+      })
+    }, 1000),
+  )
+
+  watch(
+    () => localSetting.email,
+    (newEmail) => {
+      localSetting.emailErrorInfo = ''
+      localSetting.hasEmail = !!newEmail
+      localSetting.emailChanged = newEmail !== (user.get('email') as string | undefined)
+      if (newEmail && !isEmail(newEmail)) {
+        localSetting.emailErrorInfo = t('setting.message.incorrectEmailFormat')
+      }
+    },
+  )
+
+  watch(appearanceFetched, (val) => {
+    if (val) {
+      appearanceList.splice(0, appearanceList.length, ...appearanceSettingList)
+    }
+  })
+
+  watch(activeAppearanceName, (newName, oldName) => {
+    if (!newName) {
+      activeAppearanceName.value = oldName
+      return
+    }
+    var appe = appearanceList.find((setting) => setting.name === newName)
+    if (!appe) return
+    activeAppearance.value = appe
+    appearanceSetting.value = { ...activeAppearance.value }
+  })
+
+  watch(activeAppearance, (appe) => {
+    appearanceSetting.value = appe
+  })
+
+  watch(
+    () => activeAppearance.value.backgroundImage,
+    (newImage, oldImage) => {
+      if (!newImage) {
+        activeAppearance.value.backgroundImageOpacity = 0.3
+        activeAppearance.value.sidebarOpacity = 0.7
+      } else if (!oldImage) {
+        activeAppearance.value.backgroundImageOpacity = 0.3
+        activeAppearance.value.sidebarOpacity = 0.7
+      }
+    },
+  )
+})
 
 // var saving = ref(false)
 
@@ -433,13 +462,15 @@ function deleteAppearance() {
           >{{ $t('setting.global.email.operation.madePublic') }}</mdui-checkbox
         >
         <div v-if="localSetting.hasEmail">
-          {{
-            $t('setting.global.email.status.title', {
+          <h4>{{ $t('setting.global.email.verify.title') }}</h4>
+          <p>{{ $t('setting.global.email.verify.disc') }}</p>
+          <span>{{
+            $t('setting.global.email.verify.status', {
               status: localSetting.isVerifiedEmail
-                ? $t('setting.global.email.status.verified')
-                : $t('setting.global.email.status.unverified'),
+                ? $t('setting.global.email.verify.verified')
+                : $t('setting.global.email.verify.unverified'),
             })
-          }}
+          }}</span>
           <mdui-button
             v-if="!localSetting.isVerifiedEmail"
             @click="sendEmailVerification()"
@@ -449,10 +480,10 @@ function deleteAppearance() {
             >{{ $t('setting.global.email.operation.verify') }}</mdui-button
           >
           <span v-if="localSetting.verifyEmailClicked">{{
-            $t('setting.global.email.status.message.clicked')
+            $t('setting.global.email.verify.message.clicked')
           }}</span>
-          <span v-if="localSetting.verifyEmailFailed">{{
-            $t('setting.global.email.status.message.failed')
+          <span v-if="localSetting.verifyEmailFailed" class="error-info">{{
+            $t('setting.global.email.verify.message.failed')
           }}</span>
         </div>
       </mdui-tab-panel>
@@ -546,11 +577,9 @@ function deleteAppearance() {
           <div class="color-scheme">
             {{ $t('setting.appearance.theme.colorScheme.title')
             }}<input type="color" v-model="activeAppearance.colorScheme" style="margin-left: 4px" />
-            <mdui-button
-              @click="getColor()"
-              :disabled="!activeAppearance.backgroundImage"
-              >{{ $t('setting.appearance.theme.colorScheme.getColorFromImage') }}</mdui-button
-            >
+            <mdui-button @click="getColor()" :disabled="!activeAppearance.backgroundImage">{{
+              $t('setting.appearance.theme.colorScheme.getColorFromImage')
+            }}</mdui-button>
           </div>
           <div class="error-info" v-if="colorErrorInfo">
             {{ $t('setting.appearance.theme.colorScheme.error', { colorErrorInfo }) }}

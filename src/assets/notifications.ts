@@ -4,13 +4,13 @@
 
 import { snackbar } from 'mdui'
 
-type noti = {
+type Noti = {
   message: string
 }
 
-type notis = Array<noti>
+type Notis = Array<Noti>
 
-let notiList: notis = []
+let notiList: Notis = []
 
 export function dispNoti() {
   let curNotiList = notiList

@@ -3,6 +3,9 @@ import { serverURL } from '@/assets/main'
 import { useRoute, useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { setTopNotification } from '@/assets/topNotification'
+import { getUser } from '@/assets/account'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -19,26 +22,28 @@ if (route.query.token) {
   passQuery.onreadystatechange = () => {
     if (passQuery.readyState === 4) {
       if (passQuery.status === 200) {
-        setTopNotification('邮箱验证成功。')
+        setTopNotification(t('account.emailVerify.message.success'))
+        getUser().fetch()
         router.push({ name: 'Home' })
       } else if (JSON.parse(passQuery.responseText).error) {
-        errorInfo.value = 'Token 无效或已过期。'
+        errorInfo.value = t('account.emailVerify.message.expiredToken')
       } else {
-        errorInfo.value = '连接服务器时失败。'
+        errorInfo.value = t('account.emailVerify.message.failedConnectServer')
       }
     }
   }
+  passQuery.send()
 } else {
-  errorInfo.value = '缺少 Token。'
+  errorInfo.value = t('account.emailVerify.message.emptyToken')
 }
 </script>
 
 <template>
   <div class="content">
-    <h1>{{ $t('account.operation.emailVerify') }}</h1>
+    <h1>{{ $t('account.emailVerify.title') }}</h1>
     <p class="error-info" v-if="errorInfo">
-      验证失败。<br />
-      错误：{{ errorInfo }}
+      {{ $t('account.emailVerify.message.failed') }}<br />
+      {{ $t('account.emailVerify.message.error', { errorInfo }) }}
     </p>
   </div>
 </template>

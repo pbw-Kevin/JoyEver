@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue'
 import { curRole, requireLogin, getUser, myInfoObject } from '@/assets/account'
 import UserAvatar from '@/components/account/UserAvatar.vue'
 import UserTagPack from '@/components/account/UserTagPack.vue'
 
-requireLogin()
-
 var user = getUser()
-var email = ref(user.get('email') || '')
+var email = ref('')
 var userInfo: Ref<{
   objectId: string
   avatarURL?: string
@@ -25,10 +23,14 @@ var userInfo: Ref<{
   updatedAt: '',
 })
 
-myInfoObject.get('userRoles')
-myInfoObject.get('userInfo').then((tmpUserInfo) => {
-  // console.log(tmpUserInfo)
-  if (tmpUserInfo) userInfo.value = tmpUserInfo.toJSON()
+onMounted(() => {
+  if (requireLogin()) return
+  userInfo.value.username = user.get('username')
+  if (user.get('email')) email.value = user.get('email')
+  myInfoObject.get('userRoles')
+  myInfoObject.get('userInfo').then((tmpUserInfo) => {
+    if (tmpUserInfo) userInfo.value = tmpUserInfo.toJSON()
+  })
 })
 </script>
 
@@ -43,7 +45,7 @@ myInfoObject.get('userInfo').then((tmpUserInfo) => {
           <UserTagPack :roles="curRole"></UserTagPack>
         </span>
         <br />
-        <span class="user-head-username">{{ user.get('username') }}</span>
+        <span class="user-head-username">{{ userInfo.username }}</span>
       </div>
     </div>
     <div class="user-info">
@@ -56,7 +58,7 @@ myInfoObject.get('userInfo').then((tmpUserInfo) => {
         v-if="email"
       ></mdui-text-field>
       <br />
-      <RouterLink :to="`/account/${user.get('username')}`">
+      <RouterLink :to="`/account/${userInfo.username}`">
         <mdui-button>{{ $t('account.view.visitor') }}</mdui-button>
       </RouterLink>
       <RouterLink to="/history">

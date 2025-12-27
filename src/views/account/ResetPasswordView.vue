@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { serverURL } from '@/assets/main'
 import { useRoute, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { setTopNotification } from '@/assets/topNotification'
-import { logout } from '@/assets/account'
+import { isFormattedPassword, logout } from '@/assets/account'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -18,41 +20,49 @@ var passAgain = ref('')
 
 var formDisabled = ref(false)
 
+onMounted(() => {
+  if (!route.query.token) {
+    errorInfo.value = t('account.resetPassword.message.emptyToken')
+    formDisabled.value = true
+  }
+})
+
 function submitForm() {
   errorInfo.value = ''
   formDisabled.value = true
-  if (route.query.token) {
-    if (!pass.value || !passAgain.value) {
-      errorInfo.value = '请填写密码。'
-      formDisabled.value = false
-      return
-    }
-    if (pass.value !== passAgain.value) {
-      errorInfo.value = '两次输入的密码不一致。'
-      formDisabled.value = false
-      return
-    }
-    var passQuery = new XMLHttpRequest()
-    passQuery.open('GET', fullVerifyURL + '?password=' + encodeURIComponent(pass.value), true)
-    passQuery.onreadystatechange = () => {
-      if (passQuery.readyState === 4) {
-        if (passQuery.status === 200) {
-          logout()
-          setTopNotification('重置密码成功。')
-          router.push({ name: 'Home' })
-        } else if (JSON.parse(passQuery.responseText).error) {
-          errorInfo.value = 'Token 无效或已过期。'
-        } else {
-          errorInfo.value = '连接服务器时失败。'
-          formDisabled.value = false
-        }
+  if (!route.query.token) return
+  if (!pass.value || !passAgain.value) {
+    errorInfo.value = t('account.resetPassword.message.emptyPassword')
+    formDisabled.value = false
+    return
+  }
+  if (pass.value !== passAgain.value) {
+    errorInfo.value = t('account.resetPassword.message.differentPassword')
+    formDisabled.value = false
+    return
+  }
+  if (!isFormattedPassword(pass.value)) {
+    errorInfo.value = t('account.resetPassword.message.invalidPassword')
+    formDisabled.value = false
+    return
+  }
+  var passQuery = new XMLHttpRequest()
+  passQuery.open('GET', fullVerifyURL + '?password=' + encodeURIComponent(pass.value), true)
+  passQuery.onreadystatechange = () => {
+    if (passQuery.readyState === 4) {
+      if (passQuery.status === 200) {
+        logout()
+        setTopNotification(t('account.resetPassword.message.success'))
+        router.push({ name: 'Home' })
+      } else if (JSON.parse(passQuery.responseText).error) {
+        errorInfo.value = t('account.resetPassword.message.expiredToken')
+      } else {
+        errorInfo.value = t('account.resetPassword.message.failedConnectServer')
+        formDisabled.value = false
       }
     }
-    passQuery.send()
-  } else {
-    errorInfo.value = '缺少 Token。'
-    formDisabled.value = false
   }
+  passQuery.send()
 }
 </script>
 
@@ -64,16 +74,18 @@ function submitForm() {
       <mdui-text-field
         type="password"
         toggle-password
-        label="密码"
+        :label="$t('account.resetPassword.password.title')"
         v-model="pass"
       ></mdui-text-field>
       <mdui-text-field
         type="password"
         toggle-password
-        label="确认密码"
+        :label="$t('account.resetPassword.ensurePassword.title')"
         v-model="passAgain"
       ></mdui-text-field>
-      <mdui-button type="submit" :disabled="formDisabled">重置密码</mdui-button>
+      <mdui-button type="submit" :disabled="formDisabled">{{
+        $t('account.operation.resetPassword')
+      }}</mdui-button>
     </form>
   </div>
 </template>
