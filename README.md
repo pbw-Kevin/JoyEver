@@ -1,3 +1,7 @@
+Due to the end of service of BaaS provider, this project is abandoned permanently. Thanks for your support.
+
+---
+
 # JoyEver
 
 The front-end of Online JoyEver.
