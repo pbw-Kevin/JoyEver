@@ -1,0 +1,1 @@
+import{d as o,aq as a,m as s,c as n,a as c,t as r,o as u}from"./index-6ks8CrrC.js";const l={class:"content"},_=o({__name:"LogoutView",setup(i){const e=s();return a(),e.push({name:"Home"}),(t,m)=>(u(),n("div",l,[c("h1",null,r(t.$t("account.logout.title")),1)]))}});export{_ as default};
